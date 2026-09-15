@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Learning Buddy</title>
+<title>HKDSE ICT｜互動筆記庫</title>
 <style>
 :root{
   --bg:#f5f6f8; --card:#ffffff; --text:#2c2c2a; --muted:#5f5e5a; --line:#e3e4e8;
@@ -19,7 +19,6 @@
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
 body{font-family:-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.7;overflow:hidden}
-
 /* ===== 頂欄 ===== */
 .topbar{height:56px;background:linear-gradient(135deg,#185fa5,#0f6e56);color:#fff;display:flex;align-items:center;gap:12px;padding:0 16px;position:relative;z-index:30;flex:none}
 .topbar .brand{font-size:16px;font-weight:600;letter-spacing:.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -31,16 +30,13 @@ body{font-family:-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;bac
 .lang-btn{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.45);padding:4px 12px;border-radius:999px;font-size:12px;cursor:pointer;font-weight:600;transition:all .15s}
 .lang-btn:hover{background:rgba(255,255,255,.28)}
 .lang-btn.active{background:#fff;color:#185fa5}
-
 /* ===== 主體：左側覽/右內容 ===== */
 .layout{display:flex;height:calc(100% - 56px);flex:1}
-
 /* 左側導覽 */
 .sidebar{width:var(--sidebar-w);background:#fff;border-right:1px solid var(--line);overflow-y:auto;transition:width .22s ease;flex:none}
 body.sidebar-closed .sidebar{width:var(--sidebar-w-closed);border-right:none;overflow:hidden}
 .sidebar-inner{padding:14px;min-width:var(--sidebar-w)}
 .side-sub{font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-weight:600;padding:6px 10px 8px}
-
 /* 冊（書本） */
 .book{margin-bottom:8px}
 .book-head{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:var(--radius);cursor:pointer;user-select:none;transition:background .13s;color:var(--text)}
@@ -53,7 +49,6 @@ body.sidebar-closed .sidebar{width:var(--sidebar-w-closed);border-right:none;ove
 .book-head .cnt.none{color:var(--muted);background:#f0f1f3}
 .book-body{display:none;padding:2px 0 4px 16px;border-left:2px solid var(--line);margin-left:15px}
 .book.open > .book-body{display:block}
-
 /* 章節條目 */
 .unit-item{display:block;padding:9px 11px;margin:2px 0;border-radius:9px;color:var(--text);text-decoration:none;cursor:pointer;font-size:13.5px;transition:background .13s,border-color .13s;border-left:3px solid transparent;}
 .unit-item:hover{background:var(--blue-bg)}
@@ -63,9 +58,7 @@ body.sidebar-closed .sidebar{width:var(--sidebar-w-closed);border-right:none;ove
 .unit-item.active{background:var(--blue-bg);border-left-color:var(--blue);color:var(--blue)}
 .unit-item.active .u-en{color:var(--blue)}
 .unit-item.disabled{color:var(--muted);opacity:.55;cursor:default;pointer-events:none}
-
 .empty-book{font-size:12px;color:var(--muted);padding:2px 4px 6px 4px}
-
 /* ===== 右側內容 ===== */
 .content{flex:1;position:relative;overflow:hidden;background:var(--bg)}
 .content iframe{width:100%;height:100%;border:none;display:none}
@@ -75,7 +68,6 @@ body.sidebar-closed .sidebar{width:var(--sidebar-w-closed);border-right:none;ove
 .welcome .ic{font-size:46px;margin-bottom:16px}
 .welcome h2{font-size:20px;color:var(--text);margin-bottom:8px}
 .welcome p{font-size:14px;max-width:420px}
-
 @media(max-width:640px){
   :root{--sidebar-w:236px}
   .topbar .brand small{display:none}
@@ -86,7 +78,7 @@ body.sidebar-closed .sidebar{width:var(--sidebar-w-closed);border-right:none;ove
 <div class="topbar">
   <button class="toggle-btn" id="toggleBtn" aria-label="Toggle sidebar">☰</button>
   <div class="brand">
-    Learning Buddy
+    HKDSE ICT 互動筆記庫
     <small data-zh="選擇書本與章節在右側開啟" data-en="Pick a chapter to open in the content panel">選擇書本與章節在右側開啟</small>
   </div>
   <div class="spacer"></div>
@@ -95,12 +87,10 @@ body.sidebar-closed .sidebar{width:var(--sidebar-w-closed);border-right:none;ove
     <button class="lang-btn" data-lang="en">EN</button>
   </div>
 </div>
-
 <div class="layout">
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-inner" id="sidebarInner"></div>
   </aside>
-
   <main class="content" id="content">
     <div class="welcome" id="welcome">
       <span class="ic">📚</span>
@@ -110,7 +100,6 @@ body.sidebar-closed .sidebar{width:var(--sidebar-w-closed);border-right:none;ove
     <iframe id="frame" title="chapter"></iframe>
   </main>
 </div>
-
 <script>
 // ============ 書本與單元配置，新增單元只修改這裡 ============
 const unitDot = { blue:'#185fa5', teal:'#0f6e56', purple:'#534ab7', amber:'#854f0b', green:'#3b6d11' };
@@ -142,28 +131,23 @@ const bookData = [
   {id:"electA", zh:"選修冊 A", en:"Elective Module A", descZh:"", descEn:"", col:"teal", units:[]},
   {id:"electC", zh:"選修冊 C", en:"Elective Module C", descZh:"", descEn:"", col:"purple", units:[]},
 ];
-
 // ============ i18n ============
 let LANG = 'zh';
 function t(zh,en){ return LANG==='en'?en:zh; }
-
 // ============ 渲染側欄 ============
 const sidebarEl = document.getElementById("sidebarInner");
 const contentEl = document.getElementById("content");
 const frame = document.getElementById("frame");
 const welcome = document.getElementById("welcome");
 let active = null;
-
 function renderSidebar(){
   sidebarEl.innerHTML = '<div class="side-sub" data-zh="書籍與章節" data-en="Books &amp; Chapters">書籍與章節</div>';
-
   bookData.forEach(book=>{
     const has = book.units.length>0;
     const bok = document.createElement("div");
     bok.className = "book"+(has?" open":"");
     const color = unitDot[book.col]||unitDot.blue;
     const cnts = has ? book.units.length + (LANG==='en'?' unit(s)':' 單元') : (LANG==='en'?'Soon':'即將推出');
-
     const head = document.createElement("div");
     head.className = "book-head";
     head.innerHTML =
@@ -173,7 +157,6 @@ function renderSidebar(){
       '<span class="cnt'+(has?'':' none')+'">'+cnts+'</span>';
     head.addEventListener("click", ()=>{ if(has) bok.classList.toggle("open"); });
     bok.appendChild(head);
-
     const body = document.createElement("div");
     body.className = "book-body";
     if(has){
@@ -189,7 +172,6 @@ function renderSidebar(){
           '<span class="dot" style="background:'+color+'"></span>'+
           '<span class="u-t">'+u.num+' '+(LANG==='en'?u.en:u.zh)+'</span>'+
           '<span class="u-en">'+(LANG==='en'?u.zh:u.en)+'</span>';
-        // 由 CSS 統一覆蓋 active / hover 色，這裡只存 data
         it.onclick = (e)=>{ e.preventDefault(); openChapter(book, u, it); };
         body.appendChild(it);
       });
@@ -203,7 +185,6 @@ function renderSidebar(){
     sidebarEl.appendChild(bok);
   });
 }
-
 function openChapter(book, unit, el){
   document.querySelectorAll(".unit-item").forEach(x=>x.classList.remove("active"));
   el.classList.add("active");
@@ -212,12 +193,12 @@ function openChapter(book, unit, el){
   contentEl.classList.add("show-frame");
   welcome.classList.add("hidden");
 }
-
 // ============ 事件 ============
 document.getElementById("toggleBtn").addEventListener("click", ()=>{
   document.body.classList.toggle("sidebar-closed");
 });
 
+// ===== 修改重點：切換語言時通知iframe子頁 =====
 document.querySelectorAll(".lang-btn").forEach(btn=>{
   btn.addEventListener("click", ()=>{
     LANG = btn.dataset.lang;
@@ -226,11 +207,15 @@ document.querySelectorAll(".lang-btn").forEach(btn=>{
     document.querySelectorAll(".lang-btn").forEach(b=>b.classList.toggle("active",b.dataset.lang===LANG));
     document.querySelectorAll("[data-zh][data-en]").forEach(el=>{ el.innerHTML = t(el.dataset.zh, el.dataset.en); });
     renderSidebar();
+
+    // 通知iframe內章節頁執行setLang
+    if(frame.contentWindow && typeof frame.contentWindow.setLang === "function"){
+      frame.contentWindow.setLang(LANG);
+    }
   });
 });
 
 renderSidebar();
-
 // 初始載入第一冊第一個單元（有內容才載）
 const firstBook = bookData.find(b=>b.units.length);
 if(firstBook){
