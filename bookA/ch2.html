@@ -1,0 +1,1741 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第二章　數據組織及數據控制 · 互動實驗室</title>
+<style>
+:root{
+  --bg:#f5f6f8; --card:#ffffff; --text:#2c2c2a; --muted:#5f5e5a; --line:#e3e4e8;
+  --blue:#185fa5; --blue-bg:#e6f1fb;
+  --teal:#0f6e56; --teal-bg:#e1f5ee;
+  --purple:#534ab7; --purple-bg:#eeedfe;
+  --amber:#854f0b; --amber-bg:#faeeda;
+  --red:#a32d2d; --green:#3b6d11; --green-bg:#eaf3de;
+  --radius:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.75;padding:0 0 60px}
+a{color:var(--blue);text-decoration:none}
+.wrap{max-width:960px;margin:0 auto;padding:0 20px}
+
+header{position:relative;background:linear-gradient(135deg,#185fa5,#0f6e56);color:#fff;padding:44px 20px 36px;text-align:center}
+header .badge{display:inline-block;background:rgba(255,255,255,.18);padding:4px 14px;border-radius:999px;font-size:13px;margin-bottom:14px}
+header h1{font-size:27px;font-weight:600;letter-spacing:1px}
+header .sub{font-size:14px;opacity:.92;margin-top:8px}
+.lang-switch{position:absolute;top:14px;right:18px;display:flex;gap:4px}
+.lang-btn{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.45);padding:5px 13px;border-radius:999px;font-size:12.5px;cursor:pointer;font-weight:600;transition:all .15s}
+.lang-btn:hover{background:rgba(255,255,255,.28)}
+.lang-btn.active{background:#fff;color:#185fa5}
+
+nav{position:sticky;top:0;background:rgba(255,255,255,.96);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);z-index:20}
+nav .wrap{display:flex;flex-wrap:wrap;gap:5px;padding:9px 20px;justify-content:center}
+nav a{font-size:13px;color:var(--muted);padding:6px 13px;border-radius:8px;white-space:nowrap}
+nav a:hover{background:var(--blue-bg);color:var(--blue)}
+
+section{margin-top:26px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:24px;margin-bottom:16px}
+h2{font-size:20px;font-weight:600;display:flex;align-items:center;gap:10px;margin-bottom:4px}
+h2 .num{background:var(--blue);color:#fff;width:32px;height:32px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;font-size:15px;flex:none}
+h2 .en{font-size:14px;color:var(--muted);font-weight:400}
+body[data-lang="en"] h2 .en{display:none}
+h3{font-size:16px;font-weight:600;margin:22px 0 8px;padding-left:10px;border-left:4px solid var(--teal)}
+h4{font-size:14.5px;font-weight:600;margin:16px 0 6px;color:#3c3489}
+p,li{font-size:14.5px}
+.lead{font-size:14px;color:var(--muted);margin-bottom:6px}
+
+.obj{background:var(--green-bg);border:1px solid #cfe3b8;border-left:4px solid var(--green);border-radius:10px;padding:14px 16px;margin:10px 0 16px}
+.obj .t{font-weight:700;color:#2f5c0b;font-size:13.5px;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.obj ul{margin:0;padding-left:20px}
+.obj li{font-size:13.5px;color:#3a3a36;margin:3px 0}
+
+.kw{display:inline-block;background:var(--amber-bg);border:1px solid #e7cd9a;color:#6b4008;font-size:12.5px;font-weight:600;padding:1px 9px;border-radius:6px;margin:2px 3px 2px 0}
+.mnemonic{background:var(--purple-bg);border:1px dashed var(--purple);border-radius:10px;padding:10px 14px;margin:10px 0;font-size:14px}
+.mnemonic b{color:#3c3489}
+.examtip{background:#fff8f0;border:1px solid #f0d9b8;border-left:4px solid var(--amber);border-radius:10px;padding:11px 14px;margin:10px 0;font-size:13.5px;color:#5c470a}
+.examtip b{color:#854f0b}
+
+.tip{border-bottom:1px dashed var(--blue);cursor:help;position:relative;font-weight:500}
+.tip::after{content:attr(data-tip);position:absolute;left:50%;bottom:130%;transform:translateX(-50%);background:#2c2c2a;color:#fff;font-size:12px;padding:6px 10px;border-radius:8px;white-space:normal;opacity:0;pointer-events:none;transition:opacity .15s;z-index:30;font-weight:400;max-width:260px;width:max-content}
+.tip:hover::after{opacity:1}
+
+details{border:1px solid var(--line);border-radius:10px;margin-bottom:10px;overflow:hidden;background:#fff}
+details summary{cursor:pointer;padding:12px 16px;font-weight:600;font-size:14.5px;list-style:none;display:flex;align-items:center;gap:8px;background:#fafbfc}
+details summary::-webkit-details-marker{display:none}
+details summary::before{content:"＋ 深入講解";color:var(--blue);font-weight:700}
+details[open] summary::before{content:"－ 收合"}
+body[data-lang="en"] details summary::before{content:"＋ Learn More"}
+body[data-lang="en"] details[open] summary::before{content:"－ Collapse"}
+details .body{padding:14px 16px;border-top:1px solid var(--line)}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin:10px 0}
+.chip{background:#fafbfc;border:1px solid var(--line);border-radius:10px;padding:14px}
+.chip b{display:block;font-size:14px;margin-bottom:4px}
+.chip span{font-size:13px;color:var(--muted)}
+.blue{border-left:4px solid var(--blue)} .teal{border-left:4px solid var(--teal)}
+.purple{border-left:4px solid var(--purple)} .amber{border-left:4px solid var(--amber)} .green{border-left:4px solid var(--green)}
+
+.hw-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin:10px 0}
+.hw-card{border:1px solid var(--line);border-radius:10px;padding:12px 10px;text-align:center;cursor:pointer;background:#fff;transition:all .15s;user-select:none}
+.hw-card:hover{border-color:var(--blue);box-shadow:0 2px 10px rgba(24,95,165,.12);transform:translateY(-2px)}
+.hw-card svg{width:46px;height:46px;margin:0 auto 8px;display:block}
+.hw-card .n{font-size:13px;font-weight:600}
+.hw-card .c{font-size:11.5px;color:var(--muted);margin-top:2px}
+.hw-detail{display:none;margin-top:10px;padding:14px;border:1px solid var(--blue);border-radius:10px;background:var(--blue-bg)}
+.hw-detail.show{display:block}
+.hw-detail b{color:var(--blue)}
+.hw-detail .use{font-size:13.5px;color:var(--text)}
+.hw-detail .cat{display:inline-block;font-size:11.5px;background:#fff;border:1px solid var(--blue);color:var(--blue);border-radius:5px;padding:1px 7px;margin-left:6px}
+
+.exp{border:1px solid var(--line);border-radius:12px;padding:16px;margin:14px 0;background:#fafbfc}
+.exp .lbl{display:inline-block;font-size:12px;font-weight:700;color:#fff;background:var(--teal);padding:2px 10px;border-radius:6px;margin-bottom:8px}
+.exp h4{margin:0 0 4px;color:var(--text)}
+.exp .note{font-size:13px;color:var(--muted);margin-bottom:10px}
+.slider-row{display:flex;align-items:center;gap:12px;margin:10px 0;flex-wrap:wrap}
+.slider-row label{font-size:13px;font-weight:600}
+input[type=range]{flex:1;min-width:160px;accent-color:var(--blue)}
+.slider-row .val{font-size:13px;font-weight:700;color:var(--blue);min-width:46px;text-align:center;background:var(--blue-bg);border-radius:6px;padding:2px 8px}
+canvas{border:1px solid var(--line);border-radius:8px;background:#fff;display:block;max-width:100%}
+.btn{background:var(--blue);color:#fff;border:none;padding:10px 20px;border-radius:10px;font-size:14px;cursor:pointer;font-weight:600}
+.btn:hover{opacity:.9}
+.btn.ghost{background:var(--blue-bg);color:var(--blue)}
+.feedback{margin-top:8px;font-weight:700;font-size:14.5px}
+.feedback.ok{color:var(--green)} .feedback.bad{color:var(--red)}
+
+.demo{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.demo-card{border:2px dashed var(--line);border-radius:12px;padding:14px;text-align:center;background:#fff}
+.demo-card h5{font-size:14px;margin-bottom:2px}
+.demo-card p{font-size:12.5px;color:var(--muted)}
+.stage{height:150px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.zoomable{transition:transform .35s ease;cursor:zoom-in}
+.zoomable.zoomed{transform:scale(2.3)}
+#bmp{image-rendering:pixelated;width:120px;height:120px}
+#vec{width:120px;height:120px}
+
+.sig{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.sig canvas{width:100%;height:150px}
+.sig h5{text-align:center;font-size:13px;margin-bottom:4px;color:var(--text)}
+
+.steps{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0;padding:12px;border:1px dashed var(--line);border-radius:10px;background:#fff}
+.step-btn{background:var(--purple-bg);border:1px solid var(--purple);color:#3c3489;padding:10px 18px;border-radius:10px;cursor:pointer;font-weight:600;font-size:14px}
+.step-btn:hover{background:#dedafc}
+.step-btn.used{opacity:.3;pointer-events:none}
+.dropzone{flex:1;min-width:120px;border:2px dashed var(--line);border-radius:10px;padding:12px;text-align:center;min-height:70px;background:#fff;display:flex;flex-direction:column;gap:6px;align-items:center;justify-content:center;transition:all .15s}
+.dropzone.over{border-color:var(--purple);background:var(--purple-bg)}
+.dropzone .lbl{display:inline-block;background:var(--blue-bg);color:var(--blue);padding:5px 16px;border-radius:999px;font-size:13px;font-weight:600}
+.drag-chip{background:var(--purple-bg);border:1px solid var(--purple);color:#3c3489;padding:9px 14px;border-radius:9px;font-weight:600;font-size:13.5px;cursor:grab;display:inline-block;margin:4px}
+.drag-chip:active{cursor:grabbing}
+
+.classify-card{font-size:18px;font-weight:600;text-align:center;padding:20px;border:1px solid var(--line);border-radius:10px;margin:10px 0;background:#fff}
+.classify-btns{display:flex;gap:12px;justify-content:center}
+
+.mindmap{border:1px solid var(--line);border-radius:12px;padding:16px;margin:12px 0;background:#fcfcfd;overflow-x:auto}
+.mindmap svg{display:block;margin:0 auto}
+.mm-node{cursor:pointer}
+.mm-node rect{transition:all .15s}
+.mm-node:hover rect{filter:brightness(.96);stroke-width:2.5}
+.mm-desc{font-size:13px;color:var(--muted);text-align:center;margin-top:8px;min-height:20px}
+
+.quiz-q{border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:12px}
+.quiz-q .q{font-weight:600;font-size:14.5px;margin-bottom:10px}
+.opt{display:block;margin:6px 0;padding:8px 12px;border:1px solid var(--line);border-radius:8px;cursor:pointer;font-size:14px;transition:background .15s}
+.opt:hover{background:var(--blue-bg)}
+.opt input{margin-right:8px}
+.opt.correct{background:var(--green-bg);border-color:var(--green)}
+.opt.wrong{background:#fcebeb;border-color:var(--red)}
+#quizResult{margin-top:14px;font-size:16px;font-weight:600}
+
+table{width:100%;border-collapse:collapse;margin:10px 0;font-size:13.5px}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left}
+th{background:#fafbfc}
+
+#toTop{position:fixed;right:22px;bottom:22px;width:46px;height:46px;border-radius:50%;background:var(--blue);color:#fff;border:none;font-size:20px;cursor:pointer;display:none;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+#toTop:hover{opacity:.9}
+
+footer{text-align:center;color:var(--muted);font-size:12.5px;margin-top:36px}
+
+@media(max-width:700px){
+  .demo,.sig{grid-template-columns:1fr}
+  header h1{font-size:22px}
+  .lang-switch{position:static;justify-content:center;margin-bottom:12px}
+}
+</style>
+</head>
+<body data-lang="zh">
+
+<header>
+  <div class="lang-switch">
+    <button class="lang-btn active" data-lang="zh">中文</button>
+    <button class="lang-btn" data-lang="en">EN</button>
+  </div>
+  <div class="badge" data-en="HKDSE · Information &amp; Communication Technology · Compulsory Part A (4 hours)">香港中學文憑試（HKDSE）· 資訊及通訊科技科 · 必修部分 A（4 小時）</div>
+  <h1 data-en="Chapter 2: Data Organisation and Data Control">第二章　數據組織及數據控制</h1>
+  <div class="sub" data-en="Interactive Lab · Data Organisation &amp; Data Control">互動實驗室 · Data Organisation &amp; Data Control</div>
+</header>
+
+<nav>
+  <div class="wrap">
+    <a href="#s21" data-en="2.1 Data Hierarchy">2.1 數據分級</a>
+    <a href="#s22" data-en="2.2 Data Control">2.2 數據控制</a>
+    <a href="#s23" data-en="2.3 Database Functions">2.3 數據庫的功能</a>
+    <a href="#s24" data-en="2.4 File Access">2.4 檔案存取方式</a>
+    <a href="#exam" data-en="Exam Focus">考點總覽</a>
+    <a href="#mindmap" data-en="Mind Map">腦圖總結</a>
+    <a href="#quiz" data-en="Quiz">小測驗</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <!-- ================= 2.1 數據分級 ================= -->
+  <section id="s21">
+    <div class="card">
+      <h2><span class="num">2.1</span><span data-en="Data Hierarchy">數據分級</span> <span class="en">Data Hierarchy</span></h2>
+
+      <div class="obj">
+        <div class="t" data-en="🎯 Learning Objectives">🎯 學習重點</div>
+        <ul>
+          <li data-en="State the <b>four levels</b> of the data hierarchy from lowest to highest.">由低至高說出數據分級的<b>四個層級</b>：欄位 → 記錄 → 檔案 → 數據庫。</li>
+          <li data-en="Give a school database example for each level.">以「學校學生資料庫」為例，說明每一層級放的是甚麼。</li>
+          <li data-en="Explain why a DBMS is usually better than a spreadsheet for large amounts of data.">解釋管理大量數據時，為何<span class="tip" data-tip="Database Management System：管理數據庫的軟件">DBMS</span>通常比試算表優勝。</li>
+        </ul>
+      </div>
+
+      <p class="lead" data-en="A data hierarchy organises data &quot;from small to large&quot;: each higher level is a collection of the level below. One <span class='tip' data-tip='one attribute of an entity'>field</span> stores one attribute; fields form a <span class='tip' data-tip='all fields of one entity'>record</span>; records of the same structure form a <span class='tip' data-tip='also called a table'>file</span>; related files form a <span class='tip' data-tip='a collection of related files'>database</span>.">數據分級是「由細到大、層層包含」的組織方式：<b>每個較高層的項目，都是較低層項目的集合</b>。一個<span class="tip" data-tip="實體的一項屬性">欄位</span>存一項屬性；一組欄位構成一條<span class="tip" data-tip="某實體的全部欄位">記錄</span>；結構相同的記錄集合成<span class="tip" data-tip="又稱數據表">檔案</span>；相關的檔案再集合成<span class="tip" data-tip="相關檔案的集合">數據庫</span>。</p>
+
+      <h3 data-en="Four Levels (must know)">四個層級（必背）</h3>
+      <div class="grid">
+        <div class="chip blue"><b data-en="Field">欄位 Field</b><span data-en="one attribute, e.g. student name">實體的一項屬性，例如「學生姓名」</span></div>
+        <div class="chip teal"><b data-en="Record / Row">記錄／列 Record</b><span data-en="all fields of one entity, e.g. one student's ID + name + sex + class">某實體的全部欄位，例如一名學生的學號＋姓名＋性別＋班別</span></div>
+        <div class="chip purple"><b data-en="File / Table">檔案／數據表 File</b><span data-en="records with the same structure, e.g. 40 students of class 1A">結構相同的記錄集合，例如 1A 班 40 名學生的資料</span></div>
+        <div class="chip amber"><b data-en="Database">數據庫 Database</b><span data-en="a collection of related files, e.g. student + teacher + classroom tables">相關檔案的集合，例如學生表＋教師表＋課室表＋時間表</span></div>
+      </div>
+
+      <div class="mnemonic" data-en="🧠 <b>Memory aid</b>: lowest → highest is <b>Field · Record · File · Database</b>. Think of writing: <b>word → sentence → paragraph → book</b>.">🧠 <b>記憶口訣</b>：由低至高記「<b>欄·記·檔·庫</b>」。把它想像成寫作：「<b>字 → 句 → 篇 → 書</b>」——字（欄位）組成句（記錄），句成篇（檔案），篇集成書（數據庫）。</div>
+
+      <div class="examtip" data-en="✍️ <b>Answer tip</b>: for ordering questions, write the chain first (&quot;lowest → highest: field → record → file → database&quot;) then add one example each. A database is a collection of <b>files</b>, not a collection of records.">✍️ <b>作答建議</b>：排序題先寫整條鏈「由低至高：欄位 → 記錄 → 檔案 → 數據庫」，再各補一例。注意陷阱：數據庫是<b>檔案</b>的集合，不是記錄的集合。關鍵詞 <span class="kw">Field</span><span class="kw">Record</span><span class="kw">File / Table</span><span class="kw">Database</span></div>
+
+      <details>
+        <summary data-en="Apply the four levels to a school student database">把四個層級套進「學校學生資料庫」</summary>
+        <div class="body">
+          <table>
+            <tr><th data-en="Level">階層</th><th data-en="English">英文</th><th data-en="School example">學校例子</th></tr>
+            <tr><td data-en="Field">欄位</td><td>Field</td><td data-en="SID, ENAME, SEX, CLASS, CNO">SID（學生編號）、ENAME（姓名）、SEX（性別）、CLASS（班別）、CNO（班號）</td></tr>
+            <tr><td data-en="Record / Row">記錄／列</td><td>Record</td><td data-en="015044, Peter Chan, M, 1A, 11 — one whole row">「015044、Peter Chan、M、1A、11」——同一名學生的一整列</td></tr>
+            <tr><td data-en="File / Table">檔案／數據表</td><td>File / Table</td><td data-en="all 40 records of class 1A, same five fields">1A 班 40 名學生的記錄，全部都是同樣五個欄</td></tr>
+            <tr><td data-en="Database">數據庫</td><td>Database</td><td data-en="STUDENT + TEACHER + CLASSROOM + timetable tables">STUDENT（學生）＋TEACHER（教師）＋CLASSROOM（課室）＋時間表等數據表</td></tr>
+          </table>
+          <p style="font-size:13px;color:var(--muted)" data-en="Exam trap: a &quot;column&quot; is a field, a &quot;row&quot; is a record — questions often describe one and ask for the other.">常見陷阱：題目說「一欄／一行」，要能立刻對應「欄位／記錄」。</p>
+        </div>
+      </details>
+
+      <p class="lead" data-en="For <b>large</b> amounts of data, a database is usually a better choice than a spreadsheet. A <span class='tip' data-tip='database management system'>DBMS</span> lets us organise, store and retrieve data through a <span class='tip' data-tip='graphical user interface'>GUI</span>, instead of typing commands by hand.">管理<b>大量</b>數據時，數據庫通常比試算表更合適。<span class="tip" data-tip="數據庫管理系統">DBMS</span>讓我們透過<span class="tip" data-tip="圖形用戶界面">GUI</span>有效率地組織、儲存和提取數據，而不必逐句輸入指令。</p>
+
+      <div class="exp">
+        <span class="lbl" data-en="Experiment ①">實驗①</span>
+        <h4 data-en="Drag the four levels into order (lowest → highest)">把四個層級拖到正確次序（最低層 → 最高層）</h4>
+        <p class="note" data-en="Drag each card into the correct slot, then click &quot;Check&quot;. On a touch screen, just tap a card to drop it into the first empty slot.">把下方四張描述拖進「最低層 → 最高層」的正確格內，再按「檢查答案」。觸控螢幕可直接點擊卡片，它會自動填入第一個空格。</p>
+        <div class="steps" id="hierSlots" style="border:none;background:transparent"></div>
+        <div class="steps" id="hierBank"></div>
+        <div style="display:flex;gap:10px;align-items:center">
+          <button class="btn" id="btnCheckHier" data-en="Check Answer">檢查答案</button>
+          <button class="btn ghost" id="btnResetHier" data-en="Reset">重設</button>
+          <span class="feedback" id="hierFeedback"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 2.2 數據控制 ================= -->
+  <section id="s22">
+    <div class="card">
+      <h2><span class="num">2.2</span><span data-en="Data Control">數據控制</span> <span class="en">Data Control</span></h2>
+
+      <div class="obj">
+        <div class="t" data-en="🎯 Learning Objectives">🎯 學習重點</div>
+        <ul>
+          <li data-en="Explain <b>GIGO</b> (garbage in, garbage out) and why data control matters.">解釋「<b>無用輸入，無用輸出</b>」（GIGO）的意思，以及數據控制為何重要。</li>
+          <li data-en="Name the <b>three common input errors</b> and how to reduce them.">說出<b>三種常見輸入錯誤</b>及其解決方法。</li>
+          <li data-en="Distinguish <b>data validation</b> (by computer) from <b>data verification</b> (by human).">分辨<b>數據有效性檢驗</b>（由電腦進行）與<b>數據驗證</b>（由人手進行）。</li>
+          <li data-en="List and apply the <b>eight validation checks</b>, plus check digit and parity check.">列舉並應用<b>八種有效性檢驗方法</b>，以及檢查數位與奇偶檢測。</li>
+          <li data-en="State the <b>three verification methods</b> with examples.">說出<b>三種數據驗證方法</b>並各舉一例。</li>
+        </ul>
+      </div>
+
+      <h3 data-en="A. Garbage In, Garbage Out (GIGO)">A 無用輸入，無用輸出（GIGO）</h3>
+      <p class="lead" data-en="Data can be entered by hand, sent over a network, or scanned — and errors can creep in at any point. If unreliable data goes into the analysis, no useful result can come out. This is <b>GIGO</b>.">輸入數據的方式有很多（人手輸入、網絡傳輸、掃描等），每個環節都可能出錯。當不可靠或不協調的數據被放進分析，就不可能得出有用的結果——這就是<b>GIGO</b>（Garbage In, Garbage Out）。</p>
+
+      <details>
+        <summary data-en="Three common input errors and their solutions">三種常見輸入錯誤與解決方法</summary>
+        <div class="body">
+          <table>
+            <tr><th data-en="Error type">錯誤類型</th><th data-en="What happens">說明</th><th data-en="Example">例子</th><th data-en="Solution">解決方法</th></tr>
+            <tr><td data-en="Data source error">數據來源錯誤</td><td data-en="the source itself supplies wrong data">數據來源提供了不正確的數據</td><td data-en="user gives an email address that does not exist">用戶填寫了一個不存在的電郵地址</td><td data-en="send a code to that address and ask the user to enter it">向該地址發送認證碼，要求用戶輸入</td></tr>
+            <tr><td data-en="Transcription error">轉錄錯誤</td><td data-en="data mis-read, mis-heard or mis-typed">數據被誤讀、誤聽或誤植</td><td data-en="OCR reads capital I as digit 1; typist types a wrong character">OCR 把大楷「I」讀成數字「1」；打字員打錯字</td><td data-en="spell check, enter twice, proof-read">拼寫檢查、輸入兩次作驗證、校對</td></tr>
+            <tr><td data-en="Transposition error">換位錯誤</td><td data-en="the position or order of data is swapped">數據的位置或次序被調亂</td><td data-en="15 dollars recorded as 51 dollars">把「$15」記成「$51」；蘋果價錢存進西瓜欄</td><td data-en="re-enter data, proof-read, use a check digit">再次輸入作驗證、校對、使用檢查數位</td></tr>
+          </table>
+          <div class="examtip" data-en="✍️ <b>Telling them apart</b>: wrong <b>source</b> = source error; wrong <b>character</b> = transcription; swapped <b>order</b> = transposition.">✍️ <b>辨別竅門</b>：錯在<b>來源</b>＝來源錯誤；錯在<b>字眼</b>＝轉錄；錯在<b>次序</b>＝換位。</div>
+        </div>
+      </details>
+
+      <div class="exp">
+        <span class="lbl" data-en="Experiment ②">實驗②</span>
+        <h4 data-en="Which input error is it?">這是哪種輸入錯誤？</h4>
+        <p class="note" data-en="Read the situation, then click the error type (instant feedback, auto-next).">看情境，點擊對應的錯誤類型（即時回饋，自動換下一題）。</p>
+        <div class="classify-card" id="errCard">—</div>
+        <div class="classify-btns" id="errBtns" style="flex-wrap:wrap"></div>
+        <p class="feedback" id="errFeedback" style="text-align:center"></p>
+        <div style="text-align:center;margin-top:6px"><span id="errProgress" style="font-size:13px;color:var(--muted)"></span></div>
+      </div>
+
+      <h3 data-en="B. Two Halves of Data Control">B 數據控制的兩大分支</h3>
+      <div class="grid">
+        <div class="chip blue"><b data-en="Data Validation (by computer)">數據有效性檢驗（由電腦進行）</b><span data-en="checks whether data is reasonable and follows rules — cannot guarantee it is correct">檢查數據是否<b>合理、合乎規則</b>；不能保證絕對正確</span></div>
+        <div class="chip teal"><b data-en="Data Verification (by human)">數據驗證／校驗（由人手進行）</b><span data-en="checks whether data in two places is identical and consistent">核對兩份數據是否<b>相同、一致</b></span></div>
+      </div>
+      <div class="examtip" data-en="✍️ <b>The fastest way to tell them apart</b>: ask &quot;is it checking <b>reasonableness</b> or <b>sameness</b>?&quot; Reasonableness → validation (computer); sameness → verification (human)."><b>✍️ 一秒分辨</b>：問自己「它在查<b>合理</b>還是查<b>相同</b>？」查合理 → 有效性檢驗（電腦）；查相同 → 驗證（人手）。關鍵詞 <span class="kw">Validation</span><span class="kw">Verification</span></div>
+
+      <h3 data-en="C. Data Validation Methods (click a card)">C 數據有效性檢驗方法（點卡片查看）</h3>
+      <p class="lead" data-en="Validation does <b>not</b> guarantee the data is absolutely correct — it only ensures the data is reasonable and follows certain rules. It is usually run by the system or a program, in online forms such as government booking services and shopping platforms.">有效性檢驗<b>不能</b>保證輸入的數據絕對準確，只能確保數據<b>合理並符合某些規則</b>。它通常由系統或程式執行，常見於政府預約服務、網上購物平台等網上表單。同一個欄位可以同時套用多種檢驗方法。</p>
+      <div class="hw-grid" id="hwGrid"></div>
+      <div class="hw-detail" id="hwDetail"></div>
+      <div id="simProgress" style="text-align:center;font-size:13px;color:var(--muted);margin-top:6px"></div>
+
+      <div class="mnemonic" data-en="🧠 <b>Memory aid</b>: walk through filling in a form — <b>Com</b>plete first, pick a <b>fix</b>ed value, match the <b>type</b>, stay in <b>range</b>, check the <b>length</b>, follow the <b>format</b>, stay <b>con</b>sistent, keep it <b>uni</b>que.">🧠 <b>記憶口訣</b>：想像自己在填一張報名表——先<b>完</b>整、選<b>固</b>定、對<b>類</b>型、限<b>範</b>圍、查<b>長</b>度、看<b>格</b>式、前後<b>一</b>致、學號<b>唯</b>一。（<b>完·固·類·範·長·格·一·唯</b>）</div>
+
+      <div class="exp" id="simBox">
+        <span class="lbl" data-en="Experiment ③">實驗③</span>
+        <h4 data-en="Try it: pick a check card, type a value, and the system will validate it">試玩區：選一張檢驗卡，輸入數值，讓系統幫你檢查</h4>
+        <p class="note" data-en="Click any of the 6 check cards below to select it (each card shows the expected format), then type a value and press &quot;Check&quot;. Linked with the cards above — clicking a top card scrolls here and selects the matching one.">點下面任一張檢驗卡來選用該檢驗（每張卡上都有「正確格式」的提示），然後輸入數值按「檢查」。與上方卡片連動：點上面任一張前 6 種的卡片，會自動捲到此區並選用該檢驗。</p>
+
+        <p style="font-size:13px;font-weight:600;color:var(--muted);margin:6px 0 4px" data-en="① Pick a check card:">① 選一張檢驗卡：</p>
+        <div id="valCards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:10px 0"></div>
+
+        <p style="font-size:13px;font-weight:600;color:var(--muted);margin:14px 0 4px" data-en="② Type a value and press &quot;Check&quot;:">② 輸入數值，按「檢查」：</p>
+        <div class="slider-row">
+          <label data-en="Value:">數值：</label>
+          <input type="text" id="valInput" style="flex:1;min-width:180px;padding:9px 12px;border:1px solid var(--line);border-radius:9px;font-size:14px">
+          <button class="btn" id="btnValCheck" data-en="Check">檢查</button>
+        </div>
+        <div id="valOut" style="margin-top:10px"></div>
+      </div>
+
+      <details>
+        <summary data-en="Full list of the eight validation checks">八種有效性檢驗方法一覽</summary>
+        <div class="body">
+          <table>
+            <tr><th data-en="Type">類型</th><th data-en="Function">功能</th><th data-en="Example">例子</th></tr>
+            <tr><td data-en="Completeness check">完整性檢查</td><td data-en="ensures a required field is not empty">確保必填欄位中有數據</td><td data-en="the applicant must provide a name">申請人必須填寫姓名</td></tr>
+            <tr><td data-en="Fixed value check">固定值檢查</td><td data-en="data must come from a set of specific values">數據只能是某幾個特定值之一</td><td data-en="sex must be M or F">性別必須是「M」或「F」</td></tr>
+            <tr><td data-en="Type check">類型檢查</td><td data-en="data must be of a specific type">數據必須為特定類型</td><td data-en="age must be a number">年齡必須是數字</td></tr>
+            <tr><td data-en="Range check">範圍檢查</td><td data-en="data must fall within a given range">數據必須在指定範圍內</td><td data-en="age must be greater than 12">年齡必須大於 12 歲</td></tr>
+            <tr><td data-en="Length check">長度檢查</td><td data-en="the number of characters must be within a range">字符數必須在指定範圍內</td><td data-en="an 8-digit phone number">必須輸入 8 個位的電話號碼</td></tr>
+            <tr><td data-en="Format check">格式檢查</td><td data-en="data must follow a specific pattern">數據必須採用特定格式</td><td data-en="the email must contain an @ sign">電郵地址必須包含「@」</td></tr>
+            <tr><td data-en="Consistency check">一致性檢查</td><td data-en="data must not contradict other fields">與其他欄位相比沒有不合理之處</td><td data-en="end date must be after start date">結束日期必須在開始日期之後</td></tr>
+            <tr><td data-en="Uniqueness check">唯一性檢查</td><td data-en="the value must be unique in that field">該欄位的數據必須獨一無二</td><td data-en="each student ID must not repeat">學生編號不可重複</td></tr>
+          </table>
+          <p style="font-size:13px;color:var(--muted)" data-en="Interface shortcut: drop-down lists, radio buttons and checkboxes all perform a <b>fixed value check</b>; a date picker performs a <b>type + format check</b>.">界面捷徑：下拉式選單、單選按鈕、複選框都在做<b>固定值檢查</b>；日期選擇器則同時做<b>類型＋格式檢查</b>。</p>
+        </div>
+      </details>
+
+      <h4 data-en="Data types matter (why type checks exist)">數據類型要一致（類型檢查的由來）</h4>
+      <p class="lead" data-en="For easy organisation and analysis, every value in a field should share one <span class='tip' data-tip='the kind of value stored, e.g. number or text'>data type</span>. Mixing types breaks sorting and calculation.">為方便組織和分析，同一欄位的數據應屬同一<span class="tip" data-tip="數據的種類，如數字、文字">數據類型</span>。若類型混雜，排序會亂、計算會出錯（例如把「八十五」與 91 相加只會得出錯誤）。</p>
+      <div class="grid">
+        <div class="chip blue"><b data-en="Integer">整數 Integer</b><span data-en="positive or negative whole numbers, e.g. number of students, age">可以是正數或負數：學生人數、年齡</span></div>
+        <div class="chip teal"><b data-en="Real / Floating point">浮點數／實數 Real</b><span data-en="may have a decimal point, e.g. marks, height">可有小數位：分數、身高</span></div>
+        <div class="chip purple"><b data-en="String / Text">字串／文字 String</b><span data-en="letters, digits, Chinese characters, symbols, e.g. name, address">英文字母、數字、中文字、符號：姓名、地址</span></div>
+        <div class="chip amber"><b data-en="Boolean">布爾 Boolean</b><span data-en="only TRUE or FALSE, e.g. passed or not">只能是 TRUE 或 FALSE：是否合格</span></div>
+      </div>
+      <div class="examtip" data-en="✍️ <b>Classic trap</b>: a student ID such as 015034 must be stored as <b>text</b>, because numbers cannot keep the leading zero.">✍️ <b>經典陷阱</b>：像 015034 這類學生編號必須以<b>文字</b>儲存，因為數字無法保留前置的零。</div>
+
+      <div class="exp">
+        <span class="lbl" data-en="Experiment ④">實驗④</span>
+        <h4 data-en="Sort each value into its data type">把每個數值拖進正確的數據類型</h4>
+        <p class="note" data-en="Drag each value into the correct box (Integer / Real / String / Boolean), then click &quot;Check&quot;. On a touch screen, tap a card to drop it into the first empty box.">把下方數值拖進「整數／浮點數／字串／布爾」正確的格內，再按「檢查答案」。觸控螢幕可直接點擊卡片，它會自動填入第一個空格。</p>
+        <div class="steps" id="typeSlots" style="border:none;background:transparent"></div>
+        <div class="steps" id="typeBank"></div>
+        <div style="display:flex;gap:10px;align-items:center">
+          <button class="btn" id="btnCheckType" data-en="Check Answer">檢查答案</button>
+          <button class="btn ghost" id="btnResetType" data-en="Reset">重設</button>
+          <span class="feedback" id="typeFeedback"></span>
+        </div>
+      </div>
+
+      <div class="exp">
+        <span class="lbl" data-en="Experiment ⑤">實驗⑤</span>
+        <h4 data-en="Which validation check is being used?">這句描述用的是哪種有效性檢驗？</h4>
+        <p class="note" data-en="Read the situation, then click the matching check (instant feedback, auto-next).">看情境，點擊對應的檢驗方法（即時回饋，自動換下一題）。</p>
+        <div class="classify-card" id="classifyCard">—</div>
+        <div class="classify-btns" id="classifyBtns" style="flex-wrap:wrap"></div>
+        <p class="feedback" id="classifyFeedback" style="text-align:center"></p>
+        <div style="text-align:center;margin-top:6px"><span id="classifyProgress" style="font-size:13px;color:var(--muted)"></span></div>
+      </div>
+
+      <h3 data-en="D. Check Digit">D 檢查數位</h3>
+      <p class="lead" data-en="A <span class='tip' data-tip='an extra digit generated by an algorithm and appended to the data'>check digit</span> is generated by a specific algorithm and appended to the end of numeric data (ID numbers, book numbers, credit card numbers). If the data's check digit does not match the one the algorithm produces, the data is invalid.">檢查數位是由特定算法生成、附加在數字數據末尾的一或多個數位，用於身份證號碼、書號、信用卡號碼等。若數據的檢查數位與算法算出的不符，該數據即為無效。</p>
+
+      <div class="exp">
+        <span class="lbl" data-en="Experiment ⑥">實驗⑥</span>
+        <h4 data-en="HKID check digit calculator">香港身份證號碼檢查數位計算機</h4>
+        <p class="note" data-en="Type 1–2 letters + 6 digits (e.g. Y147036) to <b>calculate</b> the check digit; or add a check character (e.g. D246246(A)) to <b>verify</b> it.">輸入「1–2 個英文字母＋6 個數字」（如 Y147036）可<b>計算</b>檢查數位；若在末尾加上檢查數位（如 D246246(A)）則可<b>驗證</b>。</p>
+        <div class="slider-row">
+          <input type="text" id="hkidInput" value="Y147036" maxlength="10" style="flex:1;min-width:180px;padding:9px 12px;border:1px solid var(--line);border-radius:9px;font-size:15px;letter-spacing:1px">
+          <button class="btn" id="btnCheckDigit" data-en="Calculate / Verify">計算／驗證</button>
+        </div>
+        <div id="cdOut"></div>
+        <p style="font-size:12.5px;color:var(--muted);margin-top:6px" data-en="Algorithm: pad a single-letter number with a leading space; A=10, B=11 … Z=35, space=36; weights 9,8,7,6,5,4,3,2,1; sum the products; a remainder of 0 on division by 11 means valid.">算法：只有一個字母時在開首補一個空格；A＝10、B＝11……Z＝35，空格＝36；比重依次為 9、8、7、6、5、4、3、2、1；求加權和再除以 11，餘數為 0 即有效。求檢查數位時用「11 − 餘數」（餘數為 0 時檢查數位是 0）。</p>
+      </div>
+
+      <h3 data-en="E. Parity Check">E 奇偶檢測</h3>
+      <p class="lead" data-en="Computers store data in binary. By appending one extra <b>parity bit</b> at the end, we can check whether the data was corrupted during transmission.">電腦內部以二進制儲存數據，可以在最後加上一個「奇偶位 parity bit」去檢查傳送途中有沒有出錯。</p>
+
+      <details style="margin:10px 0">
+        <summary data-en="Show more content">按我顯示更多內容</summary>
+        <div class="body">
+          <ul style="margin:0;padding-left:20px">
+            <li data-en="<b>Parity check</b> uses <b>1 parity bit</b> as a simple error-detection method.">奇偶檢測是加 <b>1 個奇偶位</b> 來做簡單錯誤偵測的方法。</li>
+            <li data-en="<b>Even parity</b>: the total number of 1s in the whole 9 bits (data + parity) must be <b>even</b>."><b>偶數檢測</b>：整組 9 位元（資料 8 + 奇偶 1）中 1 的數目要是 <b>雙數</b>。</li>
+            <li data-en="<b>Odd parity</b>: same rule but the total must be <b>odd</b>."><b>奇數檢測</b>：同理，總數要是 <b>單數</b>。</li>
+            <li data-en="<b>How to set the parity bit</b>: count the 1s in the data bits, then choose 0 or 1 to make the total even or odd."><b>怎樣決定奇偶位</b>：先數資料位元中有幾個 1，再選 0/1 把總數調成雙數或單數。</li>
+            <li data-en="<b>What it can detect</b>: any single-bit error (or any <b>odd number</b> of bit errors), but it cannot detect an even number of simultaneous bit errors."><b>偵測能力</b>：能偵測單一（或任何 <b>奇數個</b>）位元錯誤，但偵測不到 <b>偶數個</b> 位元同時出錯。</li>
+            <li data-en="<b>Exam task</b>: either calculate the parity bit, or judge whether a given 9-bit code is valid."><b>考試題</b>：計算奇偶位，或判斷一組 9 位元代碼是否有效。</li>
+          </ul>
+        </div>
+      </details>
+
+      <ul style="margin:10px 0;padding-left:20px;font-size:14.5px">
+        <li data-en="<b>Odd parity</b>: the total number of 1s in the whole binary code must be <b>odd</b>."><b>奇數檢測</b>：整組二進制裡面「1」的總數要是<b>奇數</b>。</li>
+        <li data-en="<b>Even parity</b>: the total number of 1s in the whole binary code must be <b>even</b>."><b>偶數檢測</b>：整組二進制裡面「1」的總數要是<b>偶數</b>。</li>
+      </ul>
+
+      <div class="exp">
+        <span class="lbl" data-en="Experiment ⑦">實驗⑦</span>
+        <h4 data-en="Parity check: flip bits and see if the code is valid">奇偶檢測：翻位元、立刻看整組代碼是否有效</h4>
+        <p class="note" data-en="Free play. Pick a check type, click any bit (0/1) to flip it, and watch the live status update. The last (orange) one is the parity bit — click it too to make the whole code valid.">自由試玩：選一種檢測，點任一位元在 0/1 之間翻轉，下方即時告訴你整組代碼是否有效。**最後一格（橙色）就是奇偶位**——你也可以動它，把整組調成有效。</p>
+
+        <p style="font-size:13px;font-weight:600;color:var(--muted);margin:10px 0 6px" data-en="Choose a check type, then click any bit to flip it (0/1):">選一種檢測，然後點任一位元在 0/1 之間切換：</p>
+        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+          <button class="btn" id="btnParityEven" data-en="Even parity">偶數檢測</button>
+          <button class="btn ghost" id="btnParityOdd" data-en="Odd parity">奇數檢測</button>
+        </div>
+
+        <p style="font-size:13px;font-weight:600;color:var(--muted);margin:14px 0 6px" data-en="The 9-bit code (the last one is the parity bit):">9 位元代碼（最後一格是奇偶位）：</p>
+        <div id="parityBits" style="display:flex;gap:6px;flex-wrap:wrap;justify-content:center;align-items:center"></div>
+        <p style="text-align:center;font-size:12.5px;color:var(--amber);margin-top:6px" data-en="← The last (orange) one is the parity bit; click it too.">← 最後一格（橙色）就是奇偶位，也可以點它切換。</p>
+
+        <div style="text-align:center;margin-top:12px">
+          <button class="btn ghost" id="btnParityRandom" data-en="Random code">隨機生成一組數據</button>
+        </div>
+
+        <div id="parityOut" style="text-align:center;margin-top:14px;font-size:15px"></div>
+      </div>
+
+      <div class="examtip" data-en="⚠️ <b>The big trap</b>: passing a parity check does <b>not</b> prove the data is correct. If 11000011 is corrupted to 10100011, the number of 1s is still 4 — both pass an even parity check. Failing proves there IS an error; passing does <b>not</b> prove there is none.">⚠️ <b>必考陷阱</b>：通過奇偶檢測<b>不代表</b>數據正確。若 11000011 被誤傳成 10100011，「1」的總數仍然是 4，兩者都通過偶數檢測。<b>未能</b>通過＝必定有錯；<b>通過</b>＝可能有錯，也可能沒有。</div>
+
+      <h3 data-en="F. Data Verification (by human)">F 數據驗證（由人手進行）</h3>
+      <p class="lead" data-en="Verification confirms that data stays <b>accurate and consistent</b> when it moves between media — for example from a paper form into a computer.">數據驗證用來確認數據在媒體之間傳輸（例如由紙本表格輸入電腦）時，仍然<b>準確且一致</b>。</p>
+      <table>
+        <tr><th data-en="Method">方法</th><th data-en="How it works">做法</th><th data-en="Example">例子</th></tr>
+        <tr><td data-en="Entering data twice">輸入數據兩次</td><td data-en="the same operator enters the data twice; the two copies are compared">同一位操作員輸入兩次，比較兩份複本是否相同</td><td data-en="setting a new password: type it once, then confirm it">設定新密碼時要輸入兩次</td></tr>
+        <tr><td data-en="Double data entry">雙重數據輸入</td><td data-en="two different operators enter the same data independently; the copies are compared">兩位操作員各自輸入同一批數據，再互相比較</td><td data-en="two staff members key in the same paper questionnaire">聘請兩人各自把紙本問卷輸入電子表單</td></tr>
+        <tr><td data-en="Proof-reading data">校對數據</td><td data-en="another operator compares the entered data against the original document">由另一位操作員把已輸入的數據與原始檔案核對</td><td data-en="print the marksheet and check it against the exam papers">把成績單列印出來與試卷互相核對</td></tr>
+      </table>
+      <div class="mnemonic" data-en="🧠 <b>Memory aid</b>: <b>type twice · two people · against the original</b>.">🧠 <b>記憶口訣</b>：驗證三招記「<b>打兩次、兩個人、對原件</b>」。</div>
+      <div class="examtip" data-en="✍️ Answer format: write &quot;<b>method + who does it + what is compared</b>&quot;. e.g. &quot;double data entry: two operators key in the same form and the system compares the two copies&quot;.">✍️ 作答格式：寫「<b>方法＋由誰做＋比較甚麼</b>」。例：「雙重數據輸入：由兩位操作員分別輸入同一份表格，系統比較兩份複本是否相同。」</div>
+
+      <div class="exp">
+        <span class="lbl" data-en="Experiment ⑧">實驗⑧</span>
+        <h4 data-en="Validation or verification?">有效性檢驗 還是 驗證？</h4>
+        <p class="note" data-en="Judge whether each action is done by the computer (validation) or by a human (verification) — a classic DSE distinction.">判斷以下做法是「由電腦查合理（有效性檢驗）」還是「由人手查相同（驗證）」。這是 DSE 常考辨析。</p>
+        <div class="classify-card" id="vvCard">—</div>
+        <div class="classify-btns" id="vvBtns" style="flex-wrap:wrap"></div>
+        <p class="feedback" id="vvFeedback" style="text-align:center"></p>
+        <div style="text-align:center;margin-top:6px"><span id="vvProgress" style="font-size:13px;color:var(--muted)"></span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 2.3 數據庫的功能 ================= -->
+  <section id="s23">
+    <div class="card">
+      <h2><span class="num">2.3</span><span data-en="Functions of a Database">數據庫的功能</span> <span class="en">Functions of a Database</span></h2>
+
+      <div class="obj">
+        <div class="t" data-en="🎯 Learning Objectives">🎯 學習重點</div>
+        <ul>
+          <li data-en="State the <b>three functions</b> of a database: organise, store, retrieve.">說出數據庫的<b>三大功能</b>：組織、儲存、提取。</li>
+          <li data-en="Explain why a field's data type must be chosen carefully.">解釋為何要謹慎選擇欄位的數據類型。</li>
+          <li data-en="Explain how an <b>index</b> speeds up retrieval, and what it costs.">解釋<b>索引</b>如何加快數據提取，以及它需要付出甚麼代價。</li>
+        </ul>
+      </div>
+
+      <h3 data-en="A. Organise">A 組織</h3>
+      <p class="lead" data-en="Data is organised according to the database structure. A good structure makes data flow smoothly between tables and <b>reduces data duplication</b>; choosing the right data type for each field keeps the data consistent and easy to analyse.">數據庫中的數據按數據庫結構組織。良好的結構可讓不同數據表之間的傳遞更流暢，並<b>減少數據重複</b>；為每個欄位選對數據類型，數據才會一致、易於分析。</p>
+
+      <details>
+        <summary data-en="Example: table structure of a student table">示例：學生數據表的結構</summary>
+        <div class="body">
+          <table>
+            <tr><th data-en="Field">欄位名稱</th><th data-en="Data type">數據類型</th><th data-en="Reason">說明</th></tr>
+            <tr><td>SID</td><td data-en="String">字串</td><td data-en="Student ID; must be text because numbers cannot store leading zeros">學生編號；數字無法儲存前置零，故必須存為文字</td></tr>
+            <tr><td>NAME</td><td data-en="String">字串</td><td data-en="student name">學生姓名</td></tr>
+            <tr><td>SEX</td><td data-en="String">字串</td><td data-en="student sex">學生性別</td></tr>
+            <tr><td>CLASS</td><td data-en="String">字串</td><td data-en="the class the student belongs to">學生所屬班別</td></tr>
+            <tr><td>CNO</td><td data-en="Integer">整數</td><td data-en="class number — a number, so it can be sorted">班號——是數字，方便排序</td></tr>
+          </table>
+        </div>
+      </details>
+
+      <h3 data-en="B. Store">B 儲存</h3>
+      <p class="lead" data-en="We can insert, change or delete records using <span class='tip' data-tip='Structured Query Language'>SQL</span> or a GUI. We can also import files such as <span class='tip' data-tip='comma-separated values'>CSV</span> to create many records quickly.">我們可以用<span class="tip" data-tip="結構化查詢語言">SQL</span>或圖形用戶界面（GUI）在數據庫中插入新記錄、更改或刪除現有記錄；亦可匯入 CSV 等格式的檔案，短時間內建立大量記錄。</p>
+      <table>
+        <tr><th data-en="Action">操作</th><th data-en="SQL example">SQL 示例</th></tr>
+        <tr><td data-en="Insert a record">插入記錄</td><td data-en="INSERT INTO STUDENT (SID, ENAME, SEX, CLASS, CNO) VALUES (…);">INSERT INTO STUDENT (SID, ENAME, SEX, CLASS, CNO) VALUES (…);</td></tr>
+        <tr><td data-en="Retrieve records">提取記錄</td><td data-en="SELECT * FROM STUDENT WHERE SEX = &quot;M&quot;;">SELECT * FROM STUDENT WHERE SEX = &quot;M&quot;;</td></tr>
+        <tr><td data-en="Retrieve and sort">提取並排序</td><td data-en="SELECT * FROM STUDENT WHERE SEX = &quot;M&quot; ORDER BY ENAME;">SELECT * FROM STUDENT WHERE SEX = &quot;M&quot; ORDER BY ENAME;</td></tr>
+      </table>
+
+      <h3 data-en="C. Retrieve (and the role of an index)">C 提取（與索引的作用）</h3>
+      <p class="lead" data-en="Without an index, the DBMS must read the table <b>row by row</b> — in the worst case it reads every record. An <span class='tip' data-tip='a sorted table holding only the indexed field and a pointer to the record'>index</span> is like a book's contents page: it stores only the indexed field plus a pointer to the record.">沒有索引時，DBMS 須<b>逐行</b>讀取數據表，最壞情況要讀完整張表。<span class="tip" data-tip="只包含索引欄位與指向記錄的指標，並按字母排序">索引</span>就像書本的目錄：只存索引欄位和指向記錄的指標。</p>
+
+      <details>
+        <summary data-en="Index table vs data table (worked example)">索引表與數據表的關係（示例）</summary>
+        <div class="body">
+          <table>
+            <tr><th data-en="Index: ENAME">索引表 ENAME</th><th data-en="Pointer">指標</th><th data-en="Data table: SID">數據表 SID</th><th data-en="ENAME">ENAME</th></tr>
+            <tr><td>Aaisha Proctor</td><td>8</td><td>015034</td><td>Suzanne Rivera</td></tr>
+            <tr><td>Caspian Browne</td><td>4</td><td>015035</td><td>Zack Ashton</td></tr>
+            <tr><td>Eilidh Rennie</td><td>9</td><td>015036</td><td>Roberta Barrera</td></tr>
+            <tr><td>Grace Manning</td><td>7</td><td>015037</td><td>Caspian Browne</td></tr>
+            <tr><td>Kalvin Kearney</td><td>6</td><td>015038</td><td>Nolan Humphrey</td></tr>
+            <tr><td>Liliana Sykes</td><td>10</td><td>015039</td><td>Kalvin Kearney</td></tr>
+            <tr><td>Nolan Humphrey</td><td>5</td><td>015040</td><td>Grace Manning</td></tr>
+            <tr><td>Peter Chan</td><td>11</td><td>015041</td><td>Aaisha Proctor</td></tr>
+            <tr><td>Roberta Barrera</td><td>3</td><td>015042</td><td>Eilidh Rennie</td></tr>
+            <tr><td>Suzanne Rivera</td><td>1</td><td>015043</td><td>Liliana Sykes</td></tr>
+            <tr><td>Zack Ashton</td><td>2</td><td>015044</td><td>Peter Chan</td></tr>
+          </table>
+          <p style="font-size:13px;color:var(--muted)" data-en="Because the index is sorted by name, the DBMS rules out about half the remaining records each time it reads one — finding &quot;Peter Chan&quot; needs only a few reads instead of all 11.">由於索引表按字母排序，DBMS 每讀一項就能篩走約一半記錄——搜尋「Peter Chan」只需讀取數項，而非全部 11 項。</p>
+          <div class="examtip" data-en="✍️ <b>Cost of an index</b>: it must be updated whenever a name changes or a new record is added. Updating takes <b>time</b>, storing it takes <b>space</b> — so only index fields that really need it.">✍️ <b>索引的代價</b>：學生姓名更改或加入新記錄時，索引表都<b>必須更新</b>。更新費<b>時間</b>、儲存佔<b>空間</b>，所以只應在必要時才建立索引。</div>
+        </div>
+      </details>
+      <div class="mnemonic" data-en="🧠 <b>Memory aid</b>: an index is a <b>contents page</b> — fast to look up, but you must reprint the page whenever the book changes.">🧠 <b>記憶口訣</b>：索引＝<b>書本目錄</b>——查得快，但書一改動就要重新印一次目錄。</div>
+
+      <div class="exp">
+        <span class="lbl" data-en="Experiment ⑨">實驗⑨</span>
+        <h4 data-en="With vs without an index: count the reads">有索引 vs 無索引：數一數讀了幾次</h4>
+        <p class="note" data-en="Pick a target name, then run the two searches. Sequential search reads every record from the start; a binary search on the sorted index probes only a few.">選定目標姓名，分別按兩個按鈕：逐行搜尋由頭逐項讀；二分搜尋在已排序的索引上每次篩走一半，只探測少數幾項。比較讀取／探測次數。</p>
+        <div class="slider-row">
+          <label data-en="Target name:">目標姓名：</label>
+          <input type="range" id="binSlider" min="1" max="11" value="8">
+          <span class="val" id="binVal" style="min-width:120px">Peter Chan</span>
+        </div>
+        <div id="binRecords" style="display:flex;gap:6px;flex-wrap:wrap;margin:10px 0"></div>
+        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+          <button class="btn" id="btnBinSeq" data-en="▶ Sequential search">▶ 逐行搜尋</button>
+          <button class="btn ghost" id="btnBinBin" data-en="▶ Binary search">▶ 二分搜尋</button>
+          <button class="btn ghost" id="btnBinReset" data-en="Reset">重設</button>
+        </div>
+        <div id="binOut" style="display:flex;gap:20px;justify-content:center;margin-top:12px;flex-wrap:wrap"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 2.4 檔案存取方式 ================= -->
+  <section id="s24">
+    <div class="card">
+      <h2><span class="num">2.4</span><span data-en="File Access Methods">檔案存取方式</span> <span class="en">File Access Methods</span></h2>
+
+      <div class="obj">
+        <div class="t" data-en="🎯 Learning Objectives">🎯 學習重點</div>
+        <ul>
+          <li data-en="Compare <b>sequential access</b> and <b>direct access</b> in terms of how data is reached.">比較<b>順序存取</b>與<b>直接存取</b>取得數據的方式。</li>
+          <li data-en="Give the storage devices that use each method.">說出使用這兩種方式的儲存設備。</li>
+          <li data-en="State the advantages, disadvantages and typical uses of each.">說出兩者的優點、缺點及常見用途。</li>
+        </ul>
+      </div>
+
+      <p class="lead" data-en="Data can be kept on different storage devices, and the device decides <b>how</b> the data is accessed. There are two common methods: sequential access and direct access.">數據可以儲存在不同的儲存設備中，而設備決定了<b>如何</b>存取數據。常見的檔案存取方式有兩種：順序存取和直接存取。</p>
+
+      <h3 data-en="A. Sequential Access">A 順序存取</h3>
+      <p class="lead" data-en="The device writes data in order from the beginning, and to reach a specific item the system must <b>search through everything before it</b>. Speed therefore depends on where the target sits — on average it is slower than direct access.">使用順序存取的設備由頭開始按順序寫入數據；要存取特定數據，系統須<b>依次搜索前面的所有數據</b>。因此速度取決於目標數據的位置，平均比直接存取慢。</p>
+      <div class="grid">
+        <div class="chip blue"><b data-en="Magnetic tape (sequential only)">磁帶（只用順序存取）</b><span data-en="must fast-forward through the tape to reach a later song">要聽後段歌曲，必須先把前面的帶子捲過去</span></div>
+      </div>
+
+      <h3 data-en="B. Direct Access">B 直接存取</h3>
+      <p class="lead" data-en="Every storage location has a <b>unique address</b>, so the system can jump straight to the data without searching other locations. Speed is stable and generally faster.">每個儲存位置都有<b>獨一無二的位址</b>，系統可直接跳到該位置存取數據，無須搜索其他地方。速度穩定，一般較快。</p>
+      <div class="grid">
+        <div class="chip teal"><b data-en="Hard disk">硬碟</b><span data-en="stores frequently used data">儲存常用數據</span></div>
+        <div class="chip purple"><b data-en="USB flash drive">隨身碟</b><span data-en="portable, direct access">方便攜帶，直接存取</span></div>
+        <div class="chip amber"><b data-en="Optical disc">光碟</b><span data-en="CD / DVD / Blu-ray">CD／DVD／藍光碟</span></div>
+        <div class="chip green"><b data-en="Magnetic disk">磁碟</b><span data-en="floppy disk and other magnetic disks">磁碟（如磁碟片）</span></div>
+      </div>
+
+      <div class="mnemonic" data-en="🧠 <b>Memory aid</b>: sequential access is like a <b>cassette tape</b> (you must wind forward); direct access is like a <b>music app</b> (drag the progress bar and jump straight there).">🧠 <b>記憶口訣</b>：順序存取像<b>卡式錄音帶</b>（要聽後段就得快轉）；直接存取像<b>音樂 App</b>（拉一下進度條就跳過去）。</div>
+
+      <details>
+        <summary data-en="Magnetic tape vs hard disk (full comparison)">磁帶 與 硬碟 完整對比</summary>
+        <div class="body">
+          <table>
+            <tr><th data-en="Property">屬性</th><th data-en="Magnetic tape">磁帶</th><th data-en="Hard disk">硬碟</th></tr>
+            <tr><td data-en="Access method">檔案存取方式</td><td data-en="sequential access">順序存取</td><td data-en="direct access">直接存取</td></tr>
+            <tr><td data-en="Data access speed">數據存取速度</td><td data-en="hard to predict, usually slower">難以預測，通常較慢</td><td data-en="stable, usually faster">穩定，通常較快</td></tr>
+            <tr><td data-en="Price per unit capacity">容量單位價格</td><td data-en="lower">較低</td><td data-en="higher">較高</td></tr>
+            <tr><td data-en="Portability">輕便性</td><td data-en="higher">較高</td><td data-en="lower">較低</td></tr>
+            <tr><td data-en="Lifespan">壽命</td><td data-en="longer">較長</td><td data-en="shorter">較短</td></tr>
+            <tr><td data-en="Typical use">常見用法</td><td data-en="backups">儲存備份</td><td data-en="frequently used data">儲存常用數據</td></tr>
+          </table>
+        </div>
+      </details>
+
+      <div class="examtip" data-en="✍️ Answer format: &quot;<b>method + why + suitable use</b>&quot;. e.g. &quot;Backup uses tape: sequential access is slower, but the cost per unit is low and it lasts longer — backups are read in order anyway&quot;.">✍️ 作答格式：「<b>方式＋原因＋適用</b>」。例：「備份宜用磁帶：順序存取雖較慢，但容量單位價格低、壽命長，而且備份本來就是按順序讀寫。」</div>
+
+      <div class="exp">
+        <span class="lbl" data-en="Experiment ⑩">實驗⑩</span>
+        <h4 data-en="Which access method does this device use?">這設備用哪種存取方式？</h4>
+        <p class="note" data-en="Read the device, then click its access method (instant feedback, auto-next).">看設備名稱，點擊它對應的存取方式（即時回饋，自動換下一題）。</p>
+        <div class="classify-card" id="devCard">—</div>
+        <div class="classify-btns" id="devBtns" style="flex-wrap:wrap"></div>
+        <p class="feedback" id="devFeedback" style="text-align:center"></p>
+        <div style="text-align:center;margin-top:6px"><span id="devProgress" style="font-size:13px;color:var(--muted)"></span></div>
+      </div>
+
+      <div class="exp">
+        <span class="lbl" data-en="Experiment ⑪">實驗⑪</span>
+        <h4 data-en="Sequential vs direct access: count the reads">順序存取 vs 直接存取：數一數讀了幾次</h4>
+        <p class="note" data-en="Pick a target record, then press each button. Sequential access lights up every record from the start; direct access jumps straight there. Compare the number of reads.">先選定目標記錄，再分別按兩個按鈕：順序存取會由頭開始逐格亮起，直接存取則一步跳到目標。比較兩者的讀取次數。</p>
+        <div class="slider-row">
+          <label data-en="Target record:">目標記錄：</label>
+          <input type="range" id="accSlider" min="1" max="12" value="9">
+          <span class="val" id="accVal">#9</span>
+        </div>
+        <div id="accRecords" style="display:flex;gap:6px;flex-wrap:wrap;margin:10px 0"></div>
+        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+          <button class="btn" id="btnSeq" data-en="▶ Sequential access">▶ 順序存取</button>
+          <button class="btn ghost" id="btnDir" data-en="▶ Direct access">▶ 直接存取</button>
+          <button class="btn ghost" id="btnAccReset" data-en="Reset">重設</button>
+        </div>
+        <div id="accOut" style="display:flex;gap:20px;justify-content:center;margin-top:12px;flex-wrap:wrap"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 考點總覽 ================= -->
+  <section id="exam">
+    <div class="card">
+      <h2><span class="num">★</span><span data-en="Exam Focus Summary">考評局考點總覽</span></h2>
+      <p class="lead" data-en="This chapter maps to Compulsory Part, Module A (Information Processing), topic b &quot;Data Organisation and Data Control&quot; (4 hours). Five must-know lists:">本章對應必修部分「單元 A 資訊處理」課題 b「<b>數據組織及數據控制</b>」（4 小時）。五張必背清單：</p>
+      <div class="grid">
+        <div class="chip blue"><b data-en="① 4 hierarchy levels">① 數據分級四層</b><span data-en="field → record → file → database">欄位 → 記錄 → 檔案 → 數據庫</span></div>
+        <div class="chip teal"><b data-en="② 2 branches of data control">② 數據控制兩分支</b><span data-en="validation (computer) + verification (human)">有效性檢驗（電腦）＋ 驗證（人手）</span></div>
+        <div class="chip purple"><b data-en="③ 8 validation checks">③ 有效性檢驗八種</b><span data-en="complete, fixed value, type, range, length, format, consistency, uniqueness">完整、固定值、類型、範圍、長度、格式、一致、唯一</span></div>
+        <div class="chip amber"><b data-en="④ 3 database functions">④ 數據庫三功能</b><span data-en="organise, store, retrieve (index speeds up retrieval)">組織、儲存、提取（索引用於加快提取）</span></div>
+        <div class="chip green"><b data-en="⑤ 2 access methods">⑤ 存取方式兩種</b><span data-en="sequential (tape) vs direct (hard disk, USB, disc)">順序（磁帶）vs 直接（硬碟、隨身碟、光碟）</span></div>
+      </div>
+      <details>
+        <summary data-en="Common question types">常考題型</summary>
+        <div class="body">
+          <ul>
+            <li data-en="<b>Ordering</b>: arrange the data hierarchy from lowest to highest"><b>層級排序</b>：把欄位／記錄／檔案／數據庫由低至高排列</li>
+            <li data-en="<b>Validation vs verification</b>: decide whether a method is done by computer or by a human"><b>有效性檢驗 vs 驗證</b>：判斷某做法由電腦還是由人手進行</li>
+            <li data-en="<b>Naming the check</b>: given a form rule, name the type of validation check"><b>檢驗方法命名</b>：給一條表單規則，說出是哪種檢查</li>
+            <li data-en="<b>Check digit &amp; parity</b>: calculate or verify, and explain why passing parity does not prove correctness"><b>檢查數位與奇偶檢測</b>：計算／驗證，並解釋「通過 ≠ 正確」</li>
+            <li data-en="<b>Index</b>: why it speeds up retrieval, and the cost of maintaining it"><b>索引</b>：為何加快提取、維護它需要甚麼代價</li>
+            <li data-en="<b>Access methods</b>: choose a method for a scenario and justify it"><b>存取方式</b>：就情境選擇順序或直接存取並說明理由</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- ================= 腦圖總結 ================= -->
+  <section id="mindmap">
+    <div class="card">
+      <h2><span class="num">🧠</span><span data-en="Chapter Mind Map">全章腦圖總結</span></h2>
+      <p class="lead" data-en="The chapter is regrouped into five concept views. Click a node to see its core content.">把全章重組為五個概念視角，點擊節點查看其核心內容。</p>
+      <div class="mindmap" id="mindmapBox"></div>
+      <div class="mm-desc" id="mmDesc" data-en="Click any node above to see its definition, example or answer tip.">點擊上圖任一節點，查看該概念的定義、例子或作答重點。</div>
+    </div>
+  </section>
+
+  <!-- ================= 小測驗 ================= -->
+  <section id="quiz">
+    <div class="card">
+      <h2><span class="num">✎</span><span data-en="Quiz (instant feedback per question)">小測驗（逐題即時回饋）</span></h2>
+
+      <div class="quiz-q" data-ans="B">
+        <div class="q" data-en="1. Which option lists the data hierarchy from lowest to highest?">1. 以下哪項把數據分級由最低層排列至最高層？</div>
+        <label class="opt"><input type="radio" name="q1" value="A"><span data-en="A. Record → Field → File → Database">A. 記錄 → 欄位 → 檔案 → 數據庫</span></label>
+        <label class="opt"><input type="radio" name="q1" value="B"><span data-en="B. Field → Record → File → Database">B. 欄位 → 記錄 → 檔案 → 數據庫</span></label>
+        <label class="opt"><input type="radio" name="q1" value="C"><span data-en="C. Field → File → Record → Database">C. 欄位 → 檔案 → 記錄 → 數據庫</span></label>
+        <label class="opt"><input type="radio" name="q1" value="D"><span data-en="D. Database → File → Record → Field">D. 數據庫 → 檔案 → 記錄 → 欄位</span></label>
+        <div class="q-feedback" data-correct="✓ 正確！由低至高分別是欄位、記錄、檔案、數據庫——每一層都是下一層的集合。" data-wrong="✗ 答錯了。正確答案是 B：欄位 → 記錄 → 檔案 → 數據庫。欄位組成記錄，記錄組成檔案，相關檔案集合成數據庫。" data-correct-en="✓ Correct! From lowest to highest: field, record, file, database — each level is a collection of the one below." data-wrong-en="✗ Wrong. The answer is B: Field → Record → File → Database. Fields form records, records form files, related files form a database."></div>
+      </div>
+
+      <div class="quiz-q" data-ans="B">
+        <div class="q" data-en="2. Which HKID number passes the check digit test?">2. 以下哪個香港身份證號碼能通過檢查數位驗證？</div>
+        <label class="opt"><input type="radio" name="q2" value="A"><span>A. D246246(A)</span></label>
+        <label class="opt"><input type="radio" name="q2" value="B"><span>B. WX135135(2)</span></label>
+        <label class="opt"><input type="radio" name="q2" value="C"><span>C. Y147036(1)</span></label>
+        <label class="opt"><input type="radio" name="q2" value="D"><span data-en="D. None of them">D. 以上皆不是</span></label>
+        <div class="q-feedback" data-correct="✓ 正確！WX135135(2) 的加權和是 627，627 ÷ 11 = 57 餘 0，故有效。" data-wrong="✗ 答錯了。正確答案是 B：WX135135(2) 的加權和為 627，除以 11 餘 0，所以有效。D246246(A) 的加權和 538 餘 10；Y147036 的檢查數位應是 A 而非 1。" data-correct-en="✓ Correct! The weighted sum of WX135135(2) is 627, and 627 ÷ 11 leaves remainder 0, so it is valid." data-wrong-en="✗ Wrong. The answer is B: the weighted sum of WX135135(2) is 627 and 627 ÷ 11 leaves remainder 0, so it is valid. D246246(A) gives remainder 10; the check digit of Y147036 should be A, not 1."></div>
+      </div>
+
+      <div class="quiz-q" data-ans="C">
+        <div class="q" data-en="3. A system receives four binary codes. Only one passes an <b>odd</b> parity check — which one?">3. 某數據傳輸系統收到四組二進制代碼，只有一組能通過<b>奇數檢測</b>，它是哪一組？</div>
+        <label class="opt"><input type="radio" name="q3" value="A"><span>A. 1101 1000</span></label>
+        <label class="opt"><input type="radio" name="q3" value="B"><span>B. 1110 1011</span></label>
+        <label class="opt"><input type="radio" name="q3" value="C"><span>C. 0010 0101</span></label>
+        <label class="opt"><input type="radio" name="q3" value="D"><span>D. 0100 1000</span></label>
+        <div class="q-feedback" data-correct="✓ 正確！0010 0101 共有 3 個「1」，是四組中唯一的單數，故通過奇數檢測。" data-wrong="✗ 答錯了。正確答案是 C：先數「1」的總數——A=4、B=6、C=3、D=2。若題目說只有一組通過，那必定是奇數檢測，故選「1」的總數為單數的一組。" data-correct-en="✓ Correct! 0010 0101 has three 1s — the only odd count among the four, so it passes an odd parity check." data-wrong-en="✗ Wrong. The answer is C: count the 1s — A=4, B=6, C=3, D=2. Since only one code passes, it must be odd parity, so pick the one with an odd count."></div>
+      </div>
+
+      <div class="quiz-q" data-ans="B">
+        <div class="q" data-en="4. A website asks users to type a new password twice. Which data control method is this?">4. 網站要求用戶把新密碼輸入兩次才完成登記，這運用了哪種數據控制方式？</div>
+        <label class="opt"><input type="radio" name="q4" value="A"><span data-en="A. Data validation (completeness check)">A. 數據有效性檢驗（完整性檢查）</span></label>
+        <label class="opt"><input type="radio" name="q4" value="B"><span data-en="B. Data verification (entering data twice)">B. 數據驗證（輸入數據兩次）</span></label>
+        <label class="opt"><input type="radio" name="q4" value="C"><span data-en="C. Check digit">C. 檢查數位</span></label>
+        <label class="opt"><input type="radio" name="q4" value="D"><span data-en="D. Parity check">D. 奇偶檢測</span></label>
+        <div class="q-feedback" data-correct="✓ 正確！比較兩次輸入是否相同，屬「輸入數據兩次」的數據驗證，由系統輔助人手核對。" data-wrong="✗ 答錯了。正確答案是 B：兩次輸入是為了比較是否<b>相同</b>，屬數據驗證中的「輸入數據兩次」。有效性檢驗查的是<b>合不合理</b>（例如長度、格式），不是相同與否。" data-correct-en="✓ Correct! Comparing two entries for sameness is data verification by &quot;entering data twice&quot;." data-wrong-en="✗ Wrong. The answer is B: entering twice compares the two copies for <b>sameness</b>, which is verification. Validation checks <b>reasonableness</b> (length, format, etc.), not sameness."></div>
+      </div>
+
+      <div class="quiz-q" data-ans="C">
+        <div class="q" data-en="5. &quot;The email address must contain an @ sign&quot; — which validation check is this?">5. 「電郵地址必須包含『@』符號」屬於哪種有效性檢驗？</div>
+        <label class="opt"><input type="radio" name="q5" value="A"><span data-en="A. Completeness check">A. 完整性檢查</span></label>
+        <label class="opt"><input type="radio" name="q5" value="B"><span data-en="B. Type check">B. 類型檢查</span></label>
+        <label class="opt"><input type="radio" name="q5" value="C"><span data-en="C. Format check">C. 格式檢查</span></label>
+        <label class="opt"><input type="radio" name="q5" value="D"><span data-en="D. Range check">D. 範圍檢查</span></label>
+        <div class="q-feedback" data-correct="✓ 正確！規定數據必須採用特定圖樣（要有 @），就是格式檢查。" data-wrong="✗ 答錯了。正確答案是 C：規定「必須包含某個符號／必須是某種排列」＝格式檢查。完整性管「有沒有填」，類型管「是不是數字」，範圍管「在不在區間內」。" data-correct-en="✓ Correct! Requiring a specific pattern (an @ sign) is a format check." data-wrong-en="✗ Wrong. The answer is C: requiring a certain pattern is a format check. Completeness is about being filled in, type is about being a number, range is about being within limits."></div>
+      </div>
+
+      <div class="quiz-q" data-ans="C">
+        <div class="q" data-en="6. Which statements about an index are correct? (1) It speeds up retrieval. (2) It reduces the size of the database. (3) It must be updated when a new record is added.">6. 以下哪項/些關於索引的陳述是正確的？(1) 索引提升數據提取的效率 (2) 索引減少數據庫所佔容量 (3) 加入新記錄時須更新索引表</div>
+        <label class="opt"><input type="radio" name="q6" value="A"><span data-en="A. (1) only">A. 只有 (1)</span></label>
+        <label class="opt"><input type="radio" name="q6" value="B"><span data-en="B. (2) only">B. 只有 (2)</span></label>
+        <label class="opt"><input type="radio" name="q6" value="C"><span data-en="C. (1) and (3) only">C. 只有 (1) 和 (3)</span></label>
+        <label class="opt"><input type="radio" name="q6" value="D"><span data-en="D. (2) and (3) only">D. 只有 (2) 和 (3)</span></label>
+        <div class="q-feedback" data-correct="✓ 正確！索引加快提取，但本身要佔用儲存空間（故 (2) 錯），而且加入新記錄或更改資料時必須更新。" data-wrong="✗ 答錯了。正確答案是 C：索引能加快提取，但(2)錯——索引表本身要佔用額外空間，並不會令數據庫變小；(3)對——加入新記錄時索引表須一併更新。" data-correct-en="✓ Correct! An index speeds up retrieval, but (2) is false — the index itself takes extra space — and (3) is true: it must be updated when records change." data-wrong-en="✗ Wrong. The answer is C: an index speeds up retrieval, but (2) is false (the index takes extra space, it does not shrink the database) and (3) is true (the index must be updated when records change)."></div>
+      </div>
+
+      <div class="quiz-q" data-ans="C">
+        <div class="q" data-en="7. Which statement about sequential access is correct?">7. 以下哪項關於順序存取的描述是正確的？</div>
+        <label class="opt"><input type="radio" name="q7" value="A"><span data-en="A. Every storage location has a unique address">A. 每個儲存位置都有獨一無二的位址</span></label>
+        <label class="opt"><input type="radio" name="q7" value="B"><span data-en="B. Access speed is stable and usually faster">B. 存取速度穩定且通常較快</span></label>
+        <label class="opt"><input type="radio" name="q7" value="C"><span data-en="C. The system searches in order from the start, so speed depends on where the target is">C. 系統須由頭開始依次搜索，速度視目標數據的位置而定</span></label>
+        <label class="opt"><input type="radio" name="q7" value="D"><span data-en="D. It can only be used on hard disks">D. 只能用於硬碟</span></label>
+        <div class="q-feedback" data-correct="✓ 正確！順序存取要依次讀過前面的數據，所以目標越後就越慢（A、B 是直接存取的特性）。" data-wrong="✗ 答錯了。正確答案是 C：順序存取須由頭依次搜索，故速度取決於目標位置。A 與 B 描述的是直接存取；D 錯，硬碟用的是直接存取，順序存取的典型設備是磁帶。" data-correct-en="✓ Correct! Sequential access reads through everything before the target, so the further back the target, the slower it is (A and B describe direct access)." data-wrong-en="✗ Wrong. The answer is C: sequential access searches from the start, so speed depends on the target's position. A and B describe direct access; D is false — hard disks use direct access, and the classic sequential device is magnetic tape."></div>
+      </div>
+
+      <div class="quiz-q" data-ans="D">
+        <div class="q" data-en="8. A class-1A table has a CNO (class number) field. Which validation checks suit it? (1) uniqueness (2) type (3) completeness">8. 某 1A 班數據表的 CNO（班號）欄位，適合運用以下哪些有效性檢驗？(1) 唯一性檢查 (2) 類型檢查 (3) 完整性檢查</div>
+        <label class="opt"><input type="radio" name="q8" value="A"><span data-en="A. (2) only">A. 只有 (2)</span></label>
+        <label class="opt"><input type="radio" name="q8" value="B"><span data-en="B. (1) and (2) only">B. 只有 (1) 和 (2)</span></label>
+        <label class="opt"><input type="radio" name="q8" value="C"><span data-en="C. (2) and (3) only">C. 只有 (2) 和 (3)</span></label>
+        <label class="opt"><input type="radio" name="q8" value="D"><span data-en="D. (1), (2) and (3)">D. (1)、(2) 和 (3)</span></label>
+        <div class="q-feedback" data-correct="✓ 正確！同一班內班號不應重複（唯一性）；班號是數字（類型）；每名學生都必須有班號（完整性）。三項都合適。" data-wrong="✗ 答錯了。正確答案是 D：同班同學的班號不應重複 → 唯一性檢查；班號數據類型為數字 → 類型檢查；每名學生都必須有班號 → 完整性檢查。三項皆適用。" data-correct-en="✓ Correct! Class numbers should not repeat within a class (uniqueness); CNO is numeric (type); every student must have one (completeness)." data-wrong-en="✗ Wrong. The answer is D: class numbers must not repeat (uniqueness), CNO is numeric (type), and every student must have one (completeness)."></div>
+      </div>
+
+      <button class="btn" id="quizBtn" data-en="Submit Score">結算得分</button>
+      <div id="quizResult"></div>
+    </div>
+  </section>
+
+</main>
+
+<button id="toTop" aria-label="回到頂部">↑</button>
+
+<footer data-en="Chapter 2: Data Organisation and Data Control · Interactive Lab | aligned with the HKDSE ICT Curriculum and Assessment Guide">第二章　數據組織及數據控制 · 互動實驗室　|　緊扣 HKDSE ICT 課程及評估指引</footer>
+
+<script>
+// ==================== i18n 語言切換 ====================
+let LANG = 'zh';
+const i18nTexts = {
+  zh: {
+    hierOk: '✓ 正確！欄位 → 記錄 → 檔案 → 數據庫',
+    hierBad: '✗ 有層級位置不對，把卡片拖回上方再試！',
+    cdChar: '字符', cdVal: '數值', cdWt: '比重', cdProd: '乘積',
+    cdSum: '加權和', cdRem: '除以 11 的餘數', cdDigit: '檢查數位',
+    cdBadFormat: '⚠️ 格式不正確：請輸入 1–2 個英文字母加 6 個數字（可選擇加上檢查數位）。',
+    cdCalcTitle: '計算結果：完整的號碼應為',
+    cdVerifyOk: '✓ 這組號碼通過檢查數位驗證（有效）',
+    cdVerifyBad: '✗ 這組號碼未能通過檢查數位驗證（無效）',
+    cdSpace: '空格',
+    pOnes: '「1」的總數', pBit: '奇偶檢驗位', pCode: '傳送的代碼',
+    pMode: '檢測方式',
+    pEvenName: '偶數檢測', pOddName: '奇數檢測',
+    pWarnPass: '注意：通過檢測只代表「1」的數目符合要求，不代表數據一定正確。',
+    classifyOk: '✓ 正確！', classifyWrong: '✗ 再想想——這條規則針對的是數據的哪一個特性？',
+    stepsDone: '🎉 完成！你已完成全部配對',
+    accSeqLabel: '順序存取', accDirLabel: '直接存取',
+    accReads: '讀取次數', accWait: '（尚待操作）',
+    accSeqNote: '由第 1 項開始逐格讀過，共讀 ',
+    accDirNote: '直接跳到目標，只需讀 ',
+    accTimes: ' 次',
+    typeOk: '✓ 正確！整數、浮點數、字串、布爾全分對了',
+    typeBad: '✗ 有數值放錯類別，把卡片拖回上方再試！',
+    errWrong: '✗ 再想想——是來源錯、字眼錯，還是次序錯？',
+    vvWrong: '✗ 再想想——它在查「合不合理」（電腦）還是「一不一樣」（人手）？',
+    devWrong: '✗ 再想想——這設備能否直接跳到目標位置？',
+    binSeqL: '逐行搜尋（無索引）', binBinL: '二分搜尋（有索引）',
+    binWait: '（尚待操作）', binSeqNote: '逐行讀取 ', binBinNote: '二分探測 ', binTimes: ' 次',
+    valPass: '✓ 通過 —— 這是', valFail: '✗ 不通過 —— 提示：', valPlaceholder: '在此輸入數值…',
+    pEvenDet: '偶數檢測', pOddDet: '奇數檢測', pEvenW: '雙數', pOddW: '單數',
+    pCountTotal: '現時「1」的總數 = ', pCountTagE: '（雙數）', pCountTagO: '（單數）',
+    pNeedEven: '。偶數檢測要求總數為雙數——該加 0 還是 1？', pNeedOdd: '。奇數檢測要求總數為單數——該加 0 還是 1？',
+    pBitLbl: '檢驗位',
+    pAnsOk: '✓ 通過「{det}」！', pAnsBad: '✗ 未通過「{det}」：檢驗位應加 {b}，令總數變為{par}（你選了 {ch}）。',
+    pSendCode: '傳送的完整代碼',
+    pNoiseA: '傳輸途中，第 ', pNoiseB: ' 個位元被干擾：', pNoiseC: ' → ', pNoiseD: '（紅格）。請按「接收端檢查」。',
+    pDetFail: '接收端數到「1」的總數 = ', pDetFail2: '，與「{det}」不符 → ✗ 偵測到傳輸錯誤！',
+    pAgain: '想再玩一次？改動任一位元、切換檢測或按「隨機換一組」即可重來。',
+    pLiveOk: '有效', pLiveBad: '無效',
+    pLiveTpl: '目前 1 的總數為 {n}，在「{det}」下，此組數據 {em} {ok}。',
+    pParityLbl: '← 最後一格（橙色）就是奇偶位，也可以點它切換。',
+    masteryPre: '已掌握 ', masteryMid: ' / ', masteryPost: ' 種（綠底＝已成功通過一次）',
+    simGoPre: '已載入下方試玩區：「', simGoPost: '」——直接輸入數值試試。',
+    simNo: '此項沒有可模擬的單欄輸入。相關練習：「實驗⑤ 檢驗配對」判斷情境、「實驗⑥ 檢查數位」、「實驗⑦ 奇偶」。'
+  },
+  en: {
+    hierOk: '✓ Correct! Field → Record → File → Database',
+    hierBad: '✗ Some levels are misplaced. Drag them back and try again!',
+    cdChar: 'Char', cdVal: 'Value', cdWt: 'Weight', cdProd: 'Product',
+    cdSum: 'Weighted sum', cdRem: 'Remainder on division by 11', cdDigit: 'Check digit',
+    cdBadFormat: '⚠️ Invalid format: please enter 1–2 letters followed by 6 digits (an optional check character may follow).',
+    cdCalcTitle: 'Result: the complete number should be',
+    cdVerifyOk: '✓ This number passes the check digit test (valid)',
+    cdVerifyBad: '✗ This number fails the check digit test (invalid)',
+    cdSpace: 'space',
+    pOnes: 'Total number of 1s', pBit: 'Parity bit', pCode: 'Code transmitted',
+    pMode: 'Check type',
+    pEvenName: 'Even parity', pOddName: 'Odd parity',
+    pWarnPass: 'Note: passing the check only means the number of 1s is as required — it does not prove the data is correct.',
+    classifyOk: '✓ Correct!', classifyWrong: '✗ Think again — which property of the data does this rule target?',
+    stepsDone: '🎉 Done! You have finished all the matches',
+    accSeqLabel: 'Sequential access', accDirLabel: 'Direct access',
+    accReads: 'reads', accWait: '(not run yet)',
+    accSeqNote: 'Reads every record from #1 onwards — ',
+    accDirNote: 'Jumps straight to the target — only ',
+    accTimes: ' read(s)',
+    typeOk: '✓ Correct! Integer, real, string and boolean are all matched.',
+    typeBad: '✗ Some values are in the wrong group. Drag them back and try again!',
+    errWrong: '✗ Think again — is it a source, character or order error?',
+    vvWrong: '✗ Think again — does it check reasonableness (computer) or sameness (human)?',
+    devWrong: '✗ Think again — can this device jump straight to the target?',
+    binSeqL: 'Sequential search (no index)', binBinL: 'Binary search (with index)',
+    binWait: '(not run yet)', binSeqNote: 'Sequential reads: ', binBinNote: 'Binary probes: ', binTimes: ' times',
+    valPass: '✓ Passed — this is a', valFail: '✗ Failed — hint: ', valPlaceholder: 'Type a value here…',
+    pEvenDet: 'even parity', pOddDet: 'odd parity', pEvenW: 'even', pOddW: 'odd',
+    pCountTotal: 'Number of 1s now: ', pCountTagE: ' (even)', pCountTagO: ' (odd)',
+    pNeedEven: '. Even parity needs an even total — add 0 or 1?', pNeedOdd: '. Odd parity needs an odd total — add 0 or 1?',
+    pBitLbl: 'parity bit',
+    pAnsOk: '✓ Passes {det}!', pAnsBad: '✗ Fails {det}: you should add {b} to make the total {par} (you chose {ch}).',
+    pSendCode: 'Full code sent',
+    pNoiseA: 'During transmission, bit ', pNoiseB: ' was corrupted:', pNoiseC: ' → ', pNoiseD: ' (in red). Press "Receiver checks".',
+    pDetFail: 'The receiver counts the 1s: ', pDetFail2: ', which does not match {det} → ✗ transmission error detected!',
+    pAgain: 'Play again: flip any bit, switch the check type or press "New code".',
+    pLiveOk: 'valid', pLiveBad: 'invalid',
+    pLiveTpl: 'Number of 1s: {n}. Under {det}, the code is {em} {ok}.',
+    pParityLbl: '← The last (orange) one is the parity bit; click it too.',
+    masteryPre: 'Mastered ', masteryMid: ' / ', masteryPost: ' checks (green = passed once)',
+    simGoPre: 'Loaded into the simulator below: "', simGoPost: '" — type a value and try.',
+    simNo: 'No single-field input to simulate here. Related drills: Experiment ⑤ matching, ⑥ check digit, ⑦ parity.'
+  }
+};
+function initI18n(){
+  document.querySelectorAll('[data-en]').forEach(el=>{
+    if(!el.dataset.zh) el.dataset.zh = el.innerHTML;
+  });
+}
+function setLang(lang){
+  LANG = lang;
+  document.body.dataset.lang = lang;
+  document.documentElement.lang = lang === 'en' ? 'en' : 'zh-Hant';
+  document.querySelectorAll('.lang-btn').forEach(b=> b.classList.toggle('active', b.dataset.lang === lang));
+  document.querySelectorAll('[data-en]').forEach(el=>{
+    if(lang === 'en'){ el.innerHTML = el.dataset.en; }
+    else { el.innerHTML = el.dataset.zh || el.innerHTML; }
+  });
+  refreshHier();
+  buildCheckCards();
+  refreshCheckDigit();
+  refreshParity();
+  classifiers.forEach(f => f());
+  refreshTypeDrag();
+  refreshValSim();
+  refreshAccess();
+  refreshBin();
+  refreshMindmap();
+  refreshQuizFeedback();
+}
+document.querySelectorAll('.lang-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{ setLang(btn.dataset.lang); });
+});
+initI18n();
+
+// ==================== 有效性檢驗方法卡片 ====================
+const checkCards = [
+  {n:'完整性檢查', nEn:'Completeness check', c:'必填不留空', cEn:'Must be filled', cat:'有效性檢驗', catEn:'Validation', use:'確保必填欄位中已輸入數據。例：申請人必須填寫姓名才可按「提交」。', useEn:'Ensures a required field is not empty. e.g. the applicant must enter a name before submitting.', icon:'c1'},
+  {n:'固定值檢查', nEn:'Fixed value check', c:'只限指定值', cEn:'Only set values', cat:'有效性檢驗', catEn:'Validation', use:'確保數據只能是某幾個特定值之一。例：性別必須是「M」或「F」；下拉式選單與單選按鈕都屬此類。', useEn:'Data must be one of a set of specific values. e.g. sex must be M or F; drop-down lists and radio buttons do this.', icon:'c2'},
+  {n:'類型檢查', nEn:'Type check', c:'數據類型', cEn:'Data type', cat:'有效性檢驗', catEn:'Validation', use:'確保數據必須為特定類型。例：年齡欄位只接受數字；日期選擇器只接受日期。', useEn:'Data must be of a specific type. e.g. the age field accepts numbers only; a date picker accepts dates only.', icon:'c3'},
+  {n:'範圍檢查', nEn:'Range check', c:'指定區間', cEn:'Within a range', cat:'有效性檢驗', catEn:'Validation', use:'確保數據位於指定範圍內。例：年齡必須大於 12 歲；班號須為正數且不超過全班人數。', useEn:'Data must fall within a given range. e.g. age must be over 12; class number must be positive and not exceed the class size.', icon:'c4'},
+  {n:'長度檢查', nEn:'Length check', c:'字符數目', cEn:'Character count', cat:'有效性檢驗', catEn:'Validation', use:'確保字符數在指定範圍內。例：必須輸入 8 個位的電話號碼；密碼長度須為 8–12 個字符。', useEn:'The number of characters must be within a range. e.g. an 8-digit phone number; a password of 8–12 characters.', icon:'c5'},
+  {n:'格式檢查', nEn:'Format check', c:'排列圖樣', cEn:'Pattern', cat:'有效性檢驗', catEn:'Validation', use:'確保數據採用特定格式。例：電郵地址必須包含「@」；日期必須是「DD/MM/YYYY」。', useEn:'Data must follow a specific pattern. e.g. the email must contain an @ sign; the date must be DD/MM/YYYY.', icon:'c6'},
+  {n:'一致性檢查', nEn:'Consistency check', c:'欄位之間', cEn:'Between fields', cat:'有效性檢驗', catEn:'Validation', use:'確保與其他欄位相比沒有不合理之處。例：結束日期必須在開始日期之後。', useEn:'Data must not contradict other fields. e.g. the end date must be after the start date.', icon:'c7'},
+  {n:'唯一性檢查', nEn:'Uniqueness check', c:'不可重複', cEn:'No duplicates', cat:'有效性檢驗', catEn:'Validation', use:'確保該欄位的數據獨一無二。例：每位學生只能申請一次，學生編號不可重複。', useEn:'The value must be unique in that field. e.g. each student may apply once, so student IDs must not repeat.', icon:'c8'},
+  {n:'檢查數位', nEn:'Check digit', c:'算法生成', cEn:'Generated by algorithm', cat:'有效性檢驗', catEn:'Validation', use:'由特定算法生成並附加在數字數據末尾，用來偵測輸入錯誤。例：香港身份證號碼、書號（ISBN）、信用卡號碼。', useEn:'Generated by an algorithm and appended to numeric data to detect input errors. e.g. HKID numbers, ISBN, credit card numbers.', icon:'c9'},
+  {n:'奇偶檢測', nEn:'Parity check', c:'傳輸偵錯', cEn:'Transmission errors', cat:'有效性檢驗', catEn:'Validation', use:'在二進制代碼末尾附加奇偶檢驗位，使「1」的總數必定為偶數或奇數，常用於數據傳輸。', useEn:'A parity bit is appended to a binary code so the number of 1s is always even or odd; commonly used during data transmission.', icon:'c10'},
+];
+const ICONS = {
+  c1:'<rect x="5" y="5" width="36" height="36" rx="8" fill="#eaf3de" stroke="#3b6d11" stroke-width="2"/><path d="M14 24 L21 31 L33 16" fill="none" stroke="#3b6d11" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>',
+  c2:'<rect x="4" y="12" width="16" height="22" rx="5" fill="#e6f1fb" stroke="#185fa5" stroke-width="2"/><rect x="26" y="12" width="16" height="22" rx="5" fill="#e6f1fb" stroke="#185fa5" stroke-width="2"/><text x="12" y="28" font-size="11" text-anchor="middle" fill="#185fa5" font-weight="700">M</text><text x="34" y="28" font-size="11" text-anchor="middle" fill="#185fa5" font-weight="700">F</text>',
+  c3:'<rect x="5" y="5" width="36" height="36" rx="8" fill="#e6f1fb" stroke="#185fa5" stroke-width="2"/><text x="23" y="30" font-size="15" text-anchor="middle" fill="#185fa5" font-weight="700">123</text>',
+  c4:'<rect x="5" y="5" width="36" height="36" rx="8" fill="#faeeda" stroke="#854f0b" stroke-width="2"/><line x1="12" y1="30" x2="34" y2="30" stroke="#854f0b" stroke-width="2"/><line x1="12" y1="26" x2="12" y2="34" stroke="#854f0b" stroke-width="2"/><line x1="34" y1="26" x2="34" y2="34" stroke="#854f0b" stroke-width="2"/><text x="23" y="21" font-size="11" text-anchor="middle" fill="#854f0b" font-weight="700">1-5</text>',
+  c5:'<rect x="4" y="14" width="38" height="18" rx="3" fill="#eeedfe" stroke="#534ab7" stroke-width="2"/><g stroke="#534ab7" stroke-width="2"><line x1="11" y1="14" x2="11" y2="21"/><line x1="18" y1="14" x2="18" y2="19"/><line x1="25" y1="14" x2="25" y2="21"/><line x1="32" y1="14" x2="32" y2="19"/></g><text x="23" y="37" font-size="10" text-anchor="middle" fill="#534ab7" font-weight="700">8</text>',
+  c6:'<rect x="5" y="5" width="36" height="36" rx="8" fill="#e1f5ee" stroke="#0f6e56" stroke-width="2"/><text x="23" y="31" font-size="18" text-anchor="middle" fill="#0f6e56" font-weight="700">@</text>',
+  c7:'<circle cx="14" cy="23" r="8" fill="#e6f1fb" stroke="#185fa5" stroke-width="2"/><circle cx="32" cy="23" r="8" fill="#e1f5ee" stroke="#0f6e56" stroke-width="2"/><line x1="22" y1="23" x2="24" y2="23" stroke="#854f0b" stroke-width="3"/>',
+  c8:'<rect x="5" y="5" width="36" height="36" rx="8" fill="#fcebeb" stroke="#a32d2d" stroke-width="2"/><text x="23" y="31" font-size="17" text-anchor="middle" fill="#a32d2d" font-weight="700">1</text>',
+  c9:'<rect x="5" y="5" width="36" height="36" rx="8" fill="#e6f1fb" stroke="#185fa5" stroke-width="2"/><text x="23" y="30" font-size="14" text-anchor="middle" fill="#185fa5" font-weight="700">CD</text>',
+  c10:'<rect x="5" y="5" width="36" height="36" rx="8" fill="#eeedfe" stroke="#534ab7" stroke-width="2"/><text x="23" y="30" font-size="15" text-anchor="middle" fill="#534ab7" font-weight="700">01</text>',
+};
+function iconSvg(k){ return '<svg viewBox="0 0 46 46" xmlns="http://www.w3.org/2000/svg">'+(ICONS[k]||'')+'</svg>'; }
+// 卡片 ↔ 模擬器連動：記錄「已成功通過一次」的檢驗（前 6 張卡對應模擬器情境）
+const mastered = new Set();
+function updateMastery(){
+  const el = document.getElementById('simProgress');
+  if(!el) return;
+  const T = i18nTexts[LANG];
+  el.innerHTML = T.masteryPre + '<b style="color:var(--green)">' + mastered.size + '</b>' + T.masteryMid + '6' + T.masteryPost;
+}
+function applyMasteredStyle(card, i){
+  if(!card || !mastered.has(i)) return;
+  card.style.background = 'var(--green-bg)'; card.style.borderColor = 'var(--green)'; card.style.position = 'relative';
+  if(!card.querySelector('.badge-ok')) card.insertAdjacentHTML('beforeend', '<span class="badge-ok" style="position:absolute;top:-7px;right:-7px;background:var(--green);color:#fff;width:20px;height:20px;border-radius:50%;font-size:12px;line-height:20px;text-align:center;font-weight:700">✓</span>');
+}
+function markMastered(i){
+  if(mastered.has(i)){ updateMastery(); return; }
+  mastered.add(i);
+  applyMasteredStyle(document.querySelector('.hw-card[data-i="'+i+'"]'), i);
+  updateMastery();
+}
+function buildCheckCards(){
+  const g = document.getElementById('hwGrid');
+  const detail = document.getElementById('hwDetail');
+  g.innerHTML = checkCards.map((h,i)=>{
+    const name = LANG==='en' ? (h.nEn || h.n) : h.n;
+    const c = LANG==='en' ? (h.cEn || h.c) : h.c;
+    return '<div class="hw-card" data-i="'+i+'">'+iconSvg(h.icon)+'<div class="n">'+name+'</div><div class="c">'+c+'</div></div>';
+  }).join('');
+  g.querySelectorAll('.hw-card').forEach(card=>{
+    const i = +card.dataset.i;
+    applyMasteredStyle(card, i);
+    card.addEventListener('click', ()=>{
+      const h = checkCards[i];
+      const nm = LANG==='en' ? (h.nEn||h.n) : h.n;
+      const ct = LANG==='en' ? (h.catEn||h.cat) : h.cat;
+      const us = LANG==='en' ? (h.useEn||h.use) : h.use;
+      const T = i18nTexts[LANG];
+      let extra = '';
+      if(i < 6){ // 有對應模擬器情境：點卡即自動載入試玩
+        const sc = valScenarios[i];
+        valActiveId = sc.id;
+        valLast = null;
+        document.getElementById('valInput').value = '';
+        renderValOut();
+        buildValCards();
+        extra = '<div class="use" style="margin-top:6px;color:var(--green)">→ '+T.simGoPre + (LANG==='en' ? sc.en : sc.zh) + T.simGoPost + '</div>';
+        const box = document.getElementById('simBox');
+        if(box) box.scrollIntoView({behavior:'smooth', block:'nearest'});
+      } else {
+        extra = '<div class="use" style="margin-top:6px;color:var(--muted);font-size:12.5px">'+T.simNo+'</div>';
+      }
+      detail.innerHTML = '<b>'+nm+'</b><span class="cat">'+ct+'</span><div class="use" style="margin-top:6px">'+us+'</div>'+extra;
+      detail.classList.add('show');
+    });
+  });
+  detail.classList.remove('show');
+  updateMastery();
+}
+buildCheckCards();
+
+// ==================== 實驗①：數據分級拖拽排序 ====================
+const hierItems = [
+  {val:'field', zh:'學生姓名「陳大文」——一項屬性', en:'Student name "Chan Tai Man" — one attribute'},
+  {val:'record', zh:'015044、Peter Chan、M、1A、11——同一學生的一整列', en:'015044, Peter Chan, M, 1A, 11 — one whole row'},
+  {val:'file', zh:'1A 班 40 名學生的資料——結構相同的記錄', en:'Data of 40 students in class 1A — same structure'},
+  {val:'db', zh:'學生表＋教師表＋課室表＋時間表', en:'Student + teacher + classroom + timetable tables'},
+];
+const hierZones = [
+  {slot:'field', zh:'最低層 ①', en:'Lowest ①'},
+  {slot:'record', zh:'②', en:'②'},
+  {slot:'file', zh:'③', en:'③'},
+  {slot:'db', zh:'最高層 ④', en:'Highest ④'},
+];
+const hierBankOrder = ['record','db','field','file'];
+function hierLabel(o){ return LANG==='en' ? o.en : o.zh; }
+function buildHier(){
+  document.getElementById('hierSlots').innerHTML = hierZones.map(z=>
+    '<div class="dropzone" data-zone="'+z.slot+'"><div class="lbl">'+hierLabel(z)+'</div></div>'
+  ).join('');
+  document.getElementById('hierBank').innerHTML = hierBankOrder.map(v=>{
+    const it = hierItems.find(i=>i.val===v);
+    return '<span class="drag-chip" draggable="true" data-val="'+it.val+'">'+hierLabel(it)+'</span>';
+  }).join('');
+  const chips = document.querySelectorAll('#hierBank .drag-chip');
+  const dropZones = document.querySelectorAll('#hierSlots .dropzone');
+  chips.forEach(ch=>{
+    ch.addEventListener('dragstart', e=>{ e.dataTransfer.setData('text/plain', ch.dataset.val); });
+    ch.addEventListener('click', ()=>{
+      const empty = [...dropZones].find(z=>!z.querySelector('.drag-chip'));
+      if(empty){ empty.querySelector('.lbl')?.remove(); empty.appendChild(ch); }
+    });
+  });
+  dropZones.forEach(z=>{
+    z.addEventListener('dragover', e=>{ e.preventDefault(); z.classList.add('over'); });
+    z.addEventListener('dragleave', ()=>{ z.classList.remove('over'); });
+    z.addEventListener('drop', e=>{
+      e.preventDefault(); z.classList.remove('over');
+      const val = e.dataTransfer.getData('text/plain');
+      const chip = document.querySelector('#hierBank .drag-chip[data-val="'+val+'"]') || document.querySelector('#hierSlots .drag-chip[data-val="'+val+'"]');
+      if(!chip) return;
+      const existing = z.querySelector('.drag-chip');
+      if(existing){ document.getElementById('hierBank').appendChild(existing); }
+      z.querySelector('.lbl')?.remove();
+      z.appendChild(chip);
+    });
+  });
+}
+buildHier();
+function refreshHier(){
+  document.querySelectorAll('#hierBank .drag-chip, #hierSlots .drag-chip').forEach(ch=>{
+    const it = hierItems.find(i=>i.val===ch.dataset.val);
+    if(it) ch.textContent = hierLabel(it);
+  });
+  document.querySelectorAll('#hierSlots .dropzone .lbl').forEach(lb=>{
+    const z = hierZones.find(z=>z.slot===lb.parentElement.dataset.zone);
+    if(z) lb.textContent = hierLabel(z);
+  });
+}
+document.getElementById('btnCheckHier').addEventListener('click', ()=>{
+  let ok = true;
+  document.querySelectorAll('#hierSlots .dropzone').forEach(z=>{
+    const chip = z.querySelector('.drag-chip');
+    if(chip && chip.dataset.val === z.dataset.zone){ z.style.borderColor = '#3b6d11'; }
+    else { ok = false; z.style.borderColor = '#a32d2d'; }
+  });
+  const f = document.getElementById('hierFeedback');
+  const T = i18nTexts[LANG];
+  f.textContent = ok ? T.hierOk : T.hierBad;
+  f.className = 'feedback ' + (ok ? 'ok' : 'bad');
+});
+document.getElementById('btnResetHier').addEventListener('click', ()=>{
+  document.querySelectorAll('#hierSlots .dropzone').forEach(z=>{
+    const chip = z.querySelector('.drag-chip');
+    if(chip){ document.getElementById('hierBank').appendChild(chip); }
+    if(!z.querySelector('.lbl')){
+      const zd = hierZones.find(zz=>zz.slot===z.dataset.zone);
+      const lbl = document.createElement('div'); lbl.className='lbl';
+      lbl.textContent = hierLabel(zd);
+      z.prepend(lbl);
+    }
+    z.style.borderColor='';
+  });
+  document.getElementById('hierFeedback').textContent = '';
+});
+
+// ==================== 實驗④：數據類型分類（拖拽） ====================
+const typeItems = [
+  {id:'t1', zone:'int', zh:'74', en:'74'},
+  {id:'t2', zone:'int', zh:'-29', en:'-29'},
+  {id:'t3', zone:'real', zh:'74.44', en:'74.44'},
+  {id:'t4', zone:'real', zh:'1.00', en:'1.00'},
+  {id:'t5', zone:'str', zh:'「RA^1$」', en:'"RA^1$"'},
+  {id:'t6', zone:'str', zh:'「日，月」', en:'"day, month"'},
+  {id:'t7', zone:'bool', zh:'TRUE', en:'TRUE'},
+  {id:'t8', zone:'bool', zh:'FALSE', en:'FALSE'},
+];
+const typeZones = [
+  {slot:'int', zh:'整數 Integer', en:'Integer'},
+  {slot:'real', zh:'浮點數／實數 Real', en:'Real'},
+  {slot:'str', zh:'字串／文字 String', en:'String'},
+  {slot:'bool', zh:'布爾 Boolean', en:'Boolean'},
+];
+const typeBankOrder = ['t5','t7','t1','t3','t6','t2','t4','t8'];
+function typeLabel(o){ return LANG==='en' ? o.en : o.zh; }
+function buildTypeDrag(){
+  document.getElementById('typeSlots').innerHTML = typeZones.map(z=>
+    '<div class="dropzone" data-zone="'+z.slot+'"><div class="lbl">'+typeLabel(z)+'</div></div>'
+  ).join('');
+  document.getElementById('typeBank').innerHTML = typeBankOrder.map(id=>{
+    const it = typeItems.find(i=>i.id===id);
+    return '<span class="drag-chip" draggable="true" data-val="'+it.id+'">'+typeLabel(it)+'</span>';
+  }).join('');
+  const chips = document.querySelectorAll('#typeBank .drag-chip');
+  const dropZones = document.querySelectorAll('#typeSlots .dropzone');
+  chips.forEach(ch=>{
+    ch.addEventListener('dragstart', e=>{ e.dataTransfer.setData('text/plain', ch.dataset.val); });
+    ch.addEventListener('click', ()=>{
+      const empty = [...dropZones].find(z=>!z.querySelector('.drag-chip'));
+      if(empty){ empty.querySelector('.lbl')?.remove(); empty.appendChild(ch); }
+    });
+  });
+  dropZones.forEach(z=>{
+    z.addEventListener('dragover', e=>{ e.preventDefault(); z.classList.add('over'); });
+    z.addEventListener('dragleave', ()=>{ z.classList.remove('over'); });
+    z.addEventListener('drop', e=>{
+      e.preventDefault(); z.classList.remove('over');
+      const val = e.dataTransfer.getData('text/plain');
+      const chip = document.querySelector('#typeBank .drag-chip[data-val="'+val+'"]') || document.querySelector('#typeSlots .drag-chip[data-val="'+val+'"]');
+      if(!chip) return;
+      const existing = z.querySelector('.drag-chip');
+      if(existing){ document.getElementById('typeBank').appendChild(existing); }
+      z.querySelector('.lbl')?.remove();
+      z.appendChild(chip);
+    });
+  });
+}
+buildTypeDrag();
+function refreshTypeDrag(){
+  document.querySelectorAll('#typeBank .drag-chip, #typeSlots .drag-chip').forEach(ch=>{
+    const it = typeItems.find(i=>i.id===ch.dataset.val);
+    if(it) ch.textContent = typeLabel(it);
+  });
+  document.querySelectorAll('#typeSlots .dropzone .lbl').forEach(lb=>{
+    const z = typeZones.find(z=>z.slot===lb.parentElement.dataset.zone);
+    if(z) lb.textContent = typeLabel(z);
+  });
+}
+document.getElementById('btnCheckType').addEventListener('click', ()=>{
+  let ok = true;
+  document.querySelectorAll('#typeSlots .dropzone').forEach(z=>{
+    const chip = z.querySelector('.drag-chip');
+    const it = chip ? typeItems.find(i=>i.id===chip.dataset.val) : null;
+    if(it && it.zone === z.dataset.zone){ z.style.borderColor = '#3b6d11'; }
+    else { ok = false; z.style.borderColor = '#a32d2d'; }
+  });
+  const f = document.getElementById('typeFeedback');
+  const T = i18nTexts[LANG];
+  f.textContent = ok ? T.typeOk : T.typeBad;
+  f.className = 'feedback ' + (ok ? 'ok' : 'bad');
+});
+document.getElementById('btnResetType').addEventListener('click', ()=>{
+  document.querySelectorAll('#typeSlots .dropzone').forEach(z=>{
+    const chip = z.querySelector('.drag-chip');
+    if(chip){ document.getElementById('typeBank').appendChild(chip); }
+    if(!z.querySelector('.lbl')){
+      const zd = typeZones.find(zz=>zz.slot===z.dataset.zone);
+      const lbl = document.createElement('div'); lbl.className='lbl';
+      lbl.textContent = typeLabel(zd);
+      z.prepend(lbl);
+    }
+    z.style.borderColor='';
+  });
+  document.getElementById('typeFeedback').textContent = '';
+});
+
+// ==================== 實驗③：有效性檢驗模擬器（卡片選擇） ====================
+const valScenarios = [
+  {id:'completeness', zh:'姓名（完整性檢查）', en:'Name (completeness check)',
+   nameZh:'完整性檢查', nameEn:'Completeness check',
+   formatZh:'不可留空', formatEn:'Cannot be empty',
+   placeholderZh:'請輸入你的姓名…', placeholderEn:'Type your name…',
+   hintZh:'這一欄不可留空，請輸入你的姓名。', hintEn:'This field cannot be empty — please enter a name.',
+   test:v=>v.trim()!==''},
+  {id:'fixed', zh:'性別（固定值檢查）', en:'Sex (fixed value check)',
+   nameZh:'固定值檢查', nameEn:'Fixed value check',
+   formatZh:'M 或 F', formatEn:'M or F',
+   placeholderZh:'輸入 M 或 F', placeholderEn:'Type M or F',
+   hintZh:'性別只可以是「M」或「F」。', hintEn:'Sex must be "M" or "F".',
+   test:v=>/^[MF]$/i.test(v.trim())},
+  {id:'type', zh:'年齡（類型檢查）', en:'Age (type check)',
+   nameZh:'類型檢查', nameEn:'Type check',
+   formatZh:'必須是數字', formatEn:'Must be a number',
+   placeholderZh:'輸入年齡（必須是數字）', placeholderEn:'Type the age (must be a number)',
+   hintZh:'年齡必須是數字。', hintEn:'Age must be a number.',
+   test:v=>{const s=v.trim(); return s!=='' && !isNaN(s);}},
+  {id:'range', zh:'評分（範圍檢查）', en:'Rating (range check)',
+   nameZh:'範圍檢查', nameEn:'Range check',
+   formatZh:'1–5 之間', formatEn:'Between 1 and 5',
+   placeholderZh:'輸入評分（1–5）', placeholderEn:'Type a rating (1–5)',
+   hintZh:'評分必須是 1 至 5 之間的數字。', hintEn:'Rating must be a number between 1 and 5.',
+   test:v=>{const n=Number(v.trim()); return v.trim()!=='' && !isNaN(n) && n>=1 && n<=5;}},
+  {id:'length', zh:'電話號碼（長度檢查）', en:'Phone (length check)',
+   nameZh:'長度檢查', nameEn:'Length check',
+   formatZh:'8 位數字', formatEn:'8 digits',
+   placeholderZh:'輸入 8 位電話號碼', placeholderEn:'Type an 8-digit phone number',
+   hintZh:'電話號碼必須是 8 個位的數字。', hintEn:'The phone number must be 8 digits long.',
+   test:v=>/^\d{8}$/.test(v.trim())},
+  {id:'format', zh:'電郵（格式檢查）', en:'Email (format check)',
+   nameZh:'格式檢查', nameEn:'Format check',
+   formatZh:'含「@」', formatEn:'Contains @',
+   placeholderZh:'輸入含「@」的電郵', placeholderEn:'Type an email containing @',
+   hintZh:'電郵地址必須包含「@」符號。', hintEn:'The email must contain an @ sign.',
+   test:v=>v.trim().includes('@')},
+];
+let valActiveId = 'completeness';
+let valLast = null;
+function buildValCards(){
+  const g = document.getElementById('valCards');
+  g.innerHTML = valScenarios.map(s=>{
+    const name = LANG==='en' ? s.nameEn : s.nameZh;
+    const format = LANG==='en' ? s.formatEn : s.formatZh;
+    const isActive = (s.id === valActiveId);
+    const activeStyle = isActive
+      ? 'border:2px solid var(--blue);background:var(--blue-bg);color:var(--blue);box-shadow:0 0 0 3px rgba(24,95,165,.12);'
+      : 'border:1px solid var(--line);background:#fff;';
+    return '<div class="val-card" data-id="'+s.id+'" style="padding:14px 10px;text-align:center;cursor:pointer;border-radius:10px;'+activeStyle+'transition:all .15s">'
+      + '<div style="font-size:14px;font-weight:700">'+name+'</div>'
+      + '<div style="font-size:11.5px;margin-top:5px;color:var(--muted)">'+format+'</div>'
+      + '</div>';
+  }).join('');
+  g.querySelectorAll('.val-card').forEach(c=>{
+    c.addEventListener('click', ()=>{
+      valActiveId = c.dataset.id;
+      valLast = null;
+      document.getElementById('valInput').value = '';
+      document.getElementById('valOut').innerHTML = '';
+      buildValCards();
+    });
+  });
+  updateValInput();
+}
+function updateValInput(){
+  const s = valScenarios.find(x=>x.id===valActiveId);
+  document.getElementById('valInput').placeholder = LANG==='en' ? s.placeholderEn : s.placeholderZh;
+}
+function renderValOut(){
+  const out = document.getElementById('valOut');
+  if(!valLast){ out.innerHTML = ''; return; }
+  const T = i18nTexts[LANG];
+  const s = valLast.scn;
+  const name = LANG==='en' ? s.nameEn : s.nameZh;
+  const hint = LANG==='en' ? s.hintEn : s.hintZh;
+  if(valLast.ok){
+    out.innerHTML = '<span class="feedback ok">'+T.valPass+'「'+name+'」</span>';
+  } else {
+    out.innerHTML = '<span class="feedback bad">'+T.valFail+hint+'</span>';
+  }
+}
+document.getElementById('btnValCheck').addEventListener('click', ()=>{
+  const s = valScenarios.find(x=>x.id===valActiveId);
+  const v = document.getElementById('valInput').value;
+  valLast = { scn: s, ok: s.test(v) };
+  renderValOut();
+  if(valLast.ok){
+    const ci = valScenarios.indexOf(s);
+    if(ci >= 0 && ci < 6) markMastered(ci);
+  }
+});
+document.getElementById('valInput').addEventListener('input', ()=>{ valLast = null; renderValOut(); });
+function refreshValSim(){ buildValCards(); renderValOut(); }
+buildValCards();
+
+// ==================== 實驗⑨：索引二分搜尋動畫 ====================
+const binNames = ['Aaisha Proctor','Caspian Browne','Eilidh Rennie','Grace Manning','Kalvin Kearney','Liliana Sykes','Nolan Humphrey','Peter Chan','Roberta Barrera','Suzanne Rivera','Zack Ashton'];
+let binToken = 0;
+function buildBin(){
+  const box = document.getElementById('binRecords');
+  box.innerHTML = '';
+  binNames.forEach((nm,i)=>{
+    const d = document.createElement('div');
+    d.dataset.i = i;
+    d.textContent = nm;
+    d.style.cssText = 'flex:1 1 0;min-width:150px;text-align:center;padding:10px 4px;border:1px solid var(--line);border-radius:8px;background:#fff;font-size:12px;color:var(--muted)';
+    box.appendChild(d);
+  });
+  renderBinOut(null, null);
+}
+function clearBin(){
+  document.querySelectorAll('#binRecords div').forEach(d=>{
+    d.style.background='#fff'; d.style.borderColor='var(--line)'; d.style.color='var(--muted)';
+  });
+}
+function binHighlight(i, c){
+  const d = document.querySelector('#binRecords div[data-i="'+i+'"]');
+  if(d){ d.style.background = c.bg; d.style.borderColor = c.bd; d.style.color = c.fg; }
+}
+function renderBinOut(seqN, binN){
+  const T = i18nTexts[LANG];
+  const seqTxt = seqN === null ? T.binWait : T.binSeqNote + seqN + T.binTimes;
+  const binTxt = binN === null ? T.binWait : T.binBinNote + binN + T.binTimes;
+  document.getElementById('binOut').innerHTML =
+    '<div style="text-align:center"><div style="font-size:12.5px;color:var(--muted)">'+T.binSeqL+'</div><div style="font-size:15px;font-weight:700;color:var(--blue)">'+seqTxt+'</div></div>' +
+    '<div style="text-align:center"><div style="font-size:12.5px;color:var(--muted)">'+T.binBinL+'</div><div style="font-size:15px;font-weight:700;color:var(--teal)">'+binTxt+'</div></div>';
+}
+function binTarget(){ return +document.getElementById('binSlider').value - 1; }
+document.getElementById('btnBinSeq').addEventListener('click', ()=>{
+  const my = ++binToken;
+  const t = binTarget();
+  clearBin(); renderBinOut(null, null);
+  let k = 0;
+  function step(){
+    if(my !== binToken) return;
+    binHighlight(k, {bg:'var(--blue-bg)', bd:'var(--blue)', fg:'var(--blue)'});
+    renderBinOut(k+1, null);
+    if(k < t){ k++; setTimeout(step, 150); }
+  }
+  step();
+});
+document.getElementById('btnBinBin').addEventListener('click', ()=>{
+  const my = ++binToken;
+  const t = binTarget();
+  const target = binNames[t];
+  clearBin(); renderBinOut(null, null);
+  let lo = 0, hi = binNames.length-1, probes = [];
+  while(lo <= hi){
+    const mid = Math.floor((lo+hi)/2);
+    probes.push(mid);
+    if(binNames[mid] === target) break;
+    else if(binNames[mid] < target) lo = mid+1;
+    else hi = mid-1;
+  }
+  let i = 0;
+  function step(){
+    if(my !== binToken) return;
+    binHighlight(probes[i], {bg:'var(--amber-bg)', bd:'var(--amber)', fg:'#854f0b'});
+    renderBinOut(null, i+1);
+    i++;
+    if(i < probes.length){ setTimeout(step, 500); }
+    else { binHighlight(t, {bg:'var(--green-bg)', bd:'var(--green)', fg:'#3b6d11'}); }
+  }
+  step();
+});
+document.getElementById('btnBinReset').addEventListener('click', ()=>{ binToken++; clearBin(); renderBinOut(null, null); });
+document.getElementById('binSlider').addEventListener('input', ()=>{
+  binToken++;
+  document.getElementById('binVal').textContent = binNames[binTarget()];
+  clearBin(); renderBinOut(null, null);
+});
+function refreshBin(){
+  buildBin();
+  document.getElementById('binVal').textContent = binNames[binTarget()];
+}
+buildBin();
+
+// ==================== 實驗⑥：檢查數位計算機 ====================
+let cdLast = null;
+function charValue(ch){
+  if(ch === ' ' || ch === '_') return 36;
+  if(ch >= '0' && ch <= '9') return +ch;
+  return ch.charCodeAt(0) - 55;
+}
+function digitLabel(v){ return v === 10 ? 'A' : String(v); }
+function parseHKID(raw){
+  const s = raw.toUpperCase().replace(/[^A-Z0-9]/g, '');
+  const m = s.match(/^([A-Z]{1,2})(\d{6})([0-9A])?$/);
+  if(!m) return null;
+  return { letters: m[1], digits: m[2], check: m[3] || null };
+}
+function calcCheckDigit(){
+  const raw = document.getElementById('hkidInput').value;
+  const p = parseHKID(raw);
+  const out = document.getElementById('cdOut');
+  if(!p){
+    cdLast = null;
+    out.innerHTML = '<p class="feedback bad" style="text-align:center">'+i18nTexts[LANG].cdBadFormat+'</p>';
+    return;
+  }
+  const chars = p.letters.length === 1 ? [' ', p.letters[0]] : [p.letters[0], p.letters[1]];
+  const all = chars.concat(p.digits.split(''));
+  const weights = [9,8,7,6,5,4,3,2];
+  let sum = 0;
+  const rows = all.map((ch,i)=>{
+    const v = charValue(ch);
+    const prod = v * weights[i];
+    sum += prod;
+    return { ch: ch, v: v, w: weights[i], prod: prod };
+  });
+  cdLast = { rows: rows, sum: sum, rem: sum % 11, check: p.check, letters: p.letters, digits: p.digits };
+  renderCheckDigit();
+}
+function renderCheckDigit(){
+  const out = document.getElementById('cdOut');
+  if(!cdLast){ out.innerHTML = ''; return; }
+  const T = i18nTexts[LANG];
+  const d = cdLast;
+  const digit = (11 - d.rem) % 11;
+  let html = '<table><tr><th>'+T.cdChar+'</th>';
+  d.rows.forEach(r=>{ html += '<td>'+(r.ch===' ' ? T.cdSpace : r.ch)+'</td>'; });
+  html += '</tr><tr><th>'+T.cdVal+'</th>';
+  d.rows.forEach(r=>{ html += '<td>'+r.v+'</td>'; });
+  html += '</tr><tr><th>'+T.cdWt+'</th>';
+  d.rows.forEach(r=>{ html += '<td>'+r.w+'</td>'; });
+  html += '</tr><tr><th>'+T.cdProd+'</th>';
+  d.rows.forEach(r=>{ html += '<td>'+r.prod+'</td>'; });
+  html += '</tr></table>';
+  html += '<p style="font-size:14px"><b>'+T.cdSum+' = '+d.sum+'</b>　|　'+d.sum+' ÷ 11 → '+T.cdRem+' = '+d.rem+'</p>';
+  if(d.check === null){
+    html += '<p class="feedback ok">'+T.cdCalcTitle+' <b style="font-size:17px">'+d.letters+d.digits+'('+digitLabel(digit)+')</b></p>';
+  } else {
+    const cv = charValue(d.check);
+    const total = d.sum + cv;
+    const valid = total % 11 === 0;
+    html += '<p style="font-size:14px">'+T.cdDigit+' = '+d.check+'（'+cv+'）　→　'+d.sum+' + '+cv+' = '+total+'，'+total+' ÷ 11 餘 '+(total % 11)+'</p>';
+    html += '<p class="feedback '+(valid?'ok':'bad')+'">'+(valid ? T.cdVerifyOk : T.cdVerifyBad)+'</p>';
+    if(!valid){
+      html += '<p style="font-size:13px;color:var(--muted)">'+T.cdCalcTitle+' <b>'+d.letters+d.digits+'('+digitLabel(digit)+')</b></p>';
+    }
+  }
+  out.innerHTML = html;
+}
+function refreshCheckDigit(){ renderCheckDigit(); }
+document.getElementById('btnCheckDigit').addEventListener('click', calcCheckDigit);
+document.getElementById('hkidInput').addEventListener('keydown', e=>{ if(e.key === 'Enter') calcCheckDigit(); });
+
+// ==================== 實驗⑦：奇偶檢測（自由翻位元＋即時回饋） ====================
+let pBits = [0,0,0,0,0,0,0,0,0]; // 前 8 位資料 + 最後 1 位奇偶
+let pMode = 'even';
+function pOnes(){ return pBits.reduce((a,b)=>a+b, 0); }
+function pValid(){
+  const n = pOnes();
+  return pMode === 'even' ? (n % 2 === 0) : (n % 2 === 1);
+}
+function buildParity(){
+  const box = document.getElementById('parityBits');
+  box.innerHTML = '';
+  pBits.forEach((b,i)=>{
+    const el = document.createElement('button');
+    el.dataset.i = i;
+    el.textContent = b;
+    const isParity = (i === pBits.length - 1);
+    let css;
+    if(isParity && b === 1){ css = 'width:46px;height:46px;border-radius:10px;border:2px solid var(--amber);background:var(--amber-bg);font-size:20px;font-weight:700;cursor:pointer;color:var(--amber)'; }
+    else if(isParity && b === 0){ css = 'width:46px;height:46px;border-radius:10px;border:2px solid var(--amber);background:#fff;font-size:20px;font-weight:700;cursor:pointer;color:var(--muted)'; }
+    else if(b === 1){ css = 'width:46px;height:46px;border-radius:10px;border:2px solid var(--blue);background:var(--blue-bg);font-size:20px;font-weight:700;cursor:pointer;color:var(--blue)'; }
+    else { css = 'width:46px;height:46px;border-radius:10px;border:2px solid var(--line);background:#fff;font-size:20px;font-weight:700;cursor:pointer;color:var(--muted)'; }
+    el.style.cssText = css;
+    el.addEventListener('click', ()=>{
+      pBits[i] = pBits[i] ? 0 : 1;
+      buildParity(); renderParity();
+    });
+    box.appendChild(el);
+  });
+}
+function renderParity(){
+  const T = i18nTexts[LANG];
+  const n = pOnes();
+  const det = pMode === 'even' ? T.pEvenDet : T.pOddDet;
+  const valid = pValid();
+  const okWord = valid ? T.pLiveOk : T.pLiveBad;
+  const emoji = valid ? '✅' : '❌';
+  const color = valid ? 'var(--green)' : 'var(--red)';
+  document.getElementById('btnParityEven').className = 'btn' + (pMode==='even' ? '' : ' ghost');
+  document.getElementById('btnParityOdd').className = 'btn' + (pMode==='odd' ? '' : ' ghost');
+  document.getElementById('parityOut').innerHTML = '<p style="font-size:15px">'+T.pLiveTpl.replace('{n}', n).replace('{det}', '<b>'+det+'</b>').replace('{em}', emoji).replace('{ok}', '<b style="color:'+color+'">'+okWord+'</b>')+'</p>';
+}
+function setParityMode(m){ pMode = m; renderParity(); }
+function refreshParity(){ buildParity(); renderParity(); }
+document.getElementById('btnParityEven').addEventListener('click', ()=> setParityMode('even'));
+document.getElementById('btnParityOdd').addEventListener('click', ()=> setParityMode('odd'));
+document.getElementById('btnParityRandom').addEventListener('click', ()=>{
+  pBits = pBits.map(()=> Math.random() < 0.5 ? 0 : 1);
+  buildParity(); renderParity();
+});
+buildParity(); renderParity();
+
+// ==================== 分類判定（可重用工廠，多個獨立實例） ====================
+const classifiers = [];
+function createClassifier(opts){
+  const el = {
+    card: document.getElementById(opts.card),
+    btns: document.getElementById(opts.btns),
+    progress: document.getElementById(opts.progress),
+    feedback: document.getElementById(opts.feedback)
+  };
+  let idx = 0;
+  const lbl = o => LANG === 'en' ? o.en : o.zh;
+  function render(){
+    if(idx < opts.data.length){
+      el.card.textContent = lbl(opts.data[idx]);
+      el.progress.textContent = (idx+1) + ' / ' + opts.data.length;
+      el.feedback.textContent = ''; el.feedback.className = 'feedback';
+    } else {
+      el.card.textContent = i18nTexts[LANG][opts.doneKey];
+      el.progress.textContent = '';
+      el.feedback.textContent = ''; el.feedback.className = 'feedback';
+    }
+  }
+  function buildBtns(){
+    el.btns.innerHTML = opts.choices.map(c=>'<button class="btn ghost" data-choice="'+c.val+'">'+lbl(c)+'</button>').join('');
+    el.btns.querySelectorAll('.btn').forEach(b=>{
+      b.addEventListener('click', ()=>{
+        if(idx >= opts.data.length) return;
+        if(b.dataset.choice === opts.data[idx].ans){
+          el.feedback.textContent = i18nTexts[LANG][opts.okKey];
+          el.feedback.className = 'feedback ok';
+          idx++;
+          setTimeout(render, 850);
+        } else {
+          el.feedback.textContent = i18nTexts[LANG][opts.wrongKey];
+          el.feedback.className = 'feedback bad';
+        }
+      });
+    });
+  }
+  const refresh = () => { buildBtns(); render(); };
+  refresh();
+  classifiers.push(refresh);
+}
+
+// 實驗⑤：有效性檢驗配對
+createClassifier({
+  card:'classifyCard', btns:'classifyBtns', progress:'classifyProgress', feedback:'classifyFeedback',
+  okKey:'classifyOk', wrongKey:'classifyWrong', doneKey:'stepsDone',
+  choices:[
+    {val:'complete', zh:'完整性檢查', en:'Completeness'},
+    {val:'type', zh:'類型檢查', en:'Type'},
+    {val:'range', zh:'範圍檢查', en:'Range'},
+    {val:'length', zh:'長度檢查', en:'Length'},
+    {val:'format', zh:'格式檢查', en:'Format'},
+  ],
+  data:[
+    {zh:'「姓名」一欄不可留空', en:'The name field cannot be left empty', ans:'complete'},
+    {zh:'「年齡」一欄只接受數字', en:'The age field accepts numbers only', ans:'type'},
+    {zh:'「服務評分」只接受 1 至 5', en:'The service rating accepts only 1 to 5', ans:'range'},
+    {zh:'「電話號碼」必須是 8 個位', en:'The phone number must be 8 digits long', ans:'length'},
+    {zh:'「電郵地址」必須包含「@」符號', en:'The email address must contain an @ sign', ans:'format'},
+    {zh:'「身高」一欄不接受文字', en:'The height field does not accept text', ans:'type'},
+    {zh:'「密碼」長度必須為 8 至 12 個字符', en:'The password must be 8 to 12 characters long', ans:'length'},
+    {zh:'「出生日期」必須是 DD/MM/YYYY 的形式', en:'The date of birth must be in the form DD/MM/YYYY', ans:'format'},
+  ]
+});
+
+// 實驗②：輸入錯誤類型判定
+createClassifier({
+  card:'errCard', btns:'errBtns', progress:'errProgress', feedback:'errFeedback',
+  okKey:'classifyOk', wrongKey:'errWrong', doneKey:'stepsDone',
+  choices:[
+    {val:'source', zh:'數據來源錯誤', en:'Source error'},
+    {val:'transcription', zh:'轉錄錯誤', en:'Transcription error'},
+    {val:'transposition', zh:'換位錯誤', en:'Transposition error'},
+  ],
+  data:[
+    {zh:'用戶填寫了一個不存在的電郵地址', en:'The user enters an email address that does not exist', ans:'source'},
+    {zh:'OCR 把大楷「I」誤讀成數字「1」', en:'OCR mis-reads a capital I as the digit 1', ans:'transcription'},
+    {zh:'打字員把「冶」打成了「治」', en:'The typist types a wrong character', ans:'transcription'},
+    {zh:'記帳時把「$15」調轉成「$51」', en:'$15 is recorded as $51', ans:'transposition'},
+    {zh:'收銀機把蘋果價錢存進了西瓜欄', en:'The apple price is stored in the watermelon field', ans:'transposition'},
+    {zh:'用戶故意填寫虛假的姓名', en:'The user deliberately enters a fake name', ans:'source'},
+    {zh:'抄寫時把 8 看成了 3', en:'A 8 is copied down as a 3', ans:'transcription'},
+  ]
+});
+
+// 實驗⑧：有效性檢驗 vs 驗證
+createClassifier({
+  card:'vvCard', btns:'vvBtns', progress:'vvProgress', feedback:'vvFeedback',
+  okKey:'classifyOk', wrongKey:'vvWrong', doneKey:'stepsDone',
+  choices:[
+    {val:'validation', zh:'數據有效性檢驗（電腦）', en:'Validation (computer)'},
+    {val:'verification', zh:'數據驗證（人手）', en:'Verification (human)'},
+  ],
+  data:[
+    {zh:'系統拒絕空白了的「姓名」欄', en:'The system rejects an empty name field', ans:'validation'},
+    {zh:'年齡欄位只接受數字', en:'The age field accepts numbers only', ans:'validation'},
+    {zh:'設定新密碼時要輸入兩次', en:'A new password must be entered twice', ans:'verification'},
+    {zh:'兩位職員各自把同一份問卷輸入系統', en:'Two staff key in the same questionnaire separately', ans:'verification'},
+    {zh:'系統要求結束日期必須在開始日期之後', en:'The system requires the end date to be after the start date', ans:'validation'},
+    {zh:'把成績單列印出來，與試卷逐一核對', en:'The printed marksheet is checked against the exam papers', ans:'verification'},
+    {zh:'電郵地址必須包含「@」符號', en:'The email must contain an @ sign', ans:'validation'},
+  ]
+});
+
+// 實驗⑩：儲存設備的存取方式
+createClassifier({
+  card:'devCard', btns:'devBtns', progress:'devProgress', feedback:'devFeedback',
+  okKey:'classifyOk', wrongKey:'devWrong', doneKey:'stepsDone',
+  choices:[
+    {val:'seq', zh:'順序存取', en:'Sequential access'},
+    {val:'direct', zh:'直接存取', en:'Direct access'},
+  ],
+  data:[
+    {zh:'磁帶', en:'Magnetic tape', ans:'seq'},
+    {zh:'硬碟', en:'Hard disk', ans:'direct'},
+    {zh:'隨身碟', en:'USB flash drive', ans:'direct'},
+    {zh:'光碟（CD／DVD）', en:'Optical disc (CD/DVD)', ans:'direct'},
+    {zh:'磁碟', en:'Magnetic disk', ans:'direct'},
+  ]
+});
+
+// ==================== 實驗⑪：順序存取 vs 直接存取 ====================
+let accToken = 0;
+function buildAccess(){
+  const box = document.getElementById('accRecords');
+  box.innerHTML = '';
+  for(let i=1;i<=12;i++){
+    const d = document.createElement('div');
+    d.dataset.i = i;
+    d.textContent = '#' + i;
+    d.style.cssText = 'flex:1;min-width:52px;text-align:center;padding:10px 2px;border:1px solid var(--line);border-radius:8px;background:#fff;font-size:12.5px;color:var(--muted)';
+    box.appendChild(d);
+  }
+  renderAccessOut(null, null);
+}
+function clearAccess(){
+  document.querySelectorAll('#accRecords div').forEach(d=>{
+    d.style.background='#fff'; d.style.borderColor='var(--line)'; d.style.color='var(--muted)';
+  });
+}
+function renderAccessOut(seqReads, dirReads){
+  const T = i18nTexts[LANG];
+  const seqTxt = seqReads === null ? T.accWait : T.accSeqNote + seqReads + T.accTimes;
+  const dirTxt = dirReads === null ? T.accWait : T.accDirNote + dirReads + T.accTimes;
+  document.getElementById('accOut').innerHTML =
+    '<div style="text-align:center"><div style="font-size:12.5px;color:var(--muted)">'+T.accSeqLabel+'</div><div style="font-size:15px;font-weight:700;color:var(--blue)">'+seqTxt+'</div></div>' +
+    '<div style="text-align:center"><div style="font-size:12.5px;color:var(--muted)">'+T.accDirLabel+'</div><div style="font-size:15px;font-weight:700;color:var(--teal)">'+dirTxt+'</div></div>';
+}
+function highlight(i){
+  const d = document.querySelector('#accRecords div[data-i="'+i+'"]');
+  if(d){ d.style.background='var(--blue-bg)'; d.style.borderColor='var(--blue)'; d.style.color='var(--blue)'; }
+}
+function targetIndex(){ return +document.getElementById('accSlider').value; }
+document.getElementById('btnSeq').addEventListener('click', ()=>{
+  const my = ++accToken;
+  const n = targetIndex();
+  clearAccess(); renderAccessOut(null, null);
+  let k = 1;
+  function step(){
+    if(my !== accToken) return;
+    highlight(k);
+    renderAccessOut(k, null);
+    if(k < n){ k++; setTimeout(step, 130); }
+  }
+  step();
+});
+document.getElementById('btnDir').addEventListener('click', ()=>{
+  const my = ++accToken;
+  const n = targetIndex();
+  clearAccess(); renderAccessOut(null, null);
+  highlight(n);
+  renderAccessOut(null, 1);
+});
+document.getElementById('btnAccReset').addEventListener('click', ()=>{
+  accToken++;
+  clearAccess(); renderAccessOut(null, null);
+});
+document.getElementById('accSlider').addEventListener('input', ()=>{
+  accToken++;
+  document.getElementById('accVal').textContent = '#' + targetIndex();
+  clearAccess(); renderAccessOut(null, null);
+});
+function refreshAccess(){
+  buildAccess();
+  document.getElementById('accVal').textContent = '#' + targetIndex();
+}
+buildAccess();
+
+// ==================== 腦圖 ====================
+const mmData = {
+  root:{zh:'數據組織及\n數據控制', en:'Data Organisation\n& Data Control', zhDesc:'第二章：先分級「組織」數據，再用檢驗與驗證「控制」數據，最後看數據庫功能與存取方式。', enDesc:'Chapter 2: organise data in a hierarchy, control it with validation and verification, then look at database functions and file access.', children:['hier','ctrl','valid','db','access']},
+  hier:{zh:'數據分級', en:'Data Hierarchy', zhDesc:'欄位 → 記錄 → 檔案 → 數據庫（低→高）。口訣：字→句→篇→書。', enDesc:'Field → Record → File → Database (low → high). Think: word → sentence → paragraph → book.', children:[]},
+  ctrl:{zh:'數據控制', en:'Data Control', zhDesc:'GIGO：無用輸入，無用輸出。兩分支＝有效性檢驗（電腦查合理）＋ 驗證（人手查相同）。', enDesc:'GIGO: garbage in, garbage out. Two branches — validation (computer checks reasonableness) and verification (human checks sameness).', children:[]},
+  valid:{zh:'有效性檢驗八種', en:'Eight Validation Checks', zhDesc:'完整、固定值、類型、範圍、長度、格式、一致、唯一；再加檢查數位與奇偶檢測。', enDesc:'Completeness, fixed value, type, range, length, format, consistency, uniqueness; plus check digit and parity check.', children:[]},
+  db:{zh:'數據庫的功能', en:'Database Functions', zhDesc:'組織（選對數據類型）、儲存（SQL／GUI／匯入 CSV）、提取（SELECT＋索引加快搜尋）。', enDesc:'Organise (pick the right data type), store (SQL / GUI / CSV import), retrieve (SELECT, with an index to speed up searching).', children:[]},
+  access:{zh:'檔案存取方式', en:'File Access Methods', zhDesc:'順序存取（磁帶，逐格讀）vs 直接存取（硬碟、隨身碟、光碟，按位址直跳）。', enDesc:'Sequential access (magnetic tape, reads row by row) vs direct access (hard disk, USB, disc — jumps by address).', children:[]},
+};
+let mmActive = 'root';
+function mmLabel(n){ return LANG==='en' ? mmData[n].en : mmData[n].zh; }
+function mmDesc(n){ return LANG==='en' ? mmData[n].enDesc : mmData[n].zhDesc; }
+function buildMindmap(){
+  const W = 880, H = 420, cx = W/2, cy = H/2;
+  const nodes = ['hier','ctrl','valid','db','access'];
+  const pos = {};
+  nodes.forEach((n,i)=>{
+    const ang = -Math.PI/2 + i*(2*Math.PI/nodes.length);
+    pos[n] = {x: cx + Math.cos(ang)*230, y: cy + Math.sin(ang)*140};
+  });
+  const colors = {hier:'#185fa5', ctrl:'#0f6e56', valid:'#534ab7', db:'#854f0b', access:'#a32d2d'};
+  let svg = '<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:880px">';
+  nodes.forEach(n=>{
+    svg += '<line x1="'+cx+'" y1="'+cy+'" x2="'+pos[n].x+'" y2="'+pos[n].y+'" stroke="#c9cbd1" stroke-width="2"/>';
+  });
+  const rootLines = mmLabel('root').split('\n');
+  svg += '<g class="mm-node" data-node="root"><circle cx="'+cx+'" cy="'+cy+'" r="44" fill="#185fa5"/>';
+  rootLines.forEach((ln,i)=>{
+    svg += '<text x="'+cx+'" y="'+(cy - 6 + i*18)+'" fill="#fff" font-size="13" text-anchor="middle" font-weight="700">'+ln+'</text>';
+  });
+  svg += '</g>';
+  nodes.forEach(n=>{
+    const c = colors[n];
+    svg += '<g class="mm-node" data-node="'+n+'"><rect x="'+(pos[n].x-78)+'" y="'+(pos[n].y-24)+'" width="156" height="48" rx="10" fill="#fff" stroke="'+c+'" stroke-width="2"/><text x="'+pos[n].x+'" y="'+(pos[n].y+5)+'" fill="'+c+'" font-size="13.5" text-anchor="middle" font-weight="700">'+mmLabel(n)+'</text></g>';
+  });
+  svg += '</svg>';
+  document.getElementById('mindmapBox').innerHTML = svg;
+  document.querySelectorAll('.mm-node').forEach(g=>{
+    g.addEventListener('click', ()=>{
+      mmActive = g.dataset.node;
+      document.getElementById('mmDesc').textContent = mmDesc(mmActive);
+    });
+  });
+}
+function refreshMindmap(){
+  buildMindmap();
+  document.getElementById('mmDesc').textContent = mmDesc(mmActive);
+}
+buildMindmap();
+
+// ==================== 小測驗 ====================
+function refreshQuizFeedback(){
+  document.querySelectorAll('.quiz-q').forEach(q=>{
+    if(!q.dataset.done) return;
+    const fb = q.querySelector('.q-feedback');
+    const isCorrect = q.dataset.wasCorrect === '1';
+    if(LANG === 'en'){
+      fb.textContent = isCorrect ? fb.dataset.correctEn : fb.dataset.wrongEn;
+    } else {
+      fb.textContent = isCorrect ? fb.dataset.correct : fb.dataset.wrong;
+    }
+  });
+}
+document.querySelectorAll('.quiz-q').forEach(q=>{
+  const ans = q.dataset.ans;
+  const fb = q.querySelector('.q-feedback');
+  fb.style.display = 'none';
+  q.querySelectorAll('.opt').forEach(opt=>{
+    opt.addEventListener('click', ()=>{
+      if(q.dataset.done) return;
+      q.dataset.done = '1';
+      const val = opt.querySelector('input').value;
+      const isCorrect = val === ans;
+      q.dataset.wasCorrect = isCorrect ? '1' : '0';
+      q.querySelectorAll('.opt').forEach(o=>{
+        const v = o.querySelector('input').value;
+        if(v === ans){ o.classList.add('correct'); }
+        else if(o === opt){ o.classList.add('wrong'); }
+      });
+      fb.textContent = isCorrect
+        ? (LANG==='en' ? fb.dataset.correctEn : fb.dataset.correct)
+        : (LANG==='en' ? fb.dataset.wrongEn : fb.dataset.wrong);
+      fb.style.color = isCorrect ? '#3b6d11' : '#a32d2d';
+      fb.style.display = 'block';
+    });
+  });
+});
+document.getElementById('quizBtn').addEventListener('click', ()=>{
+  let score = 0, total = document.querySelectorAll('.quiz-q').length;
+  document.querySelectorAll('.quiz-q').forEach(q=>{
+    const ans = q.dataset.ans;
+    const sel = q.querySelector('input:checked');
+    if(sel && sel.value === ans) score++;
+  });
+  const r = document.getElementById('quizResult');
+  let msg;
+  if(LANG === 'en'){
+    if(score === total) msg = 'Full marks! You have mastered this chapter.';
+    else if(score >= total*0.7) msg = 'Well done! Review the wrong answers.';
+    else msg = 'Review the mind map and notes above, then try again.';
+    r.textContent = 'Score: ' + score + ' / ' + total + '  ' + msg;
+  } else {
+    if(score === total) msg = '滿分！你已完全掌握本章。';
+    else if(score >= total*0.7) msg = '不錯！再溫習一下錯題即可。';
+    else msg = '建議重溫上面的腦圖與筆記，再挑戰一次。';
+    r.textContent = '得分：' + score + ' / ' + total + '　' + msg;
+  }
+});
+
+// ==================== 回到頂部 ====================
+const toTop = document.getElementById('toTop');
+window.addEventListener('scroll', ()=>{ toTop.style.display = window.scrollY > 400 ? 'block' : 'none'; });
+toTop.addEventListener('click', ()=>{ window.scrollTo({top:0, behavior:'smooth'}); });
+</script>
+</body>
+</html>

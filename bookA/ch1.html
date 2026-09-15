@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第一章　資訊處理簡介 · 互動實驗室</title>
+<style>
+:root{
+  --bg:#f5f6f8; --card:#ffffff; --text:#2c2c2a; --muted:#5f5e5a; --line:#e3e4e8;
+  --blue:#185fa5; --blue-bg:#e6f1fb;
+  --teal:#0f6e56; --teal-bg:#e1f5ee;
+  --purple:#534ab7; --purple-bg:#eeedfe;
+  --amber:#854f0b; --amber-bg:#faeeda;
+  --red:#a32d2d; --green:#3b6d11; --green-bg:#eaf3de;
+  --radius:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.75;padding:0 0 60px}
+a{color:var(--blue);text-decoration:none}
+.wrap{max-width:960px;margin:0 auto;padding:0 20px}
+
+header{position:relative;background:linear-gradient(135deg,#185fa5,#0f6e56);color:#fff;padding:44px 20px 36px;text-align:center}
+header .badge{display:inline-block;background:rgba(255,255,255,.18);padding:4px 14px;border-radius:999px;font-size:13px;margin-bottom:14px}
+header h1{font-size:27px;font-weight:600;letter-spacing:1px}
+header .sub{font-size:14px;opacity:.92;margin-top:8px}
+.lang-switch{position:absolute;top:14px;right:18px;display:flex;gap:4px}
+.lang-btn{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.45);padding:5px 13px;border-radius:999px;font-size:12.5px;cursor:pointer;font-weight:600;transition:all .15s}
+.lang-btn:hover{background:rgba(255,255,255,.28)}
+.lang-btn.active{background:#fff;color:#185fa5}
+
+nav{position:sticky;top:0;background:rgba(255,255,255,.96);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);z-index:20}
+nav .wrap{display:flex;flex-wrap:wrap;gap:5px;padding:9px 20px;justify-content:center}
+nav a{font-size:13px;color:var(--muted);padding:6px 13px;border-radius:8px;white-space:nowrap}
+nav a:hover{background:var(--blue-bg);color:var(--blue)}
+
+section{margin-top:26px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:24px;margin-bottom:16px}
+h2{font-size:20px;font-weight:600;display:flex;align-items:center;gap:10px;margin-bottom:4px}
+h2 .num{background:var(--blue);color:#fff;width:32px;height:32px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;font-size:15px;flex:none}
+h2 .en{font-size:14px;color:var(--muted);font-weight:400}
+body[data-lang="en"] h2 .en{display:none}
+h3{font-size:16px;font-weight:600;margin:22px 0 8px;padding-left:10px;border-left:4px solid var(--teal)}
+h4{font-size:14.5px;font-weight:600;margin:16px 0 6px;color:#3c3489}
+p,li{font-size:14.5px}
+.lead{font-size:14px;color:var(--muted);margin-bottom:6px}
+
+.obj{background:var(--green-bg);border:1px solid #cfe3b8;border-left:4px solid var(--green);border-radius:10px;padding:14px 16px;margin:10px 0 16px}
+.obj .t{font-weight:700;color:#2f5c0b;font-size:13.5px;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.obj ul{margin:0;padding-left:20px}
+.obj li{font-size:13.5px;color:#3a3a36;margin:3px 0}
+
+.kw{display:inline-block;background:var(--amber-bg);border:1px solid #e7cd9a;color:#6b4008;font-size:12.5px;font-weight:600;padding:1px 9px;border-radius:6px;margin:2px 3px 2px 0}
+.mnemonic{background:var(--purple-bg);border:1px dashed var(--purple);border-radius:10px;padding:10px 14px;margin:10px 0;font-size:14px}
+.mnemonic b{color:#3c3489}
+.examtip{background:#fff8f0;border:1px solid #f0d9b8;border-left:4px solid var(--amber);border-radius:10px;padding:11px 14px;margin:10px 0;font-size:13.5px;color:#5c470a}
+.examtip b{color:#854f0b}
+
+.tip{border-bottom:1px dashed var(--blue);cursor:help;position:relative;font-weight:500}
+.tip::after{content:attr(data-tip);position:absolute;left:50%;bottom:130%;transform:translateX(-50%);background:#2c2c2a;color:#fff;font-size:12px;padding:6px 10px;border-radius:8px;white-space:normal;opacity:0;pointer-events:none;transition:opacity .15s;z-index:30;font-weight:400;max-width:260px;width:max-content}
+.tip:hover::after{opacity:1}
+
+details{border:1px solid var(--line);border-radius:10px;margin-bottom:10px;overflow:hidden;background:#fff}
+details summary{cursor:pointer;padding:12px 16px;font-weight:600;font-size:14.5px;list-style:none;display:flex;align-items:center;gap:8px;background:#fafbfc}
+details summary::-webkit-details-marker{display:none}
+details summary::before{content:"＋ 深入講解";color:var(--blue);font-weight:700}
+details[open] summary::before{content:"－ 收合"}
+body[data-lang="en"] details summary::before{content:"＋ Learn More"}
+body[data-lang="en"] details[open] summary::before{content:"－ Collapse"}
+details .body{padding:14px 16px;border-top:1px solid var(--line)}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin:10px 0}
+.chip{background:#fafbfc;border:1px solid var(--line);border-radius:10px;padding:14px}
+.chip b{display:block;font-size:14px;margin-bottom:4px}
+.chip span{font-size:13px;color:var(--muted)}
+.blue{border-left:4px solid var(--blue)} .teal{border-left:4px solid var(--teal)}
+.purple{border-left:4px solid var(--purple)} .amber{border-left:4px solid var(--amber)} .green{border-left:4px solid var(--green)}
+
+.hw-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin:10px 0}
+.hw-card{border:1px solid var(--line);border-radius:10px;padding:12px 10px;text-align:center;cursor:pointer;background:#fff;transition:all .15s;user-select:none}
+.hw-card:hover{border-color:var(--blue);box-shadow:0 2px 10px rgba(24,95,165,.12);transform:translateY(-2px)}
+.hw-card svg{width:46px;height:46px;margin:0 auto 8px;display:block}
+.hw-card .n{font-size:13px;font-weight:600}
+.hw-card .c{font-size:11.5px;color:var(--muted);margin-top:2px}
+.hw-detail{display:none;margin-top:10px;padding:14px;border:1px solid var(--blue);border-radius:10px;background:var(--blue-bg)}
+.hw-detail.show{display:block}
+.hw-detail b{color:var(--blue)}
+.hw-detail .use{font-size:13.5px;color:var(--text)}
+.hw-detail .cat{display:inline-block;font-size:11.5px;background:#fff;border:1px solid var(--blue);color:var(--blue);border-radius:5px;padding:1px 7px;margin-left:6px}
+
+.exp{border:1px solid var(--line);border-radius:12px;padding:16px;margin:14px 0;background:#fafbfc}
+.exp .lbl{display:inline-block;font-size:12px;font-weight:700;color:#fff;background:var(--teal);padding:2px 10px;border-radius:6px;margin-bottom:8px}
+.exp h4{margin:0 0 4px;color:var(--text)}
+.exp .note{font-size:13px;color:var(--muted);margin-bottom:10px}
+.slider-row{display:flex;align-items:center;gap:12px;margin:10px 0;flex-wrap:wrap}
+.slider-row label{font-size:13px;font-weight:600}
+input[type=range]{flex:1;min-width:160px;accent-color:var(--blue)}
+.slider-row .val{font-size:13px;font-weight:700;color:var(--blue);min-width:46px;text-align:center;background:var(--blue-bg);border-radius:6px;padding:2px 8px}
+canvas{border:1px solid var(--line);border-radius:8px;background:#fff;display:block;max-width:100%}
+.btn{background:var(--blue);color:#fff;border:none;padding:10px 20px;border-radius:10px;font-size:14px;cursor:pointer;font-weight:600}
+.btn:hover{opacity:.9}
+.btn.ghost{background:var(--blue-bg);color:var(--blue)}
+.feedback{margin-top:8px;font-weight:700;font-size:14.5px}
+.feedback.ok{color:var(--green)} .feedback.bad{color:var(--red)}
+
+.demo{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.demo-card{border:2px dashed var(--line);border-radius:12px;padding:14px;text-align:center;background:#fff}
+.demo-card h5{font-size:14px;margin-bottom:2px}
+.demo-card p{font-size:12.5px;color:var(--muted)}
+.stage{height:150px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.zoomable{transition:transform .35s ease;cursor:zoom-in}
+.zoomable.zoomed{transform:scale(2.3)}
+#bmp{image-rendering:pixelated;width:120px;height:120px}
+#vec{width:120px;height:120px}
+
+.sig{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.sig canvas{width:100%;height:150px}
+.sig h5{text-align:center;font-size:13px;margin-bottom:4px;color:var(--text)}
+
+.steps{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0;padding:12px;border:1px dashed var(--line);border-radius:10px;background:#fff}
+.step-btn{background:var(--purple-bg);border:1px solid var(--purple);color:#3c3489;padding:10px 18px;border-radius:10px;cursor:pointer;font-weight:600;font-size:14px}
+.step-btn:hover{background:#dedafc}
+.step-btn.used{opacity:.3;pointer-events:none}
+.dropzone{flex:1;min-width:120px;border:2px dashed var(--line);border-radius:10px;padding:12px;text-align:center;min-height:70px;background:#fff;display:flex;flex-direction:column;gap:6px;align-items:center;justify-content:center;transition:all .15s}
+.dropzone.over{border-color:var(--purple);background:var(--purple-bg)}
+.dropzone .lbl{font-size:12px;color:var(--muted);font-weight:600}
+.drag-chip{background:var(--purple-bg);border:1px solid var(--purple);color:#3c3489;padding:9px 14px;border-radius:9px;font-weight:600;font-size:13.5px;cursor:grab;display:inline-block;margin:4px}
+.drag-chip:active{cursor:grabbing}
+
+.classify-card{font-size:18px;font-weight:600;text-align:center;padding:20px;border:1px solid var(--line);border-radius:10px;margin:10px 0;background:#fff}
+.classify-btns{display:flex;gap:12px;justify-content:center}
+
+.mindmap{border:1px solid var(--line);border-radius:12px;padding:16px;margin:12px 0;background:#fcfcfd;overflow-x:auto}
+.mindmap svg{display:block;margin:0 auto}
+.mm-node{cursor:pointer}
+.mm-node rect{transition:all .15s}
+.mm-node:hover rect{filter:brightness(.96);stroke-width:2.5}
+.mm-desc{font-size:13px;color:var(--muted);text-align:center;margin-top:8px;min-height:20px}
+
+.quiz-q{border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:12px}
+.quiz-q .q{font-weight:600;font-size:14.5px;margin-bottom:10px}
+.opt{display:block;margin:6px 0;padding:8px 12px;border:1px solid var(--line);border-radius:8px;cursor:pointer;font-size:14px;transition:background .15s}
+.opt:hover{background:var(--blue-bg)}
+.opt input{margin-right:8px}
+.opt.correct{background:var(--green-bg);border-color:var(--green)}
+.opt.wrong{background:#fcebeb;border-color:var(--red)}
+#quizResult{margin-top:14px;font-size:16px;font-weight:600}
+
+table{width:100%;border-collapse:collapse;margin:10px 0;font-size:13.5px}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left}
+th{background:#fafbfc}
+
+#toTop{position:fixed;right:22px;bottom:22px;width:46px;height:46px;border-radius:50%;background:var(--blue);color:#fff;border:none;font-size:20px;cursor:pointer;display:none;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+#toTop:hover{opacity:.9}
+
+footer{text-align:center;color:var(--muted);font-size:12.5px;margin-top:36px}
+
+@media(max-width:700px){
+  .demo,.sig{grid-template-columns:1fr}
+  header h1{font-size:22px}
+  .lang-switch{position:static;justify-content:center;margin-bottom:12px}
+}
+</style>
+</head>
+<body data-lang="zh">
+
+<header>
+  <div class="lang-switch">
+    <button class="lang-btn active" data-lang="zh">中文</button>
+    <button class="lang-btn" data-lang="en">EN</button>
+  </div>
+  <div class="badge" data-en="HKDSE · Information &amp; Communication Technology">香港中學文憑試（HKDSE）· 資訊及通訊科技科</div>
+  <h1 data-en="Chapter 1: Introduction to Information Processing">第一章　資訊處理簡介</h1>
+  <div class="sub" data-en="Interactive Lab">互動實驗室</div>
+</header>
+
+<nav>
+  <div class="wrap">
+    <a href="#s11" data-en="1.1 Information System">1.1 資訊系統</a>
+    <a href="#s12" data-en="1.2 Data &amp; Information">1.2 數據和資訊</a>
+    <a href="#s13" data-en="1.3 Information Processing">1.3 資訊處理</a>
+    <a href="#s14" data-en="1.4 Information Age">1.4 資訊時代</a>
+    <a href="#exam" data-en="Exam Focus">考點總覽</a>
+    <a href="#mindmap" data-en="Mind Map">腦圖總結</a>
+    <a href="#quiz" data-en="Quiz">小測驗</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <!-- ================= 1.1 資訊系統 ================= -->
+  <section id="s11">
+    <div class="card">
+      <h2><span class="num">1.1</span><span data-en="Information System">資訊系統</span> <span class="en">Information System</span></h2>
+
+      <div class="obj">
+        <div class="t" data-en="🎯 Learning Objectives">🎯 學習重點</div>
+        <ul>
+          <li data-en="State the <b>five components</b> of an information system, with one example each.">說出資訊系統的<b>五大組成部件</b>，並能各舉一個例子。</li>
+          <li data-en="Explain its purpose: <b>automate processes, reduce human error, improve efficiency</b>.">解釋資訊系統的目的：<b>自動化流程、減少人為錯誤、提升效率</b>。</li>
+          <li data-en="Distinguish <b>hardware</b> from <b>software</b>, and classify software into system vs application software.">分辨<b>硬件</b>與<b>軟件</b>，並把軟件再分為系統軟件與應用軟件。</li>
+          <li data-en="Know the <b>five job roles</b> in system development and their duties.">認識系統開發涉及的<b>五類職業角色</b>及其職責。</li>
+        </ul>
+      </div>
+
+      <p class="lead" data-en="An information system is not just a computer — it combines <b>people, procedures, hardware, software and data</b> to collect, store, process and output information. Its core value is to <b>standardise and automate</b> work flows.">「資訊系統」不是單指一部電腦，而是把<b>人員、程序、硬件、軟件與數據</b>整合起來，用以收集、儲存、處理和輸出資訊的整套系統。它的核心價值是把工作流程<b>標準化與自動化</b>。</p>
+
+      <h3 data-en="Five Components (must know)">五個部件（必背）</h3>
+      <div class="grid">
+        <div class="chip blue"><b data-en="Function">系統功能 Function</b><span data-en="automate, reduce errors, improve efficiency">自動化、減錯、提效</span></div>
+        <div class="chip teal"><b data-en="Data">數據 Data</b><span data-en="stored on devices, input/output by programs">儲存於儲存設備，供程式輸入輸出</span></div>
+        <div class="chip purple"><b data-en="Technology">科技 Technology</b><span data-en="hardware + software">硬件＋軟件</span></div>
+        <div class="chip amber"><b data-en="Process">流程 Process</b><span data-en="decides the order of processing data">決定處理數據的次序</span></div>
+        <div class="chip green"><b data-en="Personnel">從業員 Personnel</b><span data-en="people who use and manage the system">使用與管理系統的人</span></div>
+      </div>
+
+      <div class="mnemonic" data-en="🧠 <b>Memory aid</b>: remember the five as <b>F·D·T·P·P</b> — Function, Data, Technology, Process, Personnel.">🧠 <b>記憶口訣</b>：五部件記「<b>功·數·科·流·從</b>」——功(功能)、數(數據)、科(科技)、流(流程)、從(從業員)。</div>
+
+      <div class="examtip" data-en="✍️ <b>Answer tip</b>: for definition questions, write &quot;definition + purpose&quot; then one example (library / hospital / school office). Use keywords: <span class="kw">Speed</span><span class="kw">Accuracy</span><span class="kw">Consistency</span><span class="kw">Audit trail</span>">✍️ <b>作答建議</b>：定義題先寫「定義＋目的」，再補一個例子（如圖書館／醫院／校務處）。答「資訊系統的功能」時可套用關鍵詞：<span class="kw">速度 Speed</span><span class="kw">準確 Accuracy</span><span class="kw">一致性 Consistency</span><span class="kw">可追溯 Audit trail</span></div>
+
+      <details>
+        <summary data-en="Apply the five components to a library loan system">把五個部件套進「圖書館借還書系統」</summary>
+        <div class="body">
+          <table>
+            <tr><th data-en="Component">部件</th><th data-en="Library example">圖書館例子</th></tr>
+            <tr><td data-en="Hardware">硬件</td><td data-en="loan computer, barcode scanner, printer, server">借還書電腦、條碼掃描器、列印機、伺服器</td></tr>
+            <tr><td data-en="Software">軟件</td><td data-en="library program, OS, database system">圖書館管理程式、操作系統、數據庫系統</td></tr>
+            <tr><td data-en="Data">數據</td><td data-en="book records (title/author/class), student ID, loan transactions">書目（書名／作者／分類）、讀者學號、借閱交易記錄</td></tr>
+            <tr><td data-en="People">人員</td><td data-en="librarians (manage), students (borrow), IT support (maintain)">圖書館職員（管理）、學生（借書）、IT 支援（維護）</td></tr>
+            <tr><td data-en="Procedures">程序</td><td data-en="scan ID → scan book barcode → update status → show due date">掃讀者證 → 掃書本條碼 → 更新借閱狀態 → 顯示到期日</td></tr>
+          </table>
+          <p style="font-size:13px;color:var(--muted)" data-en="This kind of question often tests matching: assign each description to the correct component.">這類題目常考「配對」：把某項描述分到正確的部件。</p>
+        </div>
+      </details>
+
+      <h3 data-en="Hardware vs Software (click a card for its use)">硬件 vs 軟件（點卡片查看用途）</h3>
+      <div class="hw-grid" id="hwGrid"></div>
+      <div class="hw-detail" id="hwDetail"></div>
+
+      <h3 data-en="Related Job Roles">相關職業角色</h3>
+      <div class="grid">
+        <div class="chip blue"><b data-en="Systems Analyst">系統分析師</b><span data-en="understand needs, analyse workflow, design solution, assess cost">了解用戶需要、分析流程、設計方案、評估成本與可行性</span></div>
+        <div class="chip teal"><b data-en="Programmer">程式員</b><span data-en="write, test and maintain programs, fix errors">按設計編寫、測試、維護程式，修正錯誤</span></div>
+        <div class="chip purple"><b data-en="Network Administrator">網絡管理員</b><span data-en="manage network &amp; servers, ensure connectivity &amp; security">管理網絡與伺服器，確保連線、帳戶權限與安全</span></div>
+        <div class="chip amber"><b data-en="Technical Support">技術支援</b><span data-en="troubleshoot, install software, handle hardware">協助排除故障、安裝軟件、處理硬件問題</span></div>
+        <div class="chip green"><b data-en="Database Administrator (DBA)">數據庫管理員</b><span data-en="design/maintain database, backup, set access rights">設計維護數據庫、備份還原、設定存取權限</span></div>
+      </div>
+      <div class="examtip" data-en="✍️ Answer format: write &quot;<b>role + main task + (optional) example</b>&quot;.">✍️ 作答格式：寫「<b>職位＋主要任務＋（可選）例子</b>」。</div>
+    </div>
+  </section>
+
+  <!-- ================= 1.2 數據和資訊 ================= -->
+  <section id="s12">
+    <div class="card">
+      <h2><span class="num">1.2</span><span data-en="Data and Information">數據和資訊</span> <span class="en">Data and Information</span></h2>
+
+      <div class="obj">
+        <div class="t" data-en="🎯 Learning Objectives">🎯 學習重點</div>
+        <ul>
+          <li data-en="Distinguish <b>data</b> (unprocessed) from <b>information</b> (processed + context).">分辨<b>數據</b>（未經處理）與<b>資訊</b>（經處理＋有前文後理）。</li>
+          <li data-en="Describe the <b>IPO cycle</b> (Input → Process → Output) that turns data into information.">說明數據轉化成資訊的 <b>IPO 周期</b>（輸入→處理→輸出）。</li>
+          <li data-en="Know the four <b>multimedia data types</b>: text, image, audio, video.">認識四類<b>多媒體數據</b>：文本、圖像、音頻、視頻。</li>
+        </ul>
+      </div>
+
+      <h3 data-en="Data vs Information">數據 vs 資訊</h3>
+      <p class="lead" data-en="<span class='tip' data-tip='raw facts with no meaning by themselves'>Data</span> is the &quot;raw material&quot;; after <span class='tip' data-tip='calculation, comparison, adding context'>processing</span> it becomes <span class='tip' data-tip='meaningful and useful for decisions'>information</span> (the &quot;finished product&quot;)."><span class="tip" data-tip="未經整理、本身無意義的事實">數據 Data</span>是「原料」，經<span class="tip" data-tip="計算、比較、加上背景">處理</span>後變成<span class="tip" data-tip="符合用戶需要、有助決策">資訊 Information</span>（「成品」）。</p>
+      <div class="grid">
+        <div class="chip blue"><b data-en="Data">數據 Data</b><span data-en="e.g. 37, 40.3, 8,500 steps — no context, meaningless">例：37、40.3、8,500 步——無前文後理，不知意思</span></div>
+        <div class="chip teal"><b data-en="Information">資訊 Information</b><span data-en="e.g. patient 37°C = fever — has context, helps decide">例：病人體溫 37℃ 即發燒——加了背景，能作判斷</span></div>
+      </div>
+      <div class="examtip" data-en="✍️ Quick test: ask yourself &quot;can I act on this directly?&quot; Yes → information; No → data.">✍️ 判別竅門：問自己「這串數字／句子<b>能否直接幫助我下決定</b>？」能 → 資訊；不能 → 數據。</div>
+
+      <div class="exp">
+        <span class="lbl" data-en="Experiment ④">實驗④</span>
+        <h4 data-en="Judge: Data or Information?">判斷：數據 還是 資訊？</h4>
+        <p class="note" data-en="Read the situation, then click a button (instant feedback, auto-next).">看情境，點擊下方按鈕作答（即時回饋，自動換下一題）。</p>
+        <div class="classify-card" id="classifyCard">37</div>
+        <div class="classify-btns">
+          <button class="btn" data-choice="data" data-en="Data">數據</button>
+          <button class="btn ghost" data-choice="info" data-en="Information">資訊</button>
+        </div>
+        <p class="feedback" id="classifyFeedback" style="text-align:center"></p>
+        <div style="text-align:center;margin-top:6px"><span id="classifyProgress" style="font-size:13px;color:var(--muted)"></span></div>
+      </div>
+
+      <h3 data-en="Input–Process–Output Cycle (IPO)">輸入—處理—輸出周期（IPO Cycle）</h3>
+      <p class="lead" data-en="Turning data into information goes through three steps: <b>Input → Process → Output</b>. Example: pressing &quot;2+3=&quot; on a calculator — keys = input, calculation = process, showing &quot;5&quot; = output.">把數據轉化為資訊，須經三步：<b>輸入 Input → 處理 Process → 輸出 Output</b>。例如按計數機「2+3=」：按鍵是輸入、計算為處理、顯示「5」是輸出。</p>
+      <div class="mnemonic" data-en="🔁 Why a &quot;<b>cycle</b>&quot;? Because output often becomes the next input. e.g. system outputs &quot;low stock&quot; → staff input restock quantity.">🔁 為甚麼叫「<b>周期</b>」？因為輸出往往成為下一輪輸入。例如系統輸出「庫存不足」→ 職員再輸入補貨數量，如此反覆。</div>
+
+      <div class="exp">
+        <span class="lbl" data-en="Experiment ③">實驗③</span>
+        <h4 data-en="Drag each step to the right box">把三個步驟拖到正確位置</h4>
+        <p class="note" data-en="Drag the actions into the Input / Process / Output boxes, then click &quot;Check&quot;.">把下方的動作拖進「輸入／處理／輸出」欄位，再按「檢查答案」。</p>
+        <div class="slots" id="ipoSlots"></div>
+        <div class="steps" id="ipoBank"></div>
+        <div style="display:flex;gap:10px;align-items:center">
+          <button class="btn" id="btnCheckIPO" data-en="Check Answer">檢查答案</button>
+          <button class="btn ghost" id="btnResetIPO" data-en="Reset">重設</button>
+          <span class="feedback" id="ipoFeedback"></span>
+        </div>
+      </div>
+
+      <h3 data-en="Multimedia Data Types">多媒體數據類型</h3>
+
+      <h4 data-en="① Text">① 文本 Text</h4>
+      <p class="lead" data-en="Characters (digits, letters, symbols) are represented by a <span class='tip' data-tip='rules mapping characters to binary codes'>character encoding system</span>. Computers store &quot;codes&quot;, not &quot;shapes&quot;.">字符（數字、字母、符號）由<span class="tip" data-tip="字元對應二進位碼的規則">字符編碼系統</span>表示。電腦不是存「字形」，而是存「編碼」。</p>
+      <div class="grid">
+        <div class="chip blue"><b>ASCII</b><span data-en="mainly English letters, digits and symbols">主要支援英文字符、數字及符號</span></div>
+        <div class="chip teal"><b>Big5</b><span data-en="common Traditional Chinese encoding">繁體中文常用編碼</span></div>
+        <div class="chip purple"><b data-en="Unicode / UTF-8">Unicode / UTF-8</b><span data-en="modern universal standard for all languages">現代通用標準，涵蓋全球文字</span></div>
+      </div>
+      <div class="examtip" data-en="⚠️ <b>Cause of garbled text</b>: a file stored in one encoding is opened with another (e.g. Big5 file opened as UTF-8) → garbled.">⚠️ <b>亂碼的原因</b>：檔案以某編碼儲存，卻以另一編碼解讀（例如 Big5 檔案用 UTF-8 開啟）→ 出現亂碼。</div>
+      <div class="grid">
+        <div class="chip amber"><b data-en="Plain text">純文字 Plain text</b><span data-en="stores characters only (.txt), small file, most compatible">只存字符本身（.txt），檔案小、兼容性最高</span></div>
+        <div class="chip green"><b data-en="Formatted text">格式化文本 Formatted text</b><span data-en="also stores font, size, colour, paragraph (Word), larger file">另存字型、大小、顏色、段落（Word），檔案較大</span></div>
+      </div>
+
+      <h4 data-en="② Image">② 圖像 Image</h4>
+      <p class="lead" data-en="<b>Bitmap</b> stores <span class='tip' data-tip='individual pixels'>pixels</span>, good for photos; <b>vector</b> stores <span class='tip' data-tip='geometric shapes described by maths'>maths formulas</span>, good for logos and illustrations."><b>點陣圖</b>以<span class="tip" data-tip="一格格的像素">像素</span>儲存，適合相片；<b>向量圖</b>以<span class="tip" data-tip="數學公式描述的幾何圖形">數學公式</span>儲存，適合標誌、插圖。</p>
+
+      <div class="exp">
+        <span class="lbl" data-en="Experiment ①">實驗①</span>
+        <h4 data-en="Bitmap vs Vector (side-by-side)">點陣圖 vs 向量圖（兩組對比）</h4>
+        <p class="note" data-en="Drag the resolution slider to watch the bitmap go from &quot;blocky&quot; to &quot;fine&quot;; the vector stays smooth. Click either image to zoom 2.3×.">拉動「解像度」滑桿看點陣圖由「大格」變「細密」；向量圖恆常平滑。點擊圖像可放大 2.3 倍觀察。</p>
+        <div class="slider-row">
+          <label data-en="Bitmap resolution:">點陣圖解像度：</label>
+          <input type="range" id="resSlider" min="4" max="64" value="16">
+          <span class="val" id="resVal">16×16</span>
+        </div>
+        <div class="demo">
+          <div class="demo-card" id="bmpCard">
+            <h5 data-en="Bitmap (cartoon character)">點陣圖 Bitmap（插圖角色）</h5>
+            <div class="stage"><canvas id="bmp" class="zoomable" width="16" height="16"></canvas></div>
+            <p data-en="low resolution → &quot;blocky&quot;">解像度低時「起格」</p>
+          </div>
+          <div class="demo-card" id="vecCard">
+            <h5 data-en="Vector (same character)">向量圖 Vector（同一角色）</h5>
+            <div class="stage">
+              <svg id="vec" class="zoomable" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="50" cy="50" r="46" fill="#facc15"/>
+                <circle cx="35" cy="40" r="6" fill="#000"/>
+                <circle cx="65" cy="40" r="6" fill="#000"/>
+                <path d="M 33 62 Q 50 76 67 62" fill="none" stroke="#000" stroke-width="6" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <p data-en="smooth at any scale">任何倍率都平滑</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="examtip" data-en="✍️ <b>Choosing an image format</b>: need to enlarge clearly (logo/icon) → <b>vector</b>; need realistic detail (photo) → <b>bitmap</b>. Answer format: &quot;I choose X because... (two reasons)...&quot;.">✍️ <b>選擇圖像格式的判斷</b>：要放大仍清晰（Logo／圖示）→ <b>向量圖</b>；要呈現真實光影細節（相片）→ <b>點陣圖</b>。答題格式：「我選 X，因為…（兩點原因）…」。</div>
+      <details>
+        <summary data-en="Full bitmap vs vector comparison">點陣圖 vs 向量圖完整對比</summary>
+        <div class="body">
+          <table>
+            <tr><th data-en="Feature">特性</th><th data-en="Bitmap">點陣圖</th><th data-en="Vector">向量圖</th></tr>
+            <tr><td data-en="Storage">儲存方式</td><td data-en="pixels (colour per dot)">像素（記錄每點顏色）</td><td data-en="maths formulas / shapes">數學公式／幾何圖形</td></tr>
+            <tr><td data-en="When enlarged">放大效果</td><td data-en="blocky / mosaic">起格／馬賽克</td><td data-en="stays smooth">依然平滑</td></tr>
+            <tr><td data-en="Detail">細節表現</td><td data-en="strong (rich light &amp; colour)">強（光影、顏色豐富）</td><td data-en="weak (complex detail is lost)">弱（複雜細節會失真）</td></tr>
+            <tr><td data-en="Common formats">常見格式</td><td data-en="JPG, PNG, GIF">JPG、PNG、GIF</td><td data-en="SVG, AI, EPS">SVG、AI、EPS</td></tr>
+            <tr><td data-en="Best for">適用</td><td data-en="photos, real scenes">相片、真實場景</td><td data-en="logos, illustrations, icons, diagrams">商標、插圖、圖示、流程圖</td></tr>
+          </table>
+        </div>
+      </details>
+
+      <h4 data-en="③ Audio">③ 音頻 Audio</h4>
+      <p class="lead" data-en="Sound is naturally a continuous <span class='tip' data-tip='a continuous wave'>analog signal</span>; when recorded into a computer it is &quot;sampled&quot; into a discrete <span class='tip' data-tip='discrete 0s and 1s'>digital signal</span>.">聲音本是連續的<span class="tip" data-tip="連續不斷的波形">模擬信號</span>；錄入電腦時被「取樣」成離散的<span class="tip" data-tip="離散的 0 與 1">數碼信號</span>。</p>
+
+      <div class="exp">
+        <span class="lbl" data-en="Experiment ②">實驗②</span>
+        <h4 data-en="Analog vs Digital Signal">模擬信號 vs 數碼信號</h4>
+        <p class="note" data-en="Drag the sampling rate to watch the digital &quot;staircase&quot; approach the analog &quot;smooth wave&quot; — more samples = closer to analog.">拉動「取樣率」，看數碼「階梯波」如何逼近模擬「平滑波」——取樣點越多，數碼越接近模擬。</p>
+        <div class="slider-row">
+          <label data-en="Sampling rate:">取樣率：</label>
+          <input type="range" id="sampleSlider" min="4" max="64" value="12">
+          <span class="val" id="sampleVal">12 點／周期</span>
+        </div>
+        <div class="sig">
+          <div><h5 data-en="Analog (continuous)">模擬信號（連續）</h5><canvas id="analogCv" width="300" height="150"></canvas></div>
+          <div><h5 data-en="Digital (sampled)">數碼信號（取樣）</h5><canvas id="digitalCv" width="300" height="150"></canvas></div>
+        </div>
+      </div>
+
+      <h4 data-en="④ Video">④ 視頻 Video</h4>
+      <p class="lead" data-en="Video combines <span class='tip' data-tip='a rapid sequence of still images'>images</span> with <span class='tip' data-tip='sound'>audio</span>; files are large, so they are usually stored compressed.">視頻是<span class="tip" data-tip="一連串快速顯示的靜態圖像">圖像</span>與<span class="tip" data-tip="聲音">音頻</span>的組合，檔案大，故通常以壓縮檔儲存。</p>
+
+      <div class="exp">
+        <span class="lbl" data-en="Experiment ⑤">實驗⑤</span>
+        <h4 data-en="Video = many images played fast">影片 = 很多張圖片快速播放</h4>
+        <p class="note" data-en="Drag the fps slider: at low fps the ball &quot;jumps&quot;, at high fps it moves smoothly — this is how video works.">拉動「每秒圖片數（fps）」：低 fps 時球「跳格」，高 fps 時動作流暢——這就是影片的原理。</p>
+        <div class="slider-row">
+          <label data-en="Frames per second:">每秒圖片數：</label>
+          <input type="range" id="fpsSlider" min="2" max="30" value="10">
+          <span class="val" id="fpsVal">10 fps</span>
+        </div>
+        <canvas id="videoCv" width="480" height="150" style="width:100%"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 1.3 資訊處理 ================= -->
+  <section id="s13">
+    <div class="card">
+      <h2><span class="num">1.3</span><span data-en="Information Processing">資訊處理</span> <span class="en">Information Processing</span></h2>
+
+      <div class="obj">
+        <div class="t" data-en="🎯 Learning Objectives">🎯 學習重點</div>
+        <ul>
+          <li data-en="List the <b>seven stages</b> of information processing in order.">依序說出資訊處理的<b>七個階段</b>。</li>
+          <li data-en="Give an example for each stage, and judge which stage a situation belongs to.">能就每個階段各舉一個例子，並判斷某情境屬哪個階段。</li>
+        </ul>
+      </div>
+
+      <p class="lead" data-en="Information processing converts <span class='tip' data-tip='raw, unprocessed data'>raw data</span> into meaningful information, in seven stages:">資訊處理＝把<span class="tip" data-tip="未經處理的數據">原始數據</span>轉換為有意義的資訊，共七個階段：</p>
+      <div class="steps" style="border:none;background:transparent">
+        <span class="step-btn" style="pointer-events:none" data-en="① Collection">① 收集</span>
+        <span class="step-btn" style="pointer-events:none" data-en="② Organisation">② 組織</span>
+        <span class="step-btn" style="pointer-events:none" data-en="③ Storage">③ 儲存</span>
+        <span class="step-btn" style="pointer-events:none" data-en="④ Processing">④ 處理</span>
+        <span class="step-btn" style="pointer-events:none" data-en="⑤ Analysis">⑤ 分析</span>
+        <span class="step-btn" style="pointer-events:none" data-en="⑥ Transmission">⑥ 傳輸</span>
+        <span class="step-btn" style="pointer-events:none" data-en="⑦ Presentation">⑦ 演示</span>
+      </div>
+      <div class="mnemonic" data-en="🧠 <b>Memory aid</b>: remember the seven as <b>C·O·S·P·A·T·P</b>.">🧠 <b>記憶口訣</b>：七階段記「<b>收·整·儲·理·析·傳·示</b>」。</div>
+
+      <details>
+        <summary data-en="Definitions and examples of the seven stages">七階段定義與例子</summary>
+        <div class="body">
+          <table>
+            <tr><th data-en="Stage">階段</th><th data-en="Definition">定義</th><th data-en="Example">例子</th></tr>
+            <tr><td data-en="① Collection">① 收集</td><td data-en="obtain data by observation, experiment, interview, survey">以觀察、實驗、訪談、調查取得數據</td><td data-en="questionnaire, measuring temperature">問卷調查、量度氣溫</td></tr>
+            <tr><td data-en="② Organisation">② 組織</td><td data-en="arrange data, validation, type conversion">排列數據、有效性檢驗、類型轉換</td><td data-en="sort questionnaires by class">把問卷按班別分類</td></tr>
+            <tr><td data-en="③ Storage">③ 儲存</td><td data-en="physical copy or digital storage">實體副本或數碼儲存</td><td data-en="save to hard disk / USB / cloud">存入硬碟／USB／雲端</td></tr>
+            <tr><td data-en="④ Processing">④ 處理</td><td data-en="edit, modify, update data">編輯、修改、更新數據</td><td data-en="retouch photo, remove noise, add subtitles">修圖、去雜音、加字幕</td></tr>
+            <tr><td data-en="⑤ Analysis">⑤ 分析</td><td data-en="extract meaningful information from processed data">從已處理數據提取有意義資訊</td><td data-en="calculate average, find trends">計算平均分、找趨勢</td></tr>
+            <tr><td data-en="⑥ Transmission">⑥ 傳輸</td><td data-en="send via sender + medium + receiver, needs same protocol">經傳輸者＋媒體＋接收者傳送，需相同協定</td><td data-en="sending over the internet (HTTP)">上網傳送（HTTP）</td></tr>
+            <tr><td data-en="⑦ Presentation">⑦ 演示</td><td data-en="output results through media">透過媒體輸出結果</td><td data-en="line chart, slides">折線圖、幻燈片</td></tr>
+          </table>
+          <div class="examtip" data-en="✍️ <b>Stage-judging trick</b>: ask &quot;what is happening to the data now?&quot; brought in = collection; arranged = organisation; changed = processing; conclusion seen = analysis; sent out = transmission; shown = presentation.">✍️ <b>階段判斷竅門</b>：問自己「數據現在發生甚麼事？」帶入＝收集；排好＝組織；改動＝處理；看出結論＝分析；送出＝傳輸；展示＝演示。</div>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- ================= 1.4 資訊時代 ================= -->
+  <section id="s14">
+    <div class="card">
+      <h2><span class="num">1.4</span><span data-en="Information Age">資訊時代</span> <span class="en">Information Age</span></h2>
+
+      <div class="obj">
+        <div class="t" data-en="🎯 Learning Objectives">🎯 學習重點</div>
+        <ul>
+          <li data-en="State the <b>definition and features</b> of the information age, with everyday examples.">說明資訊時代的<b>定義與特徵</b>，並舉生活例子。</li>
+          <li data-en="Explain the <b>three reasons</b> for the spread of ICT.">解釋資訊科技普及的<b>三個原因</b>。</li>
+          <li data-en="Name the <b>four trends</b> (networks, IoT, Big Data, AI).">說出<b>四個發展方向</b>（通訊網絡、IoT、大數據、AI）。</li>
+          <li data-en="Explain the <b>four areas of information literacy</b> and act on scenarios.">解釋<b>資訊素養四範疇</b>，並能就情境提出做法。</li>
+        </ul>
+      </div>
+
+      <h3 data-en="Definition and Features">定義與特徵</h3>
+      <p class="lead" data-en="The information age is when &quot;information becomes the most important resource&quot;: people can get, store, process and share information cheaply and quickly. The internet, search engines and mobile devices remove limits of time and place.">資訊時代指「資訊成為最重要資源」的年代：人們能以低成本、快速取得、儲存、處理與分享資訊。互聯網、搜尋引擎與流動裝置普及，令資訊不再受時間地點限制。</p>
+      <div class="grid">
+        <div class="chip blue"><b data-en="Communication">溝通</b><span data-en="instant messaging, social media">即時通訊、社交媒體跨地域交流</span></div>
+        <div class="chip teal"><b data-en="Consumption">消費</b><span data-en="online shopping, e-payment, online banking">網上購物、電子支付、網上銀行</span></div>
+        <div class="chip purple"><b data-en="Learning">學習</b><span data-en="online platforms, video lessons">線上學習平台、影片教學</span></div>
+        <div class="chip amber"><b data-en="Work">工作</b><span data-en="cloud collaboration, remote work">雲端協作、遠端工作</span></div>
+      </div>
+
+      <h3 data-en="Reasons for the spread of ICT">資訊科技普及的原因</h3>
+      <div class="grid">
+        <div class="chip blue"><b data-en="Falling prices">價格下降</b><span data-en="computers &amp; phones are cheaper">電腦與智能手機更便宜，人人負擔得起</span></div>
+        <div class="chip teal"><b data-en="Better performance">性能提升</b><span data-en="speed, storage and battery improve">處理速度、儲存容量、續航上升</span></div>
+        <div class="chip purple"><b data-en="More applications">應用程式多樣化</b><span data-en="many apps for different needs">大量 App 切合不同需要</span></div>
+      </div>
+      <div class="examtip" data-en="✍️ Answer pattern: &quot;<b>Because... therefore...</b>&quot; (e.g. &quot;Because hardware is faster, we can stream HD video&quot;).">✍️ 作答句式：「<b>由於…因此…</b>」（例如「由於硬件性能提升，因此可支援高清串流」）。</div>
+
+      <h3 data-en="Development Trends">發展方向</h3>
+      <div class="grid">
+        <div class="chip blue"><b data-en="Communication networks">通訊網絡</b><span data-en="fibre, 4G/5G boost speed, support streaming">光纖、4G/5G 提升速度，支援串流</span></div>
+        <div class="chip teal"><b data-en="Internet of Things (IoT)">物聯網 IoT</b><span data-en="devices connect &amp; exchange data (smartwatch)">設備連網自動交換數據（智能手錶）</span></div>
+        <div class="chip purple"><b data-en="Big Data">大數據 Big Data</b><span data-en="find patterns from huge data, predict trends">從大量資料找規律，預測趨勢</span></div>
+        <div class="chip amber"><b data-en="Artificial Intelligence (AI)">人工智能 AI</b><span data-en="algorithms analyse data (face recognition)">演算法分析數據（人臉辨識）</span></div>
+      </div>
+
+      <h3 data-en="Information Literacy (four areas)">資訊素養（四範疇）</h3>
+      <p class="lead" data-en="Information literacy = the ability to find, evaluate, use and share information <b>responsibly</b>.">資訊素養＝有效且<b>負責任</b>地尋找、評估、使用與分享資訊的能力。</p>
+      <div class="grid">
+        <div class="chip blue"><b data-en="① Intellectual Property">① 知識產權</b><span data-en="works are protected; cite your sources">作品受版權保護，引用要註明出處</span></div>
+        <div class="chip teal"><b data-en="② Privacy &amp; Security">② 私隱與保安</b><span data-en="don't share others' data without consent; use strong passwords">未經許可不可公開他人資料；用強密碼</span></div>
+        <div class="chip purple"><b data-en="③ Credibility">③ 可信度</b><span data-en="check source, date, evidence, bias">查來源、更新日期、證據、有否偏見</span></div>
+        <div class="chip amber"><b data-en="④ Retrieval &amp; Organisation">④ 擷取與整理</b><span data-en="search effectively, organise into your own view">有效搜尋，整理成自己的觀點</span></div>
+      </div>
+      <div class="examtip" data-en="✍️ <b>Scenario answer framework</b>: ① point out the risk → ② give the correct action → ③ add prevention. e.g. using an online image for homework → check permission and cite the source.">✍️ <b>情境題作答框架</b>：① 指出風險／問題 → ② 提出正確做法 → ③ 補預防措施。例：用網上圖片做功課 → 先確認授權，並註明來源。</div>
+    </div>
+  </section>
+
+  <!-- ================= 考點總覽 ================= -->
+  <section id="exam">
+    <div class="card">
+      <h2><span class="num">★</span><span data-en="Exam Focus Summary">考評局考點總覽</span></h2>
+      <p class="lead" data-en="This chapter maps to &quot;Module A: Information Processing&quot; topic a (3 hours) and the first half of topic b. Five must-know lists:">本章對應必修部分「單元 A 資訊處理」課題 a（3 小時）及課題 b 前半。五張必背清單：</p>
+      <div class="grid">
+        <div class="chip blue"><b data-en="① 5 components">① 資訊系統五部件</b><span data-en="function, data, technology, process, personnel">功能、數據、科技、流程、從業員</span></div>
+        <div class="chip teal"><b data-en="② 7 stages">② 資訊處理七階段</b><span data-en="collect→organise→store→process→analyse→transmit→present">收→整→儲→理→析→傳→示</span></div>
+        <div class="chip purple"><b data-en="③ 4 multimedia types">③ 多媒體四類型</b><span data-en="text, image, audio, video">文本、圖像、音頻、視頻</span></div>
+        <div class="chip amber"><b data-en="④ 4 literacy areas">④ 資訊素養四範疇</b><span data-en="IP, privacy, credibility, retrieval">知識產權、私隱、可信度、擷取整理</span></div>
+        <div class="chip green"><b data-en="⑤ 5 job roles">⑤ 從業員五角色</b><span data-en="analyst, programmer, network admin, support, DBA">分析師、程式員、網管、技術支援、DBA</span></div>
+      </div>
+      <details>
+        <summary data-en="Common question types">常考題型</summary>
+        <div class="body">
+          <ul>
+            <li data-en="<b>Matching</b>: component vs example (e.g. &quot;word processor&quot; is software, not personnel)"><b>配對／辨析</b>：部件 vs 例子（如「文書處理器」是軟件不是從業員）</li>
+            <li data-en="<b>Data vs information</b>: judge whether numbers have context"><b>數據 vs 資訊</b>：判斷一串數字有否前文後理</li>
+            <li data-en="<b>Bitmap vs vector</b>: blocky when enlarged, file size, best use"><b>點陣 vs 向量</b>：放大是否起格、檔案大小、適用場景</li>
+            <li data-en="<b>Seven stages</b>: which stage does a situation belong to"><b>七階段判斷</b>：某情境屬哪個階段</li>
+            <li data-en="<b>Information literacy scenarios</b>: which area is violated"><b>資訊素養情境</b>：某行為違反哪個範疇</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- ================= 腦圖總結 ================= -->
+  <section id="mindmap">
+    <div class="card">
+      <h2><span class="num">🧠</span><span data-en="Chapter Mind Map">全章腦圖總結</span></h2>
+      <p class="lead" data-en="The chapter is regrouped into five concept views. Click a node to see its core content.">把全章重組為五個概念視角，點擊節點查看其核心內容。</p>
+      <div class="mindmap" id="mindmapBox"></div>
+      <div class="mm-desc" id="mmDesc" data-en="Click any node above to see its definition, example or answer tip.">點擊上圖任一節點，查看該概念的定義、例子或作答重點。</div>
+    </div>
+  </section>
+
+  <!-- ================= 小測驗 ================= -->
+  <section id="quiz">
+    <div class="card">
+      <h2><span class="num">✎</span><span data-en="Quiz (instant feedback per question)">小測驗（逐題即時回饋）</span></h2>
+
+      <div class="quiz-q" data-ans="A">
+        <div class="q" data-en="1. What are the five components of an information system?">1. 資訊系統有哪五個部件？</div>
+        <label class="opt"><input type="radio" name="q1" value="A"><span data-en="A. Function, Data, Technology, Process, Personnel">A. 功能、數據、科技、流程、從業員</span></label>
+        <label class="opt"><input type="radio" name="q1" value="B"><span data-en="B. Input, Process, Output, Storage, Transmission">B. 輸入、處理、輸出、儲存、傳輸</span></label>
+        <label class="opt"><input type="radio" name="q1" value="C"><span data-en="C. Hardware, Software, Program, Data, User">C. 硬件、軟件、程式、數據、用戶</span></label>
+        <div class="q-feedback" data-correct="✓ 正確！資訊系統由功能、數據、科技、流程、從業員五部分組成。" data-wrong="✗ 答錯了。正確答案是 A：功能、數據、科技、流程、從業員——這五個部件缺一不可（B 是資訊處理階段，不是部件）。" data-correct-en="✓ Correct! An information system has five parts: function, data, technology, process, personnel." data-wrong-en="✗ Wrong. The answer is A: Function, Data, Technology, Process, Personnel — all five are needed (B lists processing stages, not components)."></div>
+      </div>
+
+      <div class="quiz-q" data-ans="B">
+        <div class="q" data-en="2. &quot;Patient 37°C&quot; vs &quot;37°C = fever&quot; — which is information?">2. 「病人體溫 37℃」和「37℃ 即發燒」，哪個是資訊？</div>
+        <label class="opt"><input type="radio" name="q2" value="A"><span data-en="A. &quot;Patient 37°C&quot;">A. 「病人體溫 37℃」</span></label>
+        <label class="opt"><input type="radio" name="q2" value="B"><span data-en="B. &quot;37°C = fever&quot;">B. 「37℃ 即發燒」</span></label>
+        <label class="opt"><input type="radio" name="q2" value="C"><span data-en="C. Both are data">C. 兩者都是數據</span></label>
+        <div class="q-feedback" data-correct="✓ 正確！「37℃ 即發燒」配合了前文後理，所以是資訊。" data-wrong="✗ 答錯了。正確答案是 B：「37℃ 即發燒」加了前文後理（發燒的判斷），所以是資訊；「病人體溫 37℃」本身只是數據。" data-correct-en="✓ Correct! &quot;37°C = fever&quot; has context, so it is information." data-wrong-en="✗ Wrong. The answer is B: &quot;37°C = fever&quot; adds context (the judgement), so it is information; &quot;patient 37°C&quot; alone is just data."></div>
+      </div>
+
+      <div class="quiz-q" data-ans="A">
+        <div class="q" data-en="3. Which image type becomes &quot;blocky&quot; when enlarged?">3. 放大後會「起格」的是哪類圖像？</div>
+        <label class="opt"><input type="radio" name="q3" value="A"><span data-en="A. Bitmap">A. 點陣圖</span></label>
+        <label class="opt"><input type="radio" name="q3" value="B"><span data-en="B. Vector">B. 向量圖</span></label>
+        <label class="opt"><input type="radio" name="q3" value="C"><span data-en="C. Both become blocky">C. 兩者都會起格</span></label>
+        <div class="q-feedback" data-correct="✓ 正確！點陣圖以像素儲存，放大即見格仔。" data-wrong="✗ 答錯了。正確答案是 A：點陣圖以像素儲存，放大會「起格」；向量圖用數學公式，放大仍平滑。" data-correct-en="✓ Correct! A bitmap stores pixels, so enlarging reveals the blocks." data-wrong-en="✗ Wrong. The answer is A: a bitmap stores pixels and becomes blocky when enlarged; a vector uses maths and stays smooth."></div>
+      </div>
+
+      <div class="quiz-q" data-ans="B">
+        <div class="q" data-en="4. &quot;Retouching, removing noise, adding subtitles&quot; is which stage?">4. 「修圖、去雜音、加字幕」屬於資訊處理哪個階段？</div>
+        <label class="opt"><input type="radio" name="q4" value="A"><span data-en="A. Collection">A. 收集</span></label>
+        <label class="opt"><input type="radio" name="q4" value="B"><span data-en="B. Processing">B. 處理</span></label>
+        <label class="opt"><input type="radio" name="q4" value="C"><span data-en="C. Analysis">C. 分析</span></label>
+        <div class="q-feedback" data-correct="✓ 正確！編輯、修改、更新數據屬「處理」階段。" data-wrong="✗ 答錯了。正確答案是 B：修圖、去雜音、加字幕都是「處理」階段（編輯／修改數據）。收集是取得數據，分析是提取結論。" data-correct-en="✓ Correct! Editing, modifying and updating data belong to the &quot;processing&quot; stage." data-wrong-en="✗ Wrong. The answer is B: retouching, noise-removal and subtitling are all &quot;processing&quot; (editing data). Collection obtains data; analysis draws conclusions."></div>
+      </div>
+
+      <div class="quiz-q" data-ans="B">
+        <div class="q" data-en="5. Sharing a friend's photo without consent violates which area?">5. 未經朋友同意就轉發其相片上群組，違反哪個範疇？</div>
+        <label class="opt"><input type="radio" name="q5" value="A"><span data-en="A. Intellectual Property">A. 知識產權</span></label>
+        <label class="opt"><input type="radio" name="q5" value="B"><span data-en="B. Privacy &amp; Security">B. 私隱與保安</span></label>
+        <label class="opt"><input type="radio" name="q5" value="C"><span data-en="C. Credibility">C. 可信度</span></label>
+        <div class="q-feedback" data-correct="✓ 正確！未經同意分享他人資料，涉及私隱。" data-wrong="✗ 答錯了。正確答案是 B：未經同意分享他人相片，涉及「私隱與保安」範疇；知識產權針對版權作品，可信度針對資訊真偽。" data-correct-en="✓ Correct! Sharing someone's data without consent involves privacy." data-wrong-en="✗ Wrong. The answer is B: sharing a photo without consent is a &quot;Privacy &amp; Security&quot; issue. IP is about copyrighted works; credibility is about truthfulness."></div>
+      </div>
+
+      <div class="quiz-q" data-ans="B">
+        <div class="q" data-en="6. For a company logo, which image type should you prefer?">6. 設計公司商標（Logo），應優先選用哪類圖像？</div>
+        <label class="opt"><input type="radio" name="q6" value="A"><span data-en="A. Bitmap">A. 點陣圖</span></label>
+        <label class="opt"><input type="radio" name="q6" value="B"><span data-en="B. Vector">B. 向量圖</span></label>
+        <label class="opt"><input type="radio" name="q6" value="C"><span data-en="C. Both, no difference">C. 兩者皆可，無分別</span></label>
+        <div class="q-feedback" data-correct="✓ 正確！商標常要放大縮小，向量圖才不會失真。" data-wrong="✗ 答錯了。正確答案是 B：商標常要縮放，向量圖才不會失真；點陣圖放大會起格。" data-correct-en="✓ Correct! Logos are resized often, and vectors stay crisp." data-wrong-en="✗ Wrong. The answer is B: logos need resizing, so vectors stay sharp; bitmaps become blocky."></div>
+      </div>
+
+      <button class="btn" id="quizBtn" data-en="Submit Score">結算得分</button>
+      <div id="quizResult"></div>
+    </div>
+  </section>
+
+</main>
+
+<button id="toTop" aria-label="回到頂部">↑</button>
+
+<footer data-en="Chapter 1: Introduction to Information Processing · Interactive Lab | aligned with HKDSE ICT curriculum">第一章　資訊處理簡介 · 互動實驗室　|　緊扣 HKDSE ICT 課程指引</footer>
+
+<script>
+// ==================== i18n 語言切換 ====================
+let LANG = 'zh';
+const i18nTexts = {
+  zh: { stepsDone: '🎉 完成！你已完成全部判斷', classifyOk: '✓ 正確！', classifyWrong: '✗ 再想想——它有「前文後理」嗎？', ipoOk: '✓ 正確！輸入 → 處理 → 輸出', ipoBad: '✗ 有步驟位置不對，把卡片拖回上方再試！' },
+  en: { stepsDone: '🎉 Done! You have finished all the judgements', classifyOk: '✓ Correct!', classifyWrong: '✗ Think again — does it have "context"?', ipoOk: '✓ Correct! Input → Process → Output', ipoBad: '✗ Some steps are misplaced. Drag them back and try again!' }
+};
+function initI18n(){
+  document.querySelectorAll('[data-en]').forEach(el=>{
+    if(!el.dataset.zh) el.dataset.zh = el.innerHTML;
+  });
+}
+function setLang(lang){
+  LANG = lang;
+  document.body.dataset.lang = lang;
+  document.documentElement.lang = lang === 'en' ? 'en' : 'zh-Hant';
+  document.querySelectorAll('.lang-btn').forEach(b=> b.classList.toggle('active', b.dataset.lang === lang));
+  // 遍歷所有帶 data-en 的元素，切換 innerHTML
+  document.querySelectorAll('[data-en]').forEach(el=>{
+    if(lang === 'en'){ el.innerHTML = el.dataset.en; }
+    else { el.innerHTML = el.dataset.zh || el.innerHTML; }
+  });
+  // 更新動態內容
+  refreshClassify();
+  refreshIPO();
+  refreshMindmap();
+  refreshQuizFeedback();
+  drawVideoFrame();
+  drawAnalog(); drawDigital(+document.getElementById('sampleSlider').value);
+}
+document.querySelectorAll('.lang-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{ setLang(btn.dataset.lang); });
+});
+initI18n();
+
+// ==================== 硬件/軟件卡片 ====================
+const hardware = [
+  {n:'CPU', c:'處理', cEn:'Processing', cat:'處理', catEn:'Processing', use:'中央處理器，電腦的「大腦」，負責執行所有運算與指令。', useEn:'Central Processing Unit — the "brain" of the computer, running all calculations and instructions.', icon:'cpu'},
+  {n:'主機板', nEn:'Motherboard', c:'連接', cEn:'Connection', cat:'連接', catEn:'Connection', use:'把所有部件（CPU、記憶體、顯示卡）連起來的底板。', useEn:'The board that connects all parts (CPU, memory, graphics card).', icon:'board'},
+  {n:'路由器', nEn:'Router', c:'網絡', cEn:'Network', cat:'網絡', catEn:'Network', use:'把家中多個裝置接上互聯網，並分配網絡位置。', useEn:'Connects home devices to the internet and assigns network addresses.', icon:'router'},
+  {n:'鍵盤', nEn:'Keyboard', c:'輸入', cEn:'Input', cat:'輸入', catEn:'Input', use:'把文字與指令輸入電腦。', useEn:'Enters text and commands into the computer.', icon:'kbd'},
+  {n:'麥克風', nEn:'Microphone', c:'輸入', cEn:'Input', cat:'輸入', catEn:'Input', use:'把聲音（模擬信號）輸入電腦，轉成數碼信號。', useEn:'Inputs sound (analog signal) and converts it to digital.', icon:'mic'},
+  {n:'條碼掃描器', nEn:'Barcode scanner', c:'輸入', cEn:'Input', cat:'輸入', catEn:'Input', use:'掃描條碼，快速讀入產品／書本資料。', useEn:'Scans barcodes to quickly read product/book data.', icon:'scan'},
+  {n:'顯示器', nEn:'Monitor', c:'輸出', cEn:'Output', cat:'輸出', catEn:'Output', use:'把處理結果以畫面顯示給用戶看。', useEn:'Shows processing results on screen.', icon:'monitor'},
+  {n:'揚聲器', nEn:'Speaker', c:'輸出', cEn:'Output', cat:'輸出', catEn:'Output', use:'把數碼信號還原成聲音輸出。', useEn:'Converts digital signals back into sound.', icon:'spk'},
+  {n:'硬碟', nEn:'Hard disk', c:'儲存', cEn:'Storage', cat:'儲存', catEn:'Storage', use:'數碼儲存設備，長期保存數據。', useEn:'Digital storage device that keeps data long-term.', icon:'disk'},
+];
+const software = [
+  {n:'操作系統', nEn:'Operating system', c:'系統軟件', cEn:'System software', cat:'系統軟件', catEn:'System software', use:'管理硬件資源、提供操作介面，例如 Windows、macOS。', useEn:'Manages hardware and provides the interface, e.g. Windows, macOS.', icon:'os'},
+  {n:'實用程式', nEn:'Utility program', c:'系統軟件', cEn:'System software', cat:'系統軟件', catEn:'System software', use:'維護系統，例如防毒軟件、磁碟工具。', useEn:'Maintains the system, e.g. antivirus, disk tools.', icon:'util'},
+  {n:'應用程式', nEn:'Application program', c:'應用軟件', cEn:'Application software', cat:'應用軟件', catEn:'Application software', use:'為特定任務而設，例如文書處理器、瀏覽器。', useEn:'Built for specific tasks, e.g. word processor, browser.', icon:'app'},
+  {n:'DBMS', c:'應用軟件', cEn:'Application software', cat:'應用軟件', catEn:'Application software', use:'數據庫管理系統，管理數據的儲存與存取。', useEn:'Database Management System — manages data storage and access.', icon:'db'},
+];
+const ICONS = {
+  cpu:'<rect x="4" y="4" width="38" height="38" rx="3" fill="none" stroke="#185fa5" stroke-width="2"/><rect x="12" y="12" width="22" height="22" fill="#e6f1fb"/><text x="23" y="29" font-size="12" text-anchor="middle" fill="#185fa5" font-weight="700">CPU</text>',
+  board:'<rect x="4" y="4" width="38" height="38" rx="3" fill="#e6f1fb" stroke="#185fa5" stroke-width="2"/><rect x="9" y="9" width="8" height="8" fill="#185fa5"/><rect x="21" y="9" width="16" height="8" fill="#185fa5"/><rect x="9" y="21" width="16" height="8" fill="#0f6e56"/><rect x="29" y="21" width="8" height="16" fill="#854f0b"/>',
+  router:'<rect x="6" y="14" width="34" height="20" rx="4" fill="#e6f1fb" stroke="#185fa5" stroke-width="2"/><circle cx="14" cy="24" r="2.5" fill="#0f6e56"/><circle cx="22" cy="24" r="2.5" fill="#0f6e56"/><circle cx="30" cy="24" r="2.5" fill="#0f6e56"/><line x1="8" y1="10" x2="8" y2="14" stroke="#185fa5" stroke-width="2"/><line x1="38" y1="10" x2="38" y2="14" stroke="#185fa5" stroke-width="2"/>',
+  kbd:'<rect x="4" y="6" width="38" height="26" rx="3" fill="#e6f1fb" stroke="#185fa5" stroke-width="2"/><g fill="#185fa5"><rect x="8" y="10" width="6" height="5"/><rect x="16" y="10" width="6" height="5"/><rect x="24" y="10" width="6" height="5"/><rect x="32" y="10" width="6" height="5"/><rect x="8" y="18" width="6" height="5"/><rect x="16" y="18" width="6" height="5"/><rect x="24" y="18" width="6" height="5"/><rect x="32" y="18" width="6" height="5"/></g>',
+  mic:'<rect x="16" y="4" width="14" height="22" rx="7" fill="#e6f1fb" stroke="#185fa5" stroke-width="2"/><path d="M8 22 Q8 30 23 30 Q38 30 38 22" fill="none" stroke="#185fa5" stroke-width="2"/><line x1="23" y1="30" x2="23" y2="40" stroke="#185fa5" stroke-width="2"/><line x1="14" y1="40" x2="32" y2="40" stroke="#185fa5" stroke-width="2"/>',
+  scan:'<rect x="4" y="16" width="38" height="8" fill="#e6f1fb" stroke="#185fa5" stroke-width="2"/><line x1="6" y1="4" x2="6" y2="12" stroke="#a32d2d" stroke-width="2"/><line x1="12" y1="4" x2="12" y2="12" stroke="#a32d2d" stroke-width="2"/><line x1="18" y1="4" x2="18" y2="12" stroke="#a32d2d" stroke-width="2"/><line x1="24" y1="4" x2="24" y2="12" stroke="#a32d2d" stroke-width="2"/><line x1="30" y1="4" x2="30" y2="12" stroke="#a32d2d" stroke-width="2"/><line x1="36" y1="4" x2="36" y2="12" stroke="#a32d2d" stroke-width="2"/>',
+  monitor:'<rect x="4" y="6" width="38" height="26" rx="3" fill="#e6f1fb" stroke="#185fa5" stroke-width="2"/><line x1="23" y1="32" x2="23" y2="40" stroke="#185fa5" stroke-width="2"/><line x1="14" y1="40" x2="32" y2="40" stroke="#185fa5" stroke-width="2"/><text x="23" y="24" font-size="10" text-anchor="middle" fill="#185fa5">DSE</text>',
+  spk:'<rect x="6" y="16" width="10" height="14" fill="#185fa5"/><path d="M16 16 L26 10 L26 36 L16 30 Z" fill="#185fa5"/><path d="M30 18 Q34 23 30 28" fill="none" stroke="#185fa5" stroke-width="2"/><path d="M34 14 Q40 23 34 32" fill="none" stroke="#185fa5" stroke-width="2"/>',
+  disk:'<rect x="4" y="14" width="38" height="20" rx="4" fill="#e6f1fb" stroke="#185fa5" stroke-width="2"/><circle cx="14" cy="24" r="4" fill="#0f6e56"/><line x1="20" y1="20" x2="38" y2="20" stroke="#185fa5" stroke-width="1.5"/><line x1="20" y1="24" x2="38" y2="24" stroke="#185fa5" stroke-width="1.5"/><line x1="20" y1="28" x2="38" y2="28" stroke="#185fa5" stroke-width="1.5"/>',
+  os:'<circle cx="23" cy="23" r="16" fill="#e6f1fb" stroke="#0f6e56" stroke-width="2"/><circle cx="23" cy="23" r="4" fill="#0f6e56"/><path d="M23 7 A16 16 0 0 1 39 23" fill="none" stroke="#0f6e56" stroke-width="2"/>',
+  util:'<circle cx="23" cy="23" r="16" fill="#e6f1fb" stroke="#0f6e56" stroke-width="2"/><line x1="23" y1="9" x2="23" y2="14" stroke="#0f6e56" stroke-width="2"/><line x1="23" y1="32" x2="23" y2="37" stroke="#0f6e56" stroke-width="2"/><line x1="9" y1="23" x2="14" y2="23" stroke="#0f6e56" stroke-width="2"/><line x1="32" y1="23" x2="37" y2="23" stroke="#0f6e56" stroke-width="2"/>',
+  app:'<rect x="6" y="6" width="22" height="22" rx="4" fill="#e6f1fb" stroke="#0f6e56" stroke-width="2"/><rect x="28" y="6" width="12" height="22" rx="4" fill="#e6f1fb" stroke="#0f6e56" stroke-width="2"/>',
+  db:'<ellipse cx="23" cy="12" rx="17" ry="6" fill="#e6f1fb" stroke="#0f6e56" stroke-width="2"/><path d="M6 12 V34 Q6 40 23 40 Q40 40 40 34 V12" fill="none" stroke="#0f6e56" stroke-width="2"/><ellipse cx="23" cy="34" rx="17" ry="6" fill="none" stroke="#0f6e56" stroke-width="2"/>',
+};
+function iconSvg(k){ return '<svg viewBox="0 0 46 46" xmlns="http://www.w3.org/2000/svg">'+(ICONS[k]||'')+'</svg>'; }
+function buildHwGrid(){
+  const all = [...hardware.map(h=>({...h, group:'硬件'})), ...software.map(s=>({...s, group:'軟件'}))];
+  const g = document.getElementById('hwGrid');
+  g.innerHTML = all.map((h,i)=>{
+    const name = LANG==='en' ? (h.nEn || h.n) : h.n;
+    const c = LANG==='en' ? (h.cEn || h.c) : h.c;
+    return '<div class="hw-card" data-i="'+i+'">'+iconSvg(h.icon)+'<div class="n" data-zh="'+h.n+'" data-en="'+(h.nEn||h.n)+'">'+name+'</div><div class="c" data-zh="'+h.c+'" data-en="'+(h.cEn||h.c)+'">'+c+'</div></div>';
+  }).join('');
+  const detail = document.getElementById('hwDetail');
+  g.querySelectorAll('.hw-card').forEach(card=>{
+    card.addEventListener('click', ()=>{
+      const h = all[+card.dataset.i];
+      const nm = LANG==='en' ? (h.nEn||h.n) : h.n;
+      const ct = LANG==='en' ? (h.catEn||h.cat) : h.cat;
+      const us = LANG==='en' ? (h.useEn||h.use) : h.use;
+      detail.innerHTML = '<b data-zh="'+h.n+'" data-en="'+(h.nEn||h.n)+'">'+nm+'</b><span class="cat" data-zh="'+h.cat+'" data-en="'+(h.catEn||h.cat)+'">'+ct+'</span><div class="use" style="margin-top:6px" data-zh="'+h.use+'" data-en="'+(h.useEn||h.use)+'">'+us+'</div>';
+      detail.classList.add('show');
+      detail.scrollIntoView({behavior:'smooth', block:'nearest'});
+    });
+  });
+}
+buildHwGrid();
+
+// ==================== 實驗①：點陣圖（解像度滑桿）====================
+const bmp = document.getElementById('bmp');
+function drawBitmap(res){
+  bmp.width = res; bmp.height = res;
+  const c = bmp.getContext('2d');
+  c.clearRect(0,0,res,res);
+  c.fillStyle = '#facc15';
+  c.beginPath(); c.arc(res/2, res/2, res*0.46, 0, Math.PI*2); c.fill();
+  c.fillStyle = '#000';
+  c.fillRect(Math.round(res*0.29), Math.round(res*0.29), Math.max(1,Math.round(res*0.09)), Math.max(1,Math.round(res*0.13)));
+  c.fillRect(Math.round(res*0.62), Math.round(res*0.29), Math.max(1,Math.round(res*0.09)), Math.max(1,Math.round(res*0.13)));
+  c.strokeStyle = '#000'; c.lineWidth = Math.max(1, Math.round(res*0.08));
+  c.beginPath(); c.arc(res/2, Math.round(res*0.54), res*0.25, 0.15*Math.PI, 0.85*Math.PI); c.stroke();
+}
+document.getElementById('resSlider').addEventListener('input', ()=>{
+  const v = +document.getElementById('resSlider').value;
+  document.getElementById('resVal').textContent = v + '×' + v;
+  drawBitmap(v);
+});
+drawBitmap(16);
+document.getElementById('bmpCard').addEventListener('click', ()=> bmp.classList.toggle('zoomed'));
+document.getElementById('vecCard').addEventListener('click', ()=> document.getElementById('vec').classList.toggle('zoomed'));
+
+// ==================== 實驗②：模擬 vs 數碼信號 ====================
+const acv = document.getElementById('analogCv');
+const dcv = document.getElementById('digitalCv');
+function drawAnalog(){
+  const c = acv.getContext('2d'); const w = acv.width, h = acv.height;
+  c.clearRect(0,0,w,h);
+  c.strokeStyle = '#185fa5'; c.lineWidth = 2; c.beginPath();
+  for(let x=0; x<=w; x++){ const y = h/2 - Math.sin(x/w*Math.PI*4)*(h/2-12); x===0?c.moveTo(x,y):c.lineTo(x,y); }
+  c.stroke();
+}
+function drawDigital(n){
+  const c = dcv.getContext('2d'); const w = dcv.width, h = dcv.height;
+  c.clearRect(0,0,w,h);
+  c.strokeStyle = '#d85a30'; c.lineWidth = 2; c.beginPath();
+  const step = w/n; let prevY = null;
+  for(let i=0;i<n;i++){ const x=i*step; const y=h/2 - Math.sin(i/n*Math.PI*4)*(h/2-12);
+    if(prevY===null){ c.moveTo(x,y); } else { c.lineTo(x,prevY); c.lineTo(x,y); } prevY=y; }
+  c.lineTo(w, prevY); c.stroke();
+}
+drawAnalog(); drawDigital(12);
+document.getElementById('sampleSlider').addEventListener('input', ()=>{
+  const v = +document.getElementById('sampleSlider').value;
+  document.getElementById('sampleVal').textContent = v + (LANG==='en' ? ' pts/cycle' : ' 點／周期');
+  drawDigital(v);
+});
+
+// ==================== 實驗③：IPO 拖拽排序 ====================
+const ipoItems = [
+  {val:'input', zh:'掃描條碼／輸入分數（把數據帶入）', en:'Scan barcode / enter marks (bring data in)'},
+  {val:'process', zh:'計算平均／排序記錄（運算整理）', en:'Calculate average / sort records (compute & organise)'},
+  {val:'output', zh:'顯示成績表／列印報表（呈現結果）', en:'Show report card / print report (present result)'},
+];
+const ipoZones = [
+  {slot:'input', zh:'輸入 Input', en:'Input'},
+  {slot:'process', zh:'處理 Process', en:'Process'},
+  {slot:'output', zh:'輸出 Output', en:'Output'},
+];
+function ipoLabel(item, lang){ return lang==='en' ? item.en : item.zh; }
+function buildIPO(){
+  document.getElementById('ipoSlots').innerHTML = ipoZones.map(z=>
+    '<div class="dropzone" data-zone="'+z.slot+'"><div class="lbl" data-zh="'+z.zh+'" data-en="'+z.en+'">'+ipoLabel(z, LANG)+'</div></div>'
+  ).join('');
+  document.getElementById('ipoBank').innerHTML = ipoItems.map(it=>
+    '<span class="drag-chip" draggable="true" data-val="'+it.val+'" data-zh="'+it.zh+'" data-en="'+it.en+'">'+ipoLabel(it, LANG)+'</span>'
+  ).join('');
+  const chips = document.querySelectorAll('#ipoBank .drag-chip');
+  const dropZones = document.querySelectorAll('#ipoSlots .dropzone');
+  chips.forEach(ch=>{
+    ch.addEventListener('dragstart', e=>{ e.dataTransfer.setData('text/plain', ch.dataset.val); });
+    ch.addEventListener('click', ()=>{
+      const empty = [...dropZones].find(z=>!z.querySelector('.drag-chip'));
+      if(empty){ empty.querySelector('.lbl')?.remove(); empty.appendChild(ch); empty.classList.add('filled'); }
+    });
+  });
+  dropZones.forEach(z=>{
+    z.addEventListener('dragover', e=>{ e.preventDefault(); z.classList.add('over'); });
+    z.addEventListener('dragleave', ()=>{ z.classList.remove('over'); });
+    z.addEventListener('drop', e=>{
+      e.preventDefault(); z.classList.remove('over');
+      const val = e.dataTransfer.getData('text/plain');
+      const chip = document.querySelector('#ipoBank .drag-chip[data-val="'+val+'"]') || document.querySelector('#ipoSlots .drag-chip[data-val="'+val+'"]');
+      if(!chip) return;
+      const existing = z.querySelector('.drag-chip');
+      if(existing){ document.getElementById('ipoBank').appendChild(existing); }
+      z.querySelector('.lbl')?.remove();
+      z.appendChild(chip);
+      z.classList.add('filled');
+    });
+  });
+}
+buildIPO();
+function refreshIPO(){
+  // 更新所有 IPO 卡片的文字（保持拖動位置）
+  document.querySelectorAll('#ipoBank .drag-chip, #ipoSlots .drag-chip').forEach(ch=>{
+    const it = ipoItems.find(i=>i.val===ch.dataset.val);
+    if(it) ch.textContent = ipoLabel(it, LANG);
+  });
+  document.querySelectorAll('#ipoSlots .dropzone .lbl').forEach(lb=>{
+    const z = ipoZones.find(z=>z.slot===lb.parentElement.dataset.zone);
+    if(z) lb.textContent = ipoLabel(z, LANG);
+  });
+}
+document.getElementById('btnCheckIPO').addEventListener('click', ()=>{
+  let ok = true;
+  document.querySelectorAll('#ipoSlots .dropzone').forEach(z=>{
+    const chip = z.querySelector('.drag-chip');
+    if(chip && chip.dataset.val === z.dataset.zone){ z.style.borderColor = '#3b6d11'; }
+    else { ok = false; z.style.borderColor = '#a32d2d'; }
+  });
+  const f = document.getElementById('ipoFeedback');
+  const T = i18nTexts[LANG];
+  f.textContent = ok ? T.ipoOk : T.ipoBad;
+  f.className = 'feedback ' + (ok ? 'ok' : 'bad');
+});
+document.getElementById('btnResetIPO').addEventListener('click', ()=>{
+  document.querySelectorAll('#ipoSlots .dropzone').forEach(z=>{
+    const chip = z.querySelector('.drag-chip');
+    if(chip){ document.getElementById('ipoBank').appendChild(chip); }
+    if(!z.querySelector('.lbl')){
+      const zd = ipoZones.find(zz=>zz.slot===z.dataset.zone);
+      const lbl = document.createElement('div'); lbl.className='lbl';
+      lbl.textContent = ipoLabel(zd, LANG);
+      z.prepend(lbl);
+    }
+    z.classList.remove('filled'); z.style.borderColor='';
+  });
+  document.getElementById('ipoFeedback').textContent = '';
+});
+
+// ==================== 實驗④：數據 vs 資訊分類 ====================
+const classifyData = [
+  {zh:'37', en:'37', ans:'data'},
+  {zh:'今日最高 37℃', en:"Today's high: 37°C", ans:'info'},
+  {zh:'今日最高 37℃，比昨日高 2℃', en:"Today's high 37°C, 2°C higher than yesterday", ans:'info'},
+  {zh:'全班平均分 75', en:'Class average: 75', ans:'info'},
+  {zh:'8,500 步', en:'8,500 steps', ans:'data'},
+  {zh:'我今日行了 8,500 步，是全班最多', en:'I walked 8,500 steps today, the most in class', ans:'info'},
+];
+let ci = 0;
+function classifyText(item){ return LANG==='en' ? item.en : item.zh; }
+function showClassify(){
+  if(ci < classifyData.length){
+    document.getElementById('classifyCard').textContent = classifyText(classifyData[ci]);
+    document.getElementById('classifyProgress').textContent = (ci+1) + ' / ' + classifyData.length;
+    document.getElementById('classifyFeedback').textContent = '';
+    document.getElementById('classifyFeedback').className = 'feedback';
+  } else {
+    document.getElementById('classifyCard').textContent = i18nTexts[LANG].stepsDone;
+    document.getElementById('classifyProgress').textContent = '';
+    document.getElementById('classifyFeedback').textContent = '';
+  }
+}
+function refreshClassify(){ showClassify(); }
+document.querySelectorAll('.classify-btns .btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    if(ci >= classifyData.length) return;
+    const ans = classifyData[ci].ans;
+    const choice = btn.dataset.choice;
+    const f = document.getElementById('classifyFeedback');
+    const T = i18nTexts[LANG];
+    if(choice === ans){
+      f.textContent = T.classifyOk;
+      f.className = 'feedback ok';
+    } else {
+      f.textContent = T.classifyWrong;
+      f.className = 'feedback bad';
+      return;
+    }
+    ci++;
+    setTimeout(showClassify, 900);
+  });
+});
+showClassify();
+
+// ==================== 實驗⑤：影片 = 圖片快速播放 ====================
+const vcv = document.getElementById('videoCv');
+let fps = 10, lastFrame = 0, ballX = 0;
+function drawVideoFrame(){
+  const c = vcv.getContext('2d'); const w = vcv.width, h = vcv.height;
+  c.clearRect(0,0,w,h);
+  c.strokeStyle = '#e3e4e8'; c.lineWidth = 1;
+  for(let i=0;i<w;i+=10){ c.beginPath(); c.moveTo(i,0); c.lineTo(i,h); c.stroke(); }
+  const y = h/2 + Math.sin(ballX/40)*40;
+  c.fillStyle = '#185fa5';
+  c.beginPath(); c.arc(ballX, y, 14, 0, Math.PI*2); c.fill();
+  c.fillStyle = '#fff'; c.font = '11px sans-serif'; c.fillText(fps+' fps', 8, 16);
+}
+function videoLoop(ts){
+  if(ts - lastFrame > 1000/fps){
+    lastFrame = ts;
+    ballX = (ballX + 12) % vcv.width;
+    drawVideoFrame();
+  }
+  requestAnimationFrame(videoLoop);
+}
+document.getElementById('fpsSlider').addEventListener('input', ()=>{
+  fps = +document.getElementById('fpsSlider').value;
+  document.getElementById('fpsVal').textContent = fps + ' fps';
+});
+drawVideoFrame();
+requestAnimationFrame(videoLoop);
+
+// ==================== 腦圖 ====================
+const mmData = {
+  root:{zh:'資訊處理簡介', en:'Introduction to Information Processing', zhDesc:'第一章：從「系統」到「數據」，再到「資訊時代」', enDesc:'Chapter 1: from "systems" to "data" to the "information age"', children:['sys','data','media','age','lit']},
+  sys:{zh:'資訊系統', en:'Information System', zhDesc:'五部件：功能、數據、科技、流程、從業員。目的＝自動化、減錯、提效。', enDesc:'Five components: function, data, technology, process, personnel. Purpose: automate, reduce errors, improve efficiency.', children:[]},
+  data:{zh:'數據與資訊', en:'Data & Information', zhDesc:'數據＝原料（無意義）；資訊＝成品（有前文後理）。經 IPO 轉化：輸入→處理→輸出。', enDesc:'Data = raw material (meaningless); information = finished product (with context). Converted via IPO: Input → Process → Output.', children:[]},
+  media:{zh:'多媒體數碼化', en:'Multimedia digitisation', zhDesc:'文本（ASCII/Big5）、圖像（點陣/向量）、音頻（模擬→數碼）、視頻（圖像＋音頻）。', enDesc:'Text (ASCII/Big5), image (bitmap/vector), audio (analog→digital), video (image + audio).', children:[]},
+  age:{zh:'資訊時代', en:'Information Age', zhDesc:'價格下降、性能提升、應用多樣化推動普及；發展＝網絡、IoT、大數據、AI。', enDesc:'Falling prices, better performance, more apps drive adoption; trends = networks, IoT, Big Data, AI.', children:[]},
+  lit:{zh:'資訊素養', en:'Information Literacy', zhDesc:'四範疇：知識產權、私隱與保安、可信度、擷取與整理。', enDesc:'Four areas: intellectual property, privacy & security, credibility, retrieval & organisation.', children:[]},
+};
+let mmActive = 'root';
+function mmLabel(n){ return LANG==='en' ? mmData[n].en : mmData[n].zh; }
+function mmDesc(n){ return LANG==='en' ? mmData[n].enDesc : mmData[n].zhDesc; }
+function buildMindmap(){
+  const W = 880, H = 420, cx = W/2, cy = H/2;
+  const nodes = ['sys','data','media','age','lit'];
+  const pos = {};
+  nodes.forEach((n,i)=>{
+    const ang = -Math.PI/2 + i*(2*Math.PI/nodes.length);
+    pos[n] = {x: cx + Math.cos(ang)*230, y: cy + Math.sin(ang)*140};
+  });
+  const colors = {sys:'#185fa5', data:'#0f6e56', media:'#534ab7', age:'#854f0b', lit:'#a32d2d'};
+  let svg = '<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:880px">';
+  nodes.forEach(n=>{
+    svg += '<line x1="'+cx+'" y1="'+cy+'" x2="'+pos[n].x+'" y2="'+pos[n].y+'" stroke="#c9cbd1" stroke-width="2"/>';
+  });
+  svg += '<g class="mm-node" data-node="root"><circle cx="'+cx+'" cy="'+cy+'" r="40" fill="#185fa5"/><text x="'+cx+'" y="'+cy+'" fill="#fff" font-size="13" text-anchor="middle" font-weight="700">'+mmLabel('root')+'</text></g>';
+  nodes.forEach(n=>{
+    const c = colors[n];
+    svg += '<g class="mm-node" data-node="'+n+'"><rect x="'+(pos[n].x-70)+'" y="'+(pos[n].y-24)+'" width="140" height="48" rx="10" fill="#fff" stroke="'+c+'" stroke-width="2"/><text x="'+pos[n].x+'" y="'+(pos[n].y+5)+'" fill="'+c+'" font-size="13.5" text-anchor="middle" font-weight="700">'+mmLabel(n)+'</text></g>';
+  });
+  svg += '</svg>';
+  document.getElementById('mindmapBox').innerHTML = svg;
+  document.querySelectorAll('.mm-node').forEach(g=>{
+    g.addEventListener('click', ()=>{
+      mmActive = g.dataset.node;
+      document.getElementById('mmDesc').textContent = mmDesc(mmActive);
+    });
+  });
+}
+function refreshMindmap(){
+  buildMindmap();
+  document.getElementById('mmDesc').textContent = mmDesc(mmActive);
+}
+buildMindmap();
+
+// ==================== 小測驗 ====================
+function refreshQuizFeedback(){
+  document.querySelectorAll('.quiz-q').forEach(q=>{
+    if(!q.dataset.done) return;
+    const fb = q.querySelector('.q-feedback');
+    const isCorrect = q.dataset.wasCorrect === '1';
+    if(LANG === 'en'){
+      fb.textContent = isCorrect ? fb.dataset.correctEn : fb.dataset.wrongEn;
+    } else {
+      fb.textContent = isCorrect ? fb.dataset.correct : fb.dataset.wrong;
+    }
+  });
+}
+document.querySelectorAll('.quiz-q').forEach(q=>{
+  const ans = q.dataset.ans;
+  const fb = q.querySelector('.q-feedback');
+  fb.style.display = 'none';
+  q.querySelectorAll('.opt').forEach(opt=>{
+    opt.addEventListener('click', ()=>{
+      if(q.dataset.done) return;
+      q.dataset.done = '1';
+      const val = opt.querySelector('input').value;
+      const isCorrect = val === ans;
+      q.dataset.wasCorrect = isCorrect ? '1' : '0';
+      q.querySelectorAll('.opt').forEach(o=>{
+        const v = o.querySelector('input').value;
+        if(v === ans){ o.classList.add('correct'); }
+        else if(o === opt){ o.classList.add('wrong'); }
+      });
+      fb.textContent = isCorrect
+        ? (LANG==='en' ? fb.dataset.correctEn : fb.dataset.correct)
+        : (LANG==='en' ? fb.dataset.wrongEn : fb.dataset.wrong);
+      fb.style.color = isCorrect ? '#3b6d11' : '#a32d2d';
+      fb.style.display = 'block';
+    });
+  });
+});
+document.getElementById('quizBtn').addEventListener('click', ()=>{
+  let score = 0, total = document.querySelectorAll('.quiz-q').length;
+  document.querySelectorAll('.quiz-q').forEach(q=>{
+    const ans = q.dataset.ans;
+    const sel = q.querySelector('input:checked');
+    if(sel && sel.value === ans) score++;
+  });
+  const r = document.getElementById('quizResult');
+  let msg;
+  if(LANG === 'en'){
+    if(score === total) msg = 'Full marks! You have mastered this chapter.';
+    else if(score >= total*0.7) msg = 'Well done! Review the wrong answers.';
+    else msg = 'Review the mind map and notes above, then try again.';
+    r.textContent = 'Score: ' + score + ' / ' + total + '  ' + msg;
+  } else {
+    if(score === total) msg = '滿分！你已完全掌握本章。';
+    else if(score >= total*0.7) msg = '不錯！再溫習一下錯題即可。';
+    else msg = '建議重溫上面的腦圖與筆記，再挑戰一次。';
+    r.textContent = '得分：' + score + ' / ' + total + '　' + msg;
+  }
+});
+
+// ==================== 回到頂部 ====================
+const toTop = document.getElementById('toTop');
+window.addEventListener('scroll', ()=>{ toTop.style.display = window.scrollY > 400 ? 'block' : 'none'; });
+toTop.addEventListener('click', ()=>{ window.scrollTo({top:0, behavior:'smooth'}); });
+</script>
+</body>
+</html>
