@@ -164,10 +164,6 @@ footer{text-align:center;color:var(--muted);font-size:12.5px;margin-top:36px}
 <body data-lang="zh">
 
 <header>
-  <div class="lang-switch">
-    <button class="lang-btn active" data-lang="zh">中文</button>
-    <button class="lang-btn" data-lang="en">EN</button>
-  </div>
   <div class="badge" data-en="HKDSE · Information &amp; Communication Technology">香港中學文憑試（HKDSE）· 資訊及通訊科技科</div>
   <h1 data-en="Chapter 1: Introduction to Information Processing">第一章　資訊處理簡介</h1>
   <div class="sub" data-en="Interactive Lab">互動實驗室</div>
@@ -625,9 +621,6 @@ function setLang(lang){
   drawVideoFrame();
   drawAnalog(); drawDigital(+document.getElementById('sampleSlider').value);
 }
-document.querySelectorAll('.lang-btn').forEach(btn=>{
-  btn.addEventListener('click', ()=>{ setLang(btn.dataset.lang); });
-});
 initI18n();
 
 // ==================== 硬件/軟件卡片 ====================
@@ -1000,6 +993,9 @@ document.getElementById('quizBtn').addEventListener('click', ()=>{
 const toTop = document.getElementById('toTop');
 window.addEventListener('scroll', ()=>{ toTop.style.display = window.scrollY > 400 ? 'block' : 'none'; });
 toTop.addEventListener('click', ()=>{ window.scrollTo({top:0, behavior:'smooth'}); });
+if(window.parent !== window && window.parent.LANG){
+  setLang(window.parent.LANG);
+}
 </script>
 </body>
 </html>
