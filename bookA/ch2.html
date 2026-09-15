@@ -164,10 +164,7 @@ footer{text-align:center;color:var(--muted);font-size:12.5px;margin-top:36px}
 <body data-lang="zh">
 
 <header>
-  <div class="lang-switch">
-    <button class="lang-btn active" data-lang="zh">中文</button>
-    <button class="lang-btn" data-lang="en">EN</button>
-  </div>
+  
   <div class="badge" data-en="HKDSE · Information &amp; Communication Technology · Compulsory Part A (4 hours)">香港中學文憑試（HKDSE）· 資訊及通訊科技科 · 必修部分 A（4 小時）</div>
   <h1 data-en="Chapter 2: Data Organisation and Data Control">第二章　數據組織及數據控制</h1>
   <div class="sub" data-en="Interactive Lab · Data Organisation &amp; Data Control">互動實驗室 · Data Organisation &amp; Data Control</div>
@@ -868,9 +865,7 @@ function setLang(lang){
   refreshMindmap();
   refreshQuizFeedback();
 }
-document.querySelectorAll('.lang-btn').forEach(btn=>{
-  btn.addEventListener('click', ()=>{ setLang(btn.dataset.lang); });
-});
+
 initI18n();
 
 // ==================== 有效性檢驗方法卡片 ====================
@@ -1736,6 +1731,9 @@ document.getElementById('quizBtn').addEventListener('click', ()=>{
 const toTop = document.getElementById('toTop');
 window.addEventListener('scroll', ()=>{ toTop.style.display = window.scrollY > 400 ? 'block' : 'none'; });
 toTop.addEventListener('click', ()=>{ window.scrollTo({top:0, behavior:'smooth'}); });
+if(window.parent !== window && window.parent.LANG){
+  setLang(window.parent.LANG);
+}
 </script>
 </body>
 </html>
