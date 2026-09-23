@@ -177,10 +177,6 @@ footer{text-align:center;color:var(--muted);font-size:12.5px;margin-top:36px}
 <body data-lang="zh">
 
 <header>
-  <div class="lang-switch">
-    <button class="lang-btn active" data-lang="zh">中文</button>
-    <button class="lang-btn" data-lang="en">EN</button>
-  </div>
   <div class="badge" data-en="HKDSE · Information &amp; Communication Technology · Compulsory Part">香港中學文憑試（HKDSE）· 資訊及通訊科技科 · 必修部分</div>
   <h1 data-en="Chapter 3: Data Representation">第三章　數據表示</h1>
   <div class="sub" data-en="Interactive Lab · Data Representation">互動實驗室 · Data Representation</div>
@@ -812,9 +808,6 @@ function setLang(lang){
   refreshMindmap();
   refreshQuizFeedback();
 }
-document.querySelectorAll('.lang-btn').forEach(btn=>{
-  btn.addEventListener('click', ()=>{ setLang(btn.dataset.lang); });
-});
 initI18n();
 
 // ==================== 實驗①：進制轉換器 ====================
@@ -1519,6 +1512,9 @@ buildFmtDrag();
 buildSituation();
 fsSetup();
 buildMindmap();
+  if(window.parent !== window && window.parent.LANG){
+  setLang(window.parent.LANG);
+}
 </script>
 </body>
 </html>
