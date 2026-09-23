@@ -1,0 +1,1524 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第三章　數據表示 · 互動實驗室</title>
+<style>
+:root{
+  --bg:#f5f6f8; --card:#ffffff; --text:#2c2c2a; --muted:#5f5e5a; --line:#e3e4e8;
+  --blue:#185fa5; --blue-bg:#e6f1fb;
+  --teal:#0f6e56; --teal-bg:#e1f5ee;
+  --purple:#534ab7; --purple-bg:#eeedfe;
+  --amber:#854f0b; --amber-bg:#faeeda;
+  --red:#a32d2d; --green:#3b6d11; --green-bg:#eaf3de;
+  --radius:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.75;padding:0 0 60px}
+a{color:var(--blue);text-decoration:none}
+.wrap{max-width:960px;margin:0 auto;padding:0 20px}
+
+header{position:relative;background:linear-gradient(135deg,#185fa5,#0f6e56);color:#fff;padding:44px 20px 36px;text-align:center}
+header .badge{display:inline-block;background:rgba(255,255,255,.18);padding:4px 14px;border-radius:999px;font-size:13px;margin-bottom:14px}
+header h1{font-size:27px;font-weight:600;letter-spacing:1px}
+header .sub{font-size:14px;opacity:.92;margin-top:8px}
+.lang-switch{position:absolute;top:14px;right:18px;display:flex;gap:4px}
+.lang-btn{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.45);padding:5px 13px;border-radius:999px;font-size:12.5px;cursor:pointer;font-weight:600;transition:all .15s}
+.lang-btn:hover{background:rgba(255,255,255,.28)}
+.lang-btn.active{background:#fff;color:#185fa5}
+
+nav{position:sticky;top:0;background:rgba(255,255,255,.96);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);z-index:20}
+nav .wrap{display:flex;flex-wrap:wrap;gap:5px;padding:9px 20px;justify-content:center}
+nav a{font-size:13px;color:var(--muted);padding:6px 13px;border-radius:8px;white-space:nowrap}
+nav a:hover{background:var(--blue-bg);color:var(--blue)}
+
+section{margin-top:26px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:24px;margin-bottom:16px}
+h2{font-size:20px;font-weight:600;display:flex;align-items:center;gap:10px;margin-bottom:4px}
+h2 .num{background:var(--blue);color:#fff;width:32px;height:32px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;font-size:15px;flex:none}
+h2 .en{font-size:14px;color:var(--muted);font-weight:400}
+body[data-lang="en"] h2 .en{display:none}
+h3{font-size:16px;font-weight:600;margin:22px 0 8px;padding-left:10px;border-left:4px solid var(--teal)}
+h4{font-size:14.5px;font-weight:600;margin:16px 0 6px;color:#3c3489}
+p,li{font-size:14.5px}
+.lead{font-size:14px;color:var(--muted);margin-bottom:6px}
+
+.obj{background:var(--green-bg);border:1px solid #cfe3b8;border-left:4px solid var(--green);border-radius:10px;padding:14px 16px;margin:10px 0 16px}
+.obj .t{font-weight:700;color:#2f5c0b;font-size:13.5px;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.obj ul{margin:0;padding-left:20px}
+.obj li{font-size:13.5px;color:#3a3a36;margin:3px 0}
+
+.kw{display:inline-block;background:var(--amber-bg);border:1px solid #e7cd9a;color:#6b4008;font-size:12.5px;font-weight:600;padding:1px 9px;border-radius:6px;margin:2px 3px 2px 0}
+.mnemonic{background:var(--purple-bg);border:1px dashed var(--purple);border-radius:10px;padding:10px 14px;margin:10px 0;font-size:14px}
+.mnemonic b{color:#3c3489}
+.examtip{background:#fff8f0;border:1px solid #f0d9b8;border-left:4px solid var(--amber);border-radius:10px;padding:11px 14px;margin:10px 0;font-size:13.5px;color:#5c470a}
+.examtip b{color:#854f0b}
+
+.tip{border-bottom:1px dashed var(--blue);cursor:help;position:relative;font-weight:500}
+.tip::after{content:attr(data-tip);position:absolute;left:50%;bottom:130%;transform:translateX(-50%);background:#2c2c2a;color:#fff;font-size:12px;padding:6px 10px;border-radius:8px;white-space:normal;opacity:0;pointer-events:none;transition:opacity .15s;z-index:30;font-weight:400;max-width:260px;width:max-content}
+.tip:hover::after{opacity:1}
+
+details{border:1px solid var(--line);border-radius:10px;margin-bottom:10px;overflow:hidden;background:#fff}
+details summary{cursor:pointer;padding:12px 16px;font-weight:600;font-size:14.5px;list-style:none;display:flex;align-items:center;gap:8px;background:#fafbfc}
+details summary::-webkit-details-marker{display:none}
+details summary::before{content:"＋ 深入講解";color:var(--blue);font-weight:700}
+details[open] summary::before{content:"－ 收合"}
+body[data-lang="en"] details summary::before{content:"＋ Learn More"}
+body[data-lang="en"] details[open] summary::before{content:"－ Collapse"}
+details .body{padding:14px 16px;border-top:1px solid var(--line)}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin:10px 0}
+.chip{background:#fafbfc;border:1px solid var(--line);border-radius:10px;padding:14px}
+.chip b{display:block;font-size:14px;margin-bottom:4px}
+.chip span{font-size:13px;color:var(--muted)}
+.blue{border-left:4px solid var(--blue)} .teal{border-left:4px solid var(--teal)}
+.purple{border-left:4px solid var(--purple)} .amber{border-left:4px solid var(--amber)} .green{border-left:4px solid var(--green)}
+
+.hw-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin:10px 0}
+.hw-card{border:1px solid var(--line);border-radius:10px;padding:12px 10px;text-align:center;cursor:pointer;background:#fff;transition:all .15s;user-select:none}
+.hw-card:hover{border-color:var(--blue);box-shadow:0 2px 10px rgba(24,95,165,.12);transform:translateY(-2px)}
+.hw-card svg{width:46px;height:46px;margin:0 auto 8px;display:block}
+.hw-card .n{font-size:13px;font-weight:600}
+.hw-card .c{font-size:11.5px;color:var(--muted);margin-top:2px}
+.hw-detail{display:none;margin-top:10px;padding:14px;border:1px solid var(--blue);border-radius:10px;background:var(--blue-bg)}
+.hw-detail.show{display:block}
+.hw-detail b{color:var(--blue)}
+.hw-detail .use{font-size:13.5px;color:var(--text)}
+.hw-detail .cat{display:inline-block;font-size:11.5px;background:#fff;border:1px solid var(--blue);color:var(--blue);border-radius:5px;padding:1px 7px;margin-left:6px}
+
+.exp{border:1px solid var(--line);border-radius:12px;padding:16px;margin:14px 0;background:#fafbfc}
+.exp .lbl{display:inline-block;font-size:12px;font-weight:700;color:#fff;background:var(--teal);padding:2px 10px;border-radius:6px;margin-bottom:8px}
+.exp h4{margin:0 0 4px;color:var(--text)}
+.exp .note{font-size:13px;color:var(--muted);margin-bottom:10px}
+.slider-row{display:flex;align-items:center;gap:12px;margin:10px 0;flex-wrap:wrap}
+.slider-row label{font-size:13px;font-weight:600}
+input[type=range]{flex:1;min-width:160px;accent-color:var(--blue)}
+.slider-row .val{font-size:13px;font-weight:700;color:var(--blue);min-width:46px;text-align:center;background:var(--blue-bg);border-radius:6px;padding:2px 8px}
+canvas{border:1px solid var(--line);border-radius:8px;background:#fff;display:block;max-width:100%}
+.btn{background:var(--blue);color:#fff;border:none;padding:10px 20px;border-radius:10px;font-size:14px;cursor:pointer;font-weight:600}
+.btn:hover{opacity:.9}
+.btn.ghost{background:var(--blue-bg);color:var(--blue)}
+.feedback{margin-top:8px;font-weight:700;font-size:14.5px}
+.feedback.ok{color:var(--green)} .feedback.bad{color:var(--red)}
+
+.fmt-pool{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0;min-height:46px;padding:10px;border:1px dashed var(--line);border-radius:10px;background:#fff}
+.fmt-chip{border:1px solid var(--purple);background:var(--purple-bg);color:#3c3489;padding:8px 13px;border-radius:9px;font-weight:600;font-size:13.5px;cursor:grab;user-select:none;transition:all .15s}
+.fmt-chip:active{cursor:grabbing}
+.fmt-chip.sel{outline:3px solid var(--blue);box-shadow:0 0 0 2px #fff inset}
+.fmt-chip.placed{opacity:.45;cursor:default;border-color:var(--green);background:var(--green-bg);color:#2f5c0b}
+.fmt-zones{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:6px 0}
+.fmt-zone{border:2px dashed var(--line);border-radius:10px;padding:10px;background:#fff;min-height:96px;display:flex;flex-direction:column;gap:7px;transition:all .15s}
+.fmt-zone.over{border-color:var(--blue);background:var(--blue-bg)}
+.fmt-zone .zlbl{font-weight:700;font-size:13.5px;text-align:center;padding:4px;border-radius:6px;color:#fff}
+.fmt-zone .zcount{font-size:11.5px;color:var(--muted);text-align:center}
+.fmt-dragbar{display:flex;align-items:center;gap:14px;margin-top:10px;flex-wrap:wrap}
+.fmt-progress{font-size:13px;font-weight:600;color:var(--muted)}
+
+.demo{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.demo-card{border:2px dashed var(--line);border-radius:12px;padding:14px;text-align:center;background:#fff}
+.demo-card h5{font-size:14px;margin-bottom:2px}
+.demo-card p{font-size:12.5px;color:var(--muted)}
+.stage{height:150px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.zoomable{transition:transform .35s ease;cursor:zoom-in}
+.zoomable.zoomed{transform:scale(2.3)}
+#bmp{image-rendering:pixelated;width:120px;height:120px}
+#vec{width:120px;height:120px}
+
+.sig{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.sig canvas{width:100%;height:150px}
+.sig h5{text-align:center;font-size:13px;margin-bottom:4px;color:var(--text)}
+
+.steps{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0;padding:12px;border:1px dashed var(--line);border-radius:10px;background:#fff}
+.step-btn{background:var(--purple-bg);border:1px solid var(--purple);color:#3c3489;padding:10px 18px;border-radius:10px;cursor:pointer;font-weight:600;font-size:14px}
+.step-btn:hover{background:#dedafc}
+.step-btn.used{opacity:.3;pointer-events:none}
+.dropzone{flex:1;min-width:120px;border:2px dashed var(--line);border-radius:10px;padding:12px;text-align:center;min-height:70px;background:#fff;display:flex;flex-direction:column;gap:6px;align-items:center;justify-content:center;transition:all .15s}
+.dropzone.over{border-color:var(--purple);background:var(--purple-bg)}
+.dropzone .lbl{display:inline-block;background:var(--blue-bg);color:var(--blue);padding:5px 16px;border-radius:999px;font-size:13px;font-weight:600}
+.drag-chip{background:var(--purple-bg);border:1px solid var(--purple);color:#3c3489;padding:9px 14px;border-radius:9px;font-weight:600;font-size:13.5px;cursor:grab;display:inline-block;margin:4px}
+.drag-chip:active{cursor:grabbing}
+
+.classify-card{font-size:18px;font-weight:600;text-align:center;padding:20px;border:1px solid var(--line);border-radius:10px;margin:10px 0;background:#fff}
+.classify-btns{display:flex;gap:12px;justify-content:center}
+
+.mindmap{border:1px solid var(--line);border-radius:12px;padding:16px;margin:12px 0;background:#fcfcfd;overflow-x:auto}
+.mindmap svg{display:block;margin:0 auto}
+.mm-node{cursor:pointer}
+.mm-node rect{transition:all .15s}
+.mm-node:hover rect{filter:brightness(.96);stroke-width:2.5}
+.mm-desc{font-size:13px;color:var(--muted);text-align:center;margin-top:8px;min-height:20px}
+
+.quiz-q{border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:12px}
+.quiz-q .q{font-weight:600;font-size:14.5px;margin-bottom:10px}
+.opt{display:block;margin:6px 0;padding:8px 12px;border:1px solid var(--line);border-radius:8px;cursor:pointer;font-size:14px;transition:background .15s}
+.opt:hover{background:var(--blue-bg)}
+.opt input{margin-right:8px}
+.opt.correct{background:var(--green-bg);border-color:var(--green)}
+.opt.wrong{background:#fcebeb;border-color:var(--red)}
+#quizResult{margin-top:14px;font-size:16px;font-weight:600}
+
+table{width:100%;border-collapse:collapse;margin:10px 0;font-size:13.5px}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left}
+th{background:#fafbfc}
+
+#toTop{position:fixed;right:22px;bottom:22px;width:46px;height:46px;border-radius:50%;background:var(--blue);color:#fff;border:none;font-size:20px;cursor:pointer;display:none;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+#toTop:hover{opacity:.9}
+
+footer{text-align:center;color:var(--muted);font-size:12.5px;margin-top:36px}
+
+@media(max-width:700px){
+  .demo,.sig{grid-template-columns:1fr}
+  header h1{font-size:22px}
+  .lang-switch{position:static;justify-content:center;margin-bottom:12px}
+}
+</style>
+</head>
+<body data-lang="zh">
+
+<header>
+  <div class="lang-switch">
+    <button class="lang-btn active" data-lang="zh">中文</button>
+    <button class="lang-btn" data-lang="en">EN</button>
+  </div>
+  <div class="badge" data-en="HKDSE · Information &amp; Communication Technology · Compulsory Part">香港中學文憑試（HKDSE）· 資訊及通訊科技科 · 必修部分</div>
+  <h1 data-en="Chapter 3: Data Representation">第三章　數據表示</h1>
+  <div class="sub" data-en="Interactive Lab · Data Representation">互動實驗室 · Data Representation</div>
+</header>
+
+<nav>
+  <div class="wrap">
+    <a href="#s31" data-en="3.1 Number Systems">3.1 數字系統與表示法</a>
+    <a href="#s32" data-en="3.2 Character Encoding">3.2 字符編碼</a>
+    <a href="#s33" data-en="3.3 Barcode Encoding">3.3 條碼編碼</a>
+    <a href="#s34" data-en="3.4 Analogue vs Digital">3.4 模擬及數碼數據</a>
+    <a href="#s35" data-en="3.5 Multimedia">3.5 多媒體</a>
+    <a href="#exam" data-en="Exam Focus">考點總覽</a>
+    <a href="#mindmap" data-en="Mind Map">腦圖總結</a>
+    <a href="#quiz" data-en="Quiz">小測驗</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <!-- ================= 3.1 數字系統與表示法 ================= -->
+  <section id="s31">
+    <div class="card">
+      <h2><span class="num">3.1</span><span data-en="Number Systems and Representation">數字系統與表示法</span> <span class="en">Number Systems and Representation</span></h2>
+
+      <div class="obj">
+        <div class="t" data-en="🎯 Learning Objectives">🎯 學習重點</div>
+        <ul>
+          <li data-en="Recognise the decimal, binary and hexadecimal systems and convert between them.">認識十進制、二進制與十六進制，並能互相轉換。</li>
+          <li data-en="State the data units (bit, byte, KB, MB, GB, TB) and bit rate units.">說出數據單位（位元、字節、KB、MB、GB、TB）與位元速率單位。</li>
+          <li data-en="Relate the number of bits to the number of patterns (2^b) and find the bits needed for P patterns.">理解位元數與樣式數量（2^b）的關係，並能求表示 P 個樣式所需的位元。</li>
+          <li data-en="Find the range of unsigned and signed (two's complement) integers.">求無符號整數與有符號整數（二進制補碼）的表示範圍。</li>
+          <li data-en="Define two's complement and overflow error.">定義二進制補碼與溢出誤差。</li>
+        </ul>
+      </div>
+
+      <h3 data-en="A. Data Units">A 數據單位</h3>
+      <p class="lead" data-en="In digital devices data is measured in the units below. Note that data units are based on binary (1024), while bit rate units are based on decimal (1000).">數碼設備中，數據通常以下列單位量度。注意：<b>數據單位基於二進制（1024）</b>，而<b>位元速率單位基於十進制（1000）</b>。</p>
+      <table>
+        <tr><th data-en="Unit">單位</th><th data-en="Symbol">記號</th><th data-en="Value">數值</th></tr>
+        <tr><td data-en="Bit">位元</td><td>bit / b</td><td data-en="Basic unit of data; it can be 0 or 1.">數據的基本單位，可以是 0 或 1。</td></tr>
+        <tr><td data-en="Byte">字節 / 位元組</td><td>B</td><td>1 B = 8 bits</td></tr>
+        <tr><td data-en="Kilobyte">千字節</td><td>KB</td><td>1 KB = 1024 B</td></tr>
+        <tr><td data-en="Megabyte">百萬字節</td><td>MB</td><td>1 MB = 1024 KB</td></tr>
+        <tr><td data-en="Gigabyte">十億字節</td><td>GB</td><td>1 GB = 1024 MB</td></tr>
+        <tr><td data-en="Terabyte">萬億字節</td><td>TB</td><td>1 TB = 1024 GB</td></tr>
+      </table>
+      <p class="lead" data-en="Bit rate (data transfer rate) units: bps, kbps, Mbps, Gbps — based on decimal (1 kbps = 1000 bps). Lower-case b means bits; upper-case B means bytes.">位元速率（數據傳輸率）單位：bps、kbps、Mbps、Gbps —— 基於十進制（1 kbps = 1000 bps）。小寫「b」指位元（bits），大寫「B」指字節（bytes）。</p>
+      <div class="examtip" data-en="✍️ <b>Exam tip</b>: storage conversions use 1024 (binary); bit-rate conversions use 1000 (decimal). Watch whether the question says KB or kb.">✍️ <b>作答建議</b>：儲存空間換算用 <b>1024</b>（二進制）；位元速率換算用 <b>1000</b>（十進制）。留意題目寫的是 KB（字節）還是 kb（位元）。</div>
+
+      <h3 data-en="B. Number Systems">B 數字系統</h3>
+      <p class="lead" data-en="We normally use decimal (base 10). Digital devices use binary (base 2) because they store data as bits (0 or 1). Hexadecimal (base 16) is used because one hex digit represents exactly 4 bits.">我們日常使用十進制（基數 10）。數碼設備使用二進制（基數 2），因為它以位元（0 或 1）儲存數據。十六進制（基數 16）常用，因為<b>一個十六進制數位正好代表 4 個位元</b>。</p>
+
+      <div class="exp">
+        <span class="lbl" data-en="Experiment ①">實驗①</span>
+        <h4 data-en="Base converter: type a number and see all three systems at once">進制轉換器：輸入數值，即時看三種進制</h4>
+        <p class="note" data-en="Free play. Pick the base of your input, type a number, and watch the other two systems update instantly — including the expansion that shows why the value is what it is.">自由試玩：先選輸入的進制，再輸入數值，另外兩個進制會即時更新，並連同展開式一起顯示，讓你看到數值是怎樣算出來的。</p>
+        <div class="slider-row">
+          <label data-en="Input base:">輸入進制：</label>
+          <button class="btn" id="convBin" data-en="Binary">二進制</button>
+          <button class="btn ghost" id="convDec" data-en="Decimal">十進制</button>
+          <button class="btn ghost" id="convHex" data-en="Hexadecimal">十六進制</button>
+        </div>
+        <div class="slider-row">
+          <input type="text" id="convInput" value="1101" style="flex:1;min-width:180px;padding:9px 12px;border:1px solid var(--line);border-radius:9px;font-size:15px;letter-spacing:1px">
+        </div>
+        <div id="convOut"></div>
+      </div>
+
+      <div class="mnemonic" data-en="🧠 <b>Memory aid</b>: binary → decimal = multiply each bit by its place value and add; decimal → binary = keep dividing by 2 and read the remainders backwards.">🧠 <b>記憶口訣</b>：二進制轉十進制＝「每位乘位值再加起來」；十進制轉二進制＝「不斷除以 2，餘數倒著讀」。</div>
+
+      <h3 data-en="Number of Patterns">樣式數量</h3>
+      <p class="lead" data-en="The number of patterns (combinations) decides how much data can be represented. With b bits there are 2^b patterns; to represent P patterns you need log₂P bits.">樣式（組合）的數量決定了可以表示多少數據。使用 b 個位元就有 <b>2^b</b> 個樣式；要表示 P 個樣式，需要 <b>log₂P</b> 個位元。</p>
+
+      <div class="exp">
+        <span class="lbl" data-en="Experiment ②">實驗②</span>
+        <h4 data-en="Bits and patterns: drag to see how fast 2^b grows">位元與樣式：拖一拖，看 2^b 長得多快</h4>
+        <p class="note" data-en="Free play. Drag the slider to change the number of bits and watch the pattern count, the unsigned range and the signed range update instantly.">自由試玩：拖動滑桿改變位元數，樣式數量、無符號範圍與有符號範圍都會即時更新。</p>
+        <div class="slider-row">
+          <label data-en="Number of bits:">位元數：</label>
+          <input type="range" id="patSlider" min="1" max="16" value="4">
+          <span class="val" id="patVal">4</span>
+        </div>
+        <div id="patOut"></div>
+      </div>
+
+      <h3 data-en="D. Unsigned Integers">D 表示無符號整數</h3>
+      <p class="lead" data-en="An unsigned integer has no sign — it is zero or positive. With N bits the range is 0 to 2^N − 1.">無符號整數是沒有負號的整數，即正數和零。以 N 位元表示時，範圍涵蓋 <b>0 至 2^N − 1</b>。</p>
+
+      <h3 data-en="E. Signed Integers (Two's Complement)">E 表示有符號整數（二進制補碼）</h3>
+      <p class="lead" data-en="A signed integer can be positive, negative or zero. About half the patterns are used for negative values. With N bits the range is −2^(N−1) to 2^(N−1) − 1.">有符號整數可以是正數、負數和零，約有一半樣式用來表示負整數。以 N 位元表示時，範圍涵蓋 <b>−2^(N−1) 至 2^(N−1) − 1</b>。</p>
+      <p class="lead" data-en="Two's complement is the method most computers use. The first (leftmost) bit has a NEGATIVE place value. If the first bit is 0 the value is non-negative; if it is 1 the value is negative.">二進制補碼（二補碼）是多數電腦採用的方法。<b>最左邊的位元具有「負」的位值</b>：首位元為 0 表示非負數，為 1 表示負數。</p>
+
+      <div class="exp">
+        <span class="lbl" data-en="Experiment ③">實驗③</span>
+        <h4 data-en="Two's complement explorer: flip bits and watch the value change sign">二補碼探索器：翻動位元，看數值怎樣變號</h4>
+        <p class="note" data-en="Free play. Choose how many bits, then click any bit to flip it. The decimal value (and whether it is positive or negative) updates instantly — try flipping the leftmost bit.">自由試玩：先選位元數，再點任一位元翻轉。十進制數值與正負號會即時更新——試試翻動<b>最左邊那一位</b>看會發生什麼。</p>
+        <div class="slider-row">
+          <label data-en="Number of bits:">位元數：</label>
+          <input type="range" id="twosSlider" min="3" max="8" value="4">
+          <span class="val" id="twosVal">4</span>
+        </div>
+        <div id="twosBits" style="display:flex;gap:6px;flex-wrap:wrap;justify-content:center;align-items:center;margin:10px 0"></div>
+        <div id="twosOut" style="text-align:center"></div>
+      </div>
+
+      <div class="examtip" data-en="✍️ <b>Common trap</b>: the two's complement OF X is the two's complement NUMBER of −X. E.g. the two's complement of 3₁₀ is 101, which is the two's complement number of −3₁₀. Note the word &quot;number&quot;.">✍️ <b>常見陷阱</b>：整數 X 的<b>二進制補碼</b>是 −X 的<b>二進制補碼數字</b>。例如 3₁₀ 的二進制補碼是 101，而 101 是 −3₁₀ 的二進制補碼數字。留意「數字」二字。</div>
+
+      <h3 data-en="F. Overflow Error">F 溢出誤差</h3>
+      <p class="lead" data-en="An overflow error occurs when a calculation result falls outside the range that the number of bits can represent.">當計算結果超出位元數可以表示的範圍時，就會發生<b>溢出誤差</b>。</p>
+
+      <div class="exp">
+        <span class="lbl" data-en="Experiment ④">實驗④</span>
+        <h4 data-en="Overflow explorer: add two numbers and see if the result fits">溢出探索器：把兩個數相加，看結果裝不裝得下</h4>
+        <p class="note" data-en="Free play. Choose the number of bits, type two integers, and watch whether the sum fits in range. Try 3 + 5 with 4 bits.">自由試玩：選定位元數，輸入兩個整數，看看相加結果是否在範圍內。試試用 4 位元計算 <b>3 + 5</b>。</p>
+        <div class="slider-row">
+          <label data-en="Number of bits:">位元數：</label>
+          <input type="range" id="ovSlider" min="3" max="8" value="4">
+          <span class="val" id="ovVal">4</span>
+        </div>
+        <div class="slider-row">
+          <label data-en="First number:">第一個數：</label>
+          <input type="number" id="ovA" value="3" style="width:90px;padding:8px 10px;border:1px solid var(--line);border-radius:9px;font-size:14px">
+          <label data-en="Second number:">第二個數：</label>
+          <input type="number" id="ovB" value="5" style="width:90px;padding:8px 10px;border:1px solid var(--line);border-radius:9px;font-size:14px">
+        </div>
+        <div id="ovOut"></div>
+      </div>
+
+      <div class="examtip" data-en="✍️ <b>Key point</b>: for unsigned integers, overflow shows up as an extra carried bit or a borrow from a non-existent bit. For signed (two's complement) integers, overflow happens when two numbers with the SAME sign are added and the result has the OPPOSITE sign.">✍️ <b>判別重點</b>：無符號整數——結果多出一個位元，或最左位元向「不存在的位元」借位，即溢出。有符號（二補碼）——<b>兩個同號數相加</b>而結果<b>變號</b>，即溢出；異號相加不會溢出。</div>
+    </div>
+  </section>
+
+  <!-- ================= 3.2 字符編碼 ================= -->
+  <section id="s32">
+    <div class="card">
+      <h2><span class="num">3.2</span><span data-en="Character Encoding">字符編碼</span> <span class="en">Character Encoding</span></h2>
+
+      <div class="obj">
+        <div class="t" data-en="🎯 Learning Objectives">🎯 學習重點</div>
+        <ul>
+          <li data-en="State the features of ASCII and why it is still used.">說出 ASCII 的特點，以及它至今仍被使用的原因。</li>
+          <li data-en="Compare Big5, GB and Unicode, including the bytes each character needs.">比較大五碼、國標碼與統一碼，包括每個字符所需的字節數。</li>
+          <li data-en="Explain why garbled text (mojibake) appears when the wrong encoding is used.">解釋為何用錯編碼系統會出現亂碼。</li>
+        </ul>
+      </div>
+
+      <p class="lead" data-en="Besides numbers, characters also need representation — these systems are called character encoding systems. Different languages may use different systems.">除了數字，字符也有其表示方法，稱為<b>字符編碼系統</b>。不同語言可能使用不同的編碼系統。</p>
+
+      <h3 data-en="Common Encoding Systems (click a card)">常見字符編碼系統（點卡片查看）</h3>
+      <div class="hw-grid" id="encGrid"></div>
+      <div class="hw-detail" id="encDetail"></div>
+
+      <h3 data-en="A. ASCII Exploration">A ASCII 探索</h3>
+      <p class="lead" data-en="ASCII commonly uses 7 bits per character, so it can represent 2^7 = 128 characters. It is sometimes extended to 8 bits (1 byte) for more characters, a parity bit, or byte-based processing.">ASCII 通常使用 7 位元表示一個字符，因此可以表示 2^7 = 128 個字符。它有時會擴展為 8 位元（1 個字節），以表示更多字符、作奇偶檢驗位，或配合以字節為單位處理數據的系統。</p>
+
+      <div class="exp">
+        <span class="lbl" data-en="Experiment ⑤">實驗⑤</span>
+        <h4 data-en="ASCII explorer: type a character or a code and see the other">ASCII 探索器：輸入字符或編碼，即時互換</h4>
+        <p class="note" data-en="Free play. Type a single character to see its ASCII code, or type a decimal code (0-127) to see the character. Try 'A', 'a' and '0' — notice how the patterns relate.">自由試玩：輸入單個字符可看到它的 ASCII 編碼；輸入十進制編碼（0–127）可看到對應字符。試試 <b>A</b>、<b>a</b>、<b>0</b>，留意它們的規律。</p>
+        <div class="slider-row">
+          <label data-en="Character or code:">字符或編碼：</label>
+          <input type="text" id="asciiInput" value="A" style="flex:1;min-width:180px;padding:9px 12px;border:1px solid var(--line);border-radius:9px;font-size:15px">
+        </div>
+        <div id="asciiOut"></div>
+      </div>
+
+      <div class="mnemonic" data-en="🧠 <b>Memory aid</b>: in ASCII, digits are in ascending order and upper/lower case letters are in alphabetical order — so 'A' (65) is 32 less than 'a' (97).">🧠 <b>記憶口訣</b>：ASCII 中<b>數字按升序</b>排列，<b>大小寫字母按字母順序</b>排列——所以「A」(65) 比「a」(97) 剛好小 32。</div>
+
+      <details>
+        <summary data-en="Encoding system comparison table">字符編碼系統比較表</summary>
+        <div class="body">
+          <table>
+            <tr><th data-en="Language">語言</th><th data-en="Encoding system">字符編碼系統</th><th data-en="Size per character">每個字符的大小</th></tr>
+            <tr><td data-en="English">英文</td><td>ASCII</td><td data-en="7 bits to 1 byte">7 位元到 1 個字節</td></tr>
+            <tr><td data-en="Traditional Chinese">繁體中文</td><td data-en="Big5">大五碼</td><td data-en="2 bytes">2 個字節</td></tr>
+            <tr><td data-en="Simplified Chinese">簡體中文</td><td data-en="GB">國標碼</td><td data-en="2 bytes">2 個字節</td></tr>
+            <tr><td data-en="Most languages of the world">世界上大多數語言</td><td data-en="Unicode">統一碼</td><td data-en="1 to 4 bytes (variable length)">1 到 4 個字節（可變長度）</td></tr>
+          </table>
+          <p style="font-size:13px;color:var(--muted);margin-top:8px" data-en="Big5 and GB are not interchangeable — decoding a Big5 file with GB produces garbled text, not translated text.">大五碼與國標碼<b>不能互換</b>——用國標碼去解讀大五碼檔案只會得到亂碼，而不會變成簡體中文。</p>
+        </div>
+      </details>
+
+      <div class="examtip" data-en="✍️ <b>Exam tip</b>: a digit stored as a CHARACTER takes the character size (e.g. 16 bits), not the integer size. Count spaces as characters too.">✍️ <b>作答建議</b>：以<b>字符</b>形式儲存的數字（如字串中的「3」）會佔用<b>字符</b>的空間（例如 16 位元），而不是整數的空間；字串中的<b>空格也算一個字符</b>。</div>
+    </div>
+  </section>
+
+  <!-- ================= 3.3 條碼編碼 ================= -->
+  <section id="s33">
+    <div class="card">
+      <h2><span class="num">3.3</span><span data-en="Barcode Encoding">條碼編碼</span> <span class="en">Barcode Encoding</span></h2>
+
+      <div class="obj">
+        <div class="t" data-en="🎯 Learning Objectives">🎯 學習重點</div>
+        <ul>
+          <li data-en="State the function and features of barcodes.">說出條碼的功能及特色。</li>
+          <li data-en="Name the elements of a barcode and a QR code.">說出條碼與二維碼的組成元素。</li>
+          <li data-en="Compare barcodes and QR codes.">比較條碼與二維碼。</li>
+        </ul>
+      </div>
+
+      <p class="lead" data-en="Barcodes are widely used in daily life — on packaged products in supermarkets or on coupons. Compared with typing numbers by hand, scanning a barcode reduces input errors and the time needed.">條碼在日常生活中廣泛使用，例如超市的包裝產品或零售商分發的優惠券。與手動輸入數字相比，掃描條碼可<b>減少輸入錯誤和輸入所需時間</b>。</p>
+
+      <h3 data-en="Barcode vs QR code (click a card)">條碼與二維碼（點卡片查看）</h3>
+      <div class="hw-grid" id="barGrid"></div>
+      <div class="hw-detail" id="barDetail"></div>
+
+      <details>
+        <summary data-en="Barcode vs QR code comparison">條碼與二維碼詳細比較</summary>
+        <div class="body">
+          <table>
+            <tr><th data-en="Property">屬性</th><th data-en="Barcode">條碼</th><th data-en="QR code">二維碼</th></tr>
+            <tr><td data-en="Scanning directions">掃描方向</td><td data-en="Mostly only from two angles, 0° or 180°.">大多只能從兩個角度掃描，即 0° 或 180°。</td><td data-en="Can be scanned from any direction, even if the image is distorted.">可從任何方向掃描；即使掃描器傾側令圖像扭曲，仍有機會成功讀取。</td></tr>
+            <tr><td data-en="Error correction">糾正錯誤的能力</td><td data-en="If the width of a single bar or space is changed, it cannot be scanned correctly.">若單個條形或空格的寬度被更改，便無法正確掃描。</td><td data-en="Higher correction ability — can usually recover up to 30% of data.">糾錯能力較高，通常可恢復高達 30% 的數據。</td></tr>
+            <tr><td data-en="Types of data">可代表的數據種類</td><td data-en="Some represent ASCII characters, others only digits.">部分可表示 ASCII 字符，另一些只可表示數字。</td><td data-en="Can represent Unicode characters.">可以表示統一碼字符。</td></tr>
+            <tr><td data-en="Amount of data">可代表的數據量</td><td data-en="Maximum sequence length is about 50 characters.">序列的最大長度約為 50 個字符。</td><td data-en="Upper limit is usually no less than 1000 characters.">上限通常不少於 1000 個字符。</td></tr>
+          </table>
+        </div>
+      </details>
+
+      <div class="examtip" data-en="✍️ <b>Exam tip</b>: a QR code has three positioning marks (in three of its four corners), which is why it can be scanned from any direction. It can also survive a logo placed in its centre.">✍️ <b>作答建議</b>：二維碼四個角中有<b>三個定位標誌</b>，所以能從任何方向掃描；即使中心被商標遮住，只要不超過約 30% 的數據，仍可解碼。</div>
+    </div>
+  </section>
+
+  <!-- ================= 3.4 模擬及數碼數據 ================= -->
+  <section id="s34">
+    <div class="card">
+      <h2><span class="num">3.4</span><span data-en="Analogue and Digital Data">模擬及數碼數據</span> <span class="en">Analogue and Digital Data</span></h2>
+
+      <div class="obj">
+        <div class="t" data-en="🎯 Learning Objectives">🎯 學習重點</div>
+        <ul>
+          <li data-en="Distinguish analogue data (continuous) from digital data (discrete).">分辨模擬數據（連續）與數碼數據（離散）。</li>
+          <li data-en="Explain digitisation as discretisation plus quantisation.">解釋數碼化是「離散化」加「量化」兩個步驟。</li>
+          <li data-en="Relate sampling rate to how closely the digital data matches the original.">說明取樣頻率與數碼數據接近原本波形的關係。</li>
+        </ul>
+      </div>
+
+      <p class="lead" data-en="Analogue data is represented physically with continuous values (e.g. sound waves, a printed photo). Digital data is represented with discrete symbols such as 0 and 1 (e.g. text files, digital photos, audio files).">以物理方式用<b>連續值</b>表示的數據（如聲波、沖印照片）稱為<b>模擬數據</b>；以 0 和 1 等<b>離散符號</b>表示的數據（如文字檔案、數碼照片、音頻檔案）就是<b>數碼數據</b>。</p>
+
+      <h3 data-en="A. Digitisation">A 數碼化</h3>
+      <p class="lead" data-en="Digitisation is converting analogue data into digital data. It has two parts: discretisation (sampling at fixed time intervals) and quantisation (rounding sampled values to a set of discrete values).">數碼化是將模擬數據轉換為數碼數據，可分為兩部分：<b>離散化</b>（在固定時間間隔取樣）與<b>量化</b>（把取樣值四捨五入為一組特定的離散值）。</p>
+
+      <div class="exp">
+        <span class="lbl" data-en="Experiment ⑥">實驗⑥</span>
+        <h4 data-en="Sampling rate: drag to see how well the digital version matches the original">取樣頻率：拖一拖，看數碼版本有多接近原本波形</h4>
+        <p class="note" data-en="Free play. Drag the sampling rate and compare the two waves. Low rate = coarse staircase that loses detail; high rate = close to the original smooth wave.">自由試玩：拖動取樣率，比較左右兩幅波形。取樣率低→階梯粗糙、失真大；取樣率高→階梯細密，更接近原本的平滑波形。</p>
+        <div class="slider-row">
+          <label data-en="Sampling rate:">取樣率：</label>
+          <input type="range" id="sampSlider" min="4" max="64" value="12">
+          <span class="val" id="sampVal">12</span>
+        </div>
+        <div class="sig">
+          <div><h5 data-en="Analogue signal (continuous)">模擬訊號（連續）</h5><canvas id="sampAnalogCv" width="300" height="150"></canvas></div>
+          <div><h5 data-en="After sampling (digital)">取樣後（數碼）</h5><canvas id="sampDigitalCv" width="300" height="150"></canvas></div>
+        </div>
+        <p style="font-size:13px;color:var(--muted);margin-top:8px" data-en="A higher sampling rate means more samples in a given time, so less data is lost during digitisation — but the file also becomes larger.">取樣頻率越高，表示在指定時間內取得越多樣本，數碼化時丟失的數據越少——但檔案也會變得更大。</p>
+      </div>
+
+      <details>
+        <summary data-en="Analogue vs digital comparison">模擬與數碼數據詳細比較</summary>
+        <div class="body">
+          <table>
+            <tr><th data-en="Property">屬性</th><th data-en="Analogue data">模擬數據</th><th data-en="Digital data">數碼數據</th></tr>
+            <tr><td data-en="Representation">表示方式</td><td data-en="Physical; values change continuously.">以實體表示，數值之間的變化是連續的。</td><td data-en="Discrete symbols, usually 0 and 1.">以離散符號表示，通常為 0 和 1。</td></tr>
+            <tr><td data-en="Lifespan of storage media">數據儲存媒體的壽命</td><td data-en="Usually shorter and less durable.">通常較短且較不耐用。</td><td data-en="Usually longer and more durable.">通常更長更耐用。</td></tr>
+            <tr><td data-en="Compression feasibility">壓縮的可行性</td><td data-en="Low.">低。</td><td data-en="High — e.g. digital TV signals use less radio spectrum.">高，例如數碼電視訊號佔用較少的無線電頻譜。</td></tr>
+            <tr><td data-en="Resistance to corruption">防止傳輸複製時損壞的能力</td><td data-en="Low.">低。</td><td data-en="High — validation methods such as parity check can be applied.">高，可套用奇偶檢測等有效性檢驗方法。</td></tr>
+            <tr><td data-en="Data analysis ability">數據分析能力</td><td data-en="Low — manual recalculation is needed.">低，例如數據變動時需手動更新計算結果。</td><td data-en="High — spreadsheets can auto-update and create charts.">高，例如電子試算表可自動更新數據甚至即時製作圖表。</td></tr>
+          </table>
+        </div>
+      </details>
+
+      <div class="examtip" data-en="⚠️ <b>Common trap</b>: OCR (optical character recognition) is NOT digitisation by itself, because a digital image and an e-book are both already digital. Digitisation is analogue → digital. Printing a digital photo is the opposite (digital → analogue).">⚠️ <b>常見陷阱</b>：光符識別（OCR）<b>本身不算數碼化</b>，因為數碼圖像與電子書都已經是數碼數據。數碼化是「模擬 → 數碼」；把電子書或數碼圖像<b>打印</b>出來則是相反方向（數碼 → 模擬）。</div>
+    </div>
+  </section>
+
+  <!-- ================= 3.5 多媒體 ================= -->
+  <section id="s35">
+    <div class="card">
+      <h2><span class="num">3.5</span><span data-en="Multimedia">多媒體</span> <span class="en">Multimedia</span></h2>
+
+      <div class="obj">
+        <div class="t" data-en="🎯 Learning Objectives">🎯 學習重點</div>
+        <ul>
+          <li data-en="Name the common multimedia elements: text, image, audio, video and animation.">說出多媒體的常見元素：文本、圖像、音頻、視頻與動畫。</li>
+          <li data-en="Identify common file formats for each multimedia type and their uses.">識別不同多媒體類型的常見檔案格式及其用途。</li>
+          <li data-en="Distinguish uncompressed, lossless compression and lossy compression.">分辨「未壓縮」、「無損壓縮」與「有損壓縮」三種儲存方式。</li>
+          <li data-en="Compare how large the same data becomes in different formats, and choose a suitable format for a situation.">比較儲存相同數據時各格式的檔案大小差別，並為情境選出合適格式。</li>
+        </ul>
+      </div>
+
+      <p class="lead" data-en="Multimedia combines more than one media element — commonly text, image, audio, video and animation. Once these elements are digitised, they are stored in different file formats; the compression method differs, so do the file size and the quality.">多媒體（multimedia）指結合<b>多於一種</b>媒體元素的資訊，常見元素包括<b>文本</b>、<b>圖像</b>、<b>音頻</b>、<b>視頻</b>與<b>動畫</b>。這些元素經數碼化後，要以不同的<b>檔案格式</b>儲存——壓縮方式不同，檔案大小與質素也就不一樣。</p>
+
+      <div class="grid">
+        <div class="chip blue"><b data-en="Text">文本 Text</b><span data-en="Words and symbols — e.g. txt, docx, odt, pdf">文字與符號；格式如 txt、docx、odt、pdf</span></div>
+        <div class="chip teal"><b data-en="Image">圖像 Image</b><span data-en="Still pictures — e.g. bmp, png, jpg">靜態畫面；格式如 bmp、png、jpg</span></div>
+        <div class="chip purple"><b data-en="Audio">音頻 Audio</b><span data-en="Sound — e.g. wav, mp3">聲音；格式如 wav、mp3</span></div>
+        <div class="chip amber"><b data-en="Video">視頻 Video</b><span data-en="Moving pictures with sound — e.g. avi, mp4">連續畫面＋聲音；格式如 avi、mp4</span></div>
+        <div class="chip green"><b data-en="Animation">動畫 Animation</b><span data-en="A sequence of images played in order, often embedded in video or web pages">連續播放的圖像序列，常內嵌於視頻或網頁</span></div>
+      </div>
+
+      <h3 data-en="A. Three ways of storing (compression)">A 三種儲存方式（壓縮）</h3>
+      <p class="lead" data-en="Why do we need so many formats? Because of the trade-off between file size and quality. The same data can be stored uncompressed, losslessly compressed, or lossily compressed.">為甚麼要有這麼多格式？因為<b>檔案大小</b>與<b>質素</b>之間要取捨。同一份數據可以用「未壓縮」、「無損壓縮」或「有損壓縮」三種方式儲存。</p>
+
+      <div class="mnemonic" data-en="🧠 <b>Memory aid</b>: &quot;<b>uncompressed = bulkiest, lossless = faithful, lossy = lightest</b>&quot;.<br>· Uncompressed (bmp, wav): records everything exactly, restores 100%, but the file is the largest.<br>· Lossless (png): after decompression the data is identical to the original; medium size.<br>· Lossy (jpg, mp3, mp4): discards details that our eyes and ears barely notice; smallest file, but <b>it cannot be undone</b>.<br>Pick a format with: &quot;<b>photos use jpg, logos use png, masters use bmp/wav</b>&quot;.">🧠 <b>記憶口訣</b>：「<b>未壓最脹、無損不失真、有損最輕身</b>」。<br>· <b>未壓縮</b>（bmp、wav）：原原本本記低，可 100% 還原，但檔案最大。<br>· <b>無損壓縮</b>（png）：解壓後與原檔完全相同，檔案中等。<br>· <b>有損壓縮</b>（jpg、mp3、mp4）：捨棄人眼／人耳不易察覺的細節，檔案最細，但<b>無法還原</b>。<br>選格式再記一句：「<b>相片用 jpg、標誌用 png、原檔用 bmp／wav</b>」。</div>
+
+      <div class="exp">
+        <span class="lbl" data-en="Experiment ⑦">實驗⑦</span>
+        <h4 data-en="File size explorer: see how much compression saves">檔案大小探索器：壓縮到底省了多少？</h4>
+        <p class="note" data-en="Free play. Switch between image and audio, drag the three sliders, and every file size updates instantly. Same data, different formats — very different sizes.">自由試玩：切換「圖像／音頻」，拖動三個滑桿，所有檔案大小即時更新。同一份數據，用不同格式儲存，大小可以差好幾倍。</p>
+
+        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:12px">
+          <button class="btn" id="fsModeImg" data-en="Image">圖像</button>
+          <button class="btn ghost" id="fsModeAud" data-en="Audio">音頻</button>
+        </div>
+
+        <div class="slider-row"><label id="fsL1" data-en="Width (pixels)">闊（像素）</label><input type="range" id="fsS1"><span class="val" id="fsV1"></span></div>
+        <div class="slider-row"><label id="fsL2" data-en="Height (pixels)">高（像素）</label><input type="range" id="fsS2"><span class="val" id="fsV2"></span></div>
+        <div class="slider-row"><label id="fsL3" data-en="Colour depth (bits per pixel)">色深（每像素位元）</label><input type="range" id="fsS3"><span class="val" id="fsV3"></span></div>
+
+        <div id="fsOut" style="margin-top:12px"></div>
+      </div>
+
+      <h3 data-en="B. Common file formats (click a card)">B 常見多媒體檔案格式（點卡片查看）</h3>
+      <p class="lead" data-en="The curriculum lists these common formats. Click a card to see what it is used for and how it compresses.">課程指引列出下列常見格式。點一張卡，看它的用途與壓縮方式。</p>
+      <div class="hw-grid" id="fmtGrid"></div>
+      <div class="hw-detail" id="fmtDetail"></div>
+
+      <div class="exp">
+        <span class="lbl" data-en="Experiment ⑧">實驗⑧</span>
+        <h4 data-en="Format sorting: drag each format to its media type">格式分類：把每個格式拖到所屬的媒體類型</h4>
+        <p class="note" data-en="Free play. Tap a format card to pick it up, then tap a type column to drop it — or just drag on a computer. Wrong drops bounce back; correct ones turn green. Sort all 11 to finish.">自由試玩：點一張格式卡選中它，再點下方的類型欄放下；電腦上也可直接拖放。放錯會彈回，放對變綠色。把 11 個全部分類就完成。</p>
+        <div class="fmt-pool" id="fmtPool"></div>
+        <div class="fmt-zones" id="fmtZones"></div>
+        <div class="fmt-dragbar">
+          <span class="fmt-progress" id="fmtDragProgress"></span>
+          <button class="btn ghost" id="fmtDragReset" data-en="Reset / shuffle">重置／打散</button>
+        </div>
+        <div class="feedback" id="fmtDragFeedback"></div>
+      </div>
+
+      <div class="exp">
+        <span class="lbl" data-en="Experiment ⑨">實驗⑨</span>
+        <h4 data-en="Pick a format for the situation">情境揀格式：為每個情境選最合適的格式</h4>
+        <p class="note" data-en="Read the situation, then tap the best format. Instant feedback tells you why — practise the exam structure: format name + reason.">讀完情境，點最合適的格式。即時回饋告訴你點解——練習考評作答結構：格式名＋原因。</p>
+        <div class="classify-card" id="sitCard"></div>
+        <div class="classify-btns" id="sitBtns"></div>
+        <div class="fmt-dragbar">
+          <span class="fmt-progress" id="sitProgress"></span>
+        </div>
+        <div class="feedback" id="sitFeedback"></div>
+      </div>
+
+      <details>
+        <summary data-en="Full comparison table">完整格式對照表</summary>
+        <div class="body">
+          <table>
+            <tr><th data-en="Multimedia type">多媒體類型</th><th data-en="Format">格式</th><th data-en="Feature">特點</th></tr>
+            <tr><td data-en="Image">影像</td><td>bmp</td><td data-en="Uncompressed bitmap; very large file.">未壓縮點陣圖，檔案很大。</td></tr>
+            <tr><td data-en="Image">影像</td><td>png</td><td data-en="Lossless compression; supports transparency.">無損壓縮，支援透明背景。</td></tr>
+            <tr><td data-en="Image">影像</td><td>jpg / jpeg</td><td data-en="Lossy compression; small file, good for photos.">有損壓縮，檔案細，適合照片。</td></tr>
+            <tr><td data-en="Audio">音頻</td><td>wav</td><td data-en="Uncompressed audio; very large file.">未壓縮音頻，檔案很大。</td></tr>
+            <tr><td data-en="Audio">音頻</td><td>mp3</td><td data-en="Lossy compressed audio; small file.">有損壓縮音頻，檔案細。</td></tr>
+            <tr><td data-en="Video">視頻</td><td>avi</td><td data-en="Video container; usually very large file.">視頻容器，檔案通常很大。</td></tr>
+            <tr><td data-en="Video">視頻</td><td>mpeg4 / mp4</td><td data-en="Compressed video; relatively small file.">壓縮視頻，檔案相對細。</td></tr>
+            <tr><td data-en="Text">文本</td><td>txt</td><td data-en="Plain text with no formatting.">純文字，不含任何格式。</td></tr>
+            <tr><td data-en="Text">文本</td><td>docx</td><td data-en="Microsoft Word document with formatting.">Microsoft Word 文件，含格式。</td></tr>
+            <tr><td data-en="Text">文本</td><td>odt</td><td data-en="OpenDocument text format.">開放文件格式（OpenDocument）。</td></tr>
+            <tr><td data-en="Text">文本</td><td>pdf</td><td data-en="Cross-platform fixed layout; hard to modify.">跨平台固定版面，不易被修改。</td></tr>
+          </table>
+        </div>
+      </details>
+
+      <div class="examtip" data-en="✍️ <b>Exam tip</b>: when asked to choose a format, always write &quot;<b>format name + reason (size / quality / compatibility)</b>&quot;:<br>· small file for the web or photos → <b>jpg</b> (lossy)<br>· transparency, sharp lines, must restore exactly → <b>png</b> (lossless)<br>· keep every original sample for editing → <b>bmp</b> / <b>wav</b> (uncompressed)<br>· fixed layout across devices, hard to edit → <b>pdf</b><br>· text content only, no formatting needed → <b>txt</b><br>⚠️ <b>Traps</b>: &quot;lossy compression can be reversed&quot; is FALSE; &quot;a smaller file always means worse quality&quot; is not necessarily true — png keeps quality AND shrinks the file.">✍️ <b>作答建議</b>：被問「選哪個格式」時，一定要寫「<b>格式名 ＋ 原因（大小／質素／相容性）</b>」：<br>· 要檔案細、放上網頁或是照片 → <b>jpg</b>（有損）<br>· 要透明背景、線條清晰、必須完全還原 → <b>png</b>（無損）<br>· 要保留全部原始數據作後製 → <b>bmp</b>／<b>wav</b>（未壓縮）<br>· 要跨平台版面一致、不易被改 → <b>pdf</b><br>· 只要文字內容、不需格式 → <b>txt</b><br>⚠️ <b>常見陷阱</b>：「有損壓縮可以還原」是<b>錯</b>的；「檔案細就一定質素差」也<b>不一定</b>——png 就是既保質素又縮細檔案。</div>
+    </div>
+  </section>
+
+  <!-- ================= 考點總覽 ================= -->
+  <section id="exam">
+    <div class="card">
+      <h2><span class="num">★</span><span data-en="Exam Focus Summary">考評局考點總覽</span></h2>
+      <p class="lead" data-en="Must-know lists for this chapter:">本章必背清單：</p>
+      <div class="grid">
+        <div class="chip blue"><b data-en="① Data units">① 數據單位</b><span data-en="bit, B, KB, MB, GB, TB — based on 1024; bit rate uses 1000">bit、B、KB、MB、GB、TB（1024 進位）；位元速率用 1000 進位</span></div>
+        <div class="chip teal"><b data-en="② Base conversion">② 進制轉換</b><span data-en="binary ↔ decimal ↔ hexadecimal; 1 hex digit = 4 bits">二進制 ↔ 十進制 ↔ 十六進制；1 個十六進制位 = 4 位元</span></div>
+        <div class="chip purple"><b data-en="③ Patterns">③ 樣式數量</b><span data-en="patterns = 2^b; bits needed = log₂P">樣式數量 = 2^b；所需位元 = log₂P</span></div>
+        <div class="chip amber"><b data-en="④ Integer ranges">④ 整數範圍</b><span data-en="unsigned 0 to 2^N−1; signed −2^(N−1) to 2^(N−1)−1">無符號 0 至 2^N−1；有符號 −2^(N−1) 至 2^(N−1)−1</span></div>
+        <div class="chip green"><b data-en="⑤ Two's complement">⑤ 二進制補碼</b><span data-en="first bit has negative place value; two's complement of X = number of −X">首位元為負位值；X 的二補碼 = −X 的二補碼數字</span></div>
+        <div class="chip blue"><b data-en="⑥ Overflow">⑥ 溢出誤差</b><span data-en="result out of range; signed: same signs add → opposite sign result">結果超出範圍；有符號：同號相加結果變號</span></div>
+        <div class="chip teal"><b data-en="⑦ Character encoding">⑦ 字符編碼</b><span data-en="ASCII 7b/1B; Big5 &amp; GB 2B; Unicode 1–4B variable">ASCII 7 位元/1 字節；大五碼、國標碼 2 字節；統一碼 1–4 字節可變</span></div>
+        <div class="chip purple"><b data-en="⑧ Barcode">⑧ 條碼</b><span data-en="barcode ~50 chars, 2 angles; QR ~1000 chars, any direction, 30% recovery">條碼約 50 字符、兩個角度；二維碼約 1000 字符、任何方向、可恢復 30%</span></div>
+        <div class="chip amber"><b data-en="⑨ Digitisation">⑨ 數碼化</b><span data-en="analogue → digital = discretisation + quantisation">模擬 → 數碼 = 離散化 + 量化；取樣率越高越接近原波形</span></div>
+        <div class="chip blue"><b data-en="⑩ Multimedia formats">⑩ 多媒體檔案格式</b><span data-en="bmp/png/jpg, wav/mp3, avi/mp4, txt/docx/odt/pdf; uncompressed / lossless / lossy">影像 bmp／png／jpg；音頻 wav／mp3；視頻 avi／mp4；文本 txt／docx／odt／pdf</span></div>
+      </div>
+      <details>
+        <summary data-en="Common question types">常考題型</summary>
+        <div class="body">
+          <ul>
+            <li data-en="<b>Base conversion</b>: convert binary/hex to decimal and back; sometimes compare three values.">進制轉換：二進制／十六進制與十進制互換，有時要比較三個數值的大小。</li>
+            <li data-en="<b>Storage calculation</b>: find MB needed for N files, or hours of audio a disk can hold.">儲存空間計算：求 N 個檔案需要的 MB，或硬碟可儲存多少小時的音頻。</li>
+            <li data-en="<b>Patterns and bits</b>: how many IDs can b bits represent; how many bits for P participants.">樣式與位元：b 位元可表示多少個 ID；P 個參賽者需要多少位元。</li>
+            <li data-en="<b>Two's complement</b>: find the two's complement (number) of a value, or order several two's complement numbers.">二補碼：求某數值的二補碼（數字），或把數個二補碼數字排序。</li>
+            <li data-en="<b>Overflow</b>: decide which calculation causes an overflow error.">溢出誤差：判斷哪一項計算會產生溢出誤差。</li>
+            <li data-en="<b>Encoding choice</b>: choose a character encoding system for mixed-language data and justify it.">編碼選擇：為包含多種語言的數據選擇字符編碼系統並說明理由。</li>
+            <li data-en="<b>Digitisation</b>: identify whether an action converts analogue to digital (or the reverse).">數碼化：判斷某動作是否涉及模擬與數碼數據之間的轉換。</li>
+            <li data-en="<b>File format choice</b>: pick a suitable multimedia format for a situation and justify it by size, quality or compatibility.">檔案格式選擇：為某情境選出合適的多媒體檔案格式，並以檔案大小、質素或相容性說明理由。</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- ================= 腦圖總結 ================= -->
+  <section id="mindmap">
+    <div class="card">
+      <h2><span class="num">🧠</span><span data-en="Chapter Mind Map">全章腦圖總結</span></h2>
+      <p class="lead" data-en="The chapter is grouped into seven concept views. Click a node to see its core content.">把全章重組為七個概念視角，點擊節點查看其核心內容。</p>
+      <div class="mindmap" id="mindmapBox"></div>
+      <div class="mm-desc" id="mmDesc" data-en="Click any node above to see its definition, example or answer tip.">點擊上圖任一節點，查看該概念的定義、例子或作答重點。</div>
+    </div>
+  </section>
+
+  <!-- ================= 小測驗 ================= -->
+  <section id="quiz">
+    <div class="card">
+      <h2><span class="num">✎</span><span data-en="Quiz (instant feedback per question)">小測驗（逐題即時回饋）</span></h2>
+
+      <div class="quiz-q" data-ans="B">
+        <div class="q" data-en="1. What is the decimal value of the binary number 1101?">1. 二進制數字 1101 的十進制數值是多少？</div>
+        <label class="opt"><input type="radio" name="q1" value="A"><span>A. 11</span></label>
+        <label class="opt"><input type="radio" name="q1" value="B"><span>B. 13</span></label>
+        <label class="opt"><input type="radio" name="q1" value="C"><span>C. 14</span></label>
+        <label class="opt"><input type="radio" name="q1" value="D"><span>D. 15</span></label>
+        <div class="q-feedback" data-correct="✓ 正確！1101₂ = 8 + 4 + 0 + 1 = 13。" data-wrong="✗ 答錯了。正確答案是 B：1101₂ = 8 + 4 + 0 + 1 = 13。" data-correct-en="✓ Correct! 1101₂ = 8 + 4 + 0 + 1 = 13." data-wrong-en="✗ Wrong. The answer is B: 1101₂ = 8 + 4 + 0 + 1 = 13."></div>
+      </div>
+
+      <div class="quiz-q" data-ans="C">
+        <div class="q" data-en="2. What is the decimal value of the hexadecimal number 2B?">2. 十六進制數字 2B 的十進制數值是多少？</div>
+        <label class="opt"><input type="radio" name="q2" value="A"><span>A. 32</span></label>
+        <label class="opt"><input type="radio" name="q2" value="B"><span>B. 33</span></label>
+        <label class="opt"><input type="radio" name="q2" value="C"><span>C. 43</span></label>
+        <label class="opt"><input type="radio" name="q2" value="D"><span>D. 44</span></label>
+        <div class="q-feedback" data-correct="✓ 正確！2B₁₆ = 2 × 16 + 11 = 32 + 11 = 43。" data-wrong="✗ 答錯了。正確答案是 C：2B₁₆ = 2 × 16 + 11 = 32 + 11 = 43（B 代表 11）。" data-correct-en="✓ Correct! 2B₁₆ = 2 × 16 + 11 = 32 + 11 = 43." data-wrong-en="✗ Wrong. The answer is C: 2B₁₆ = 2 × 16 + 11 = 32 + 11 = 43 (B stands for 11)."></div>
+      </div>
+
+      <div class="quiz-q" data-ans="B">
+        <div class="q" data-en="3. How many MB is 40 GB? (data units are binary-based)">3. 40 GB 等於多少 MB？（數據單位基於二進制）</div>
+        <label class="opt"><input type="radio" name="q3" value="A"><span>A. 4 000 MB</span></label>
+        <label class="opt"><input type="radio" name="q3" value="B"><span>B. 40 960 MB</span></label>
+        <label class="opt"><input type="radio" name="q3" value="C"><span>C. 40 000 MB</span></label>
+        <label class="opt"><input type="radio" name="q3" value="D"><span>D. 4 096 MB</span></label>
+        <div class="q-feedback" data-correct="✓ 正確！40 GB = 40 × 1024 = 40 960 MB。" data-wrong="✗ 答錯了。正確答案是 B：數據單位基於二進制，1 GB = 1024 MB，所以 40 GB = 40 × 1024 = 40 960 MB。" data-correct-en="✓ Correct! 40 GB = 40 × 1024 = 40 960 MB." data-wrong-en="✗ Wrong. The answer is B: data units are binary-based, 1 GB = 1024 MB, so 40 GB = 40 × 1024 = 40 960 MB."></div>
+      </div>
+
+      <div class="quiz-q" data-ans="D">
+        <div class="q" data-en="4. How many different patterns can 8 bits represent?">4. 8 個位元可以表示多少個不同的樣式？</div>
+        <label class="opt"><input type="radio" name="q4" value="A"><span>A. 8</span></label>
+        <label class="opt"><input type="radio" name="q4" value="B"><span>B. 64</span></label>
+        <label class="opt"><input type="radio" name="q4" value="C"><span>C. 128</span></label>
+        <label class="opt"><input type="radio" name="q4" value="D"><span>D. 256</span></label>
+        <div class="q-feedback" data-correct="✓ 正確！樣式數量 = 2^8 = 256。" data-wrong="✗ 答錯了。正確答案是 D：樣式數量 = 2^b，即 2^8 = 256。" data-correct-en="✓ Correct! Number of patterns = 2^8 = 256." data-wrong-en="✗ Wrong. The answer is D: patterns = 2^b, so 2^8 = 256."></div>
+      </div>
+
+      <div class="quiz-q" data-ans="B">
+        <div class="q" data-en="5. What is the range of a 4-bit two's complement number?">5. 以 4 位元二進制補碼表示，範圍是什麼？</div>
+        <label class="opt"><input type="radio" name="q5" value="A"><span data-en="A. 0 to 15">A. 0 至 15</span></label>
+        <label class="opt"><input type="radio" name="q5" value="B"><span data-en="B. −8 to 7">B. −8 至 7</span></label>
+        <label class="opt"><input type="radio" name="q5" value="C"><span data-en="C. −7 to 8">C. −7 至 8</span></label>
+        <label class="opt"><input type="radio" name="q5" value="D"><span data-en="D. −8 to 8">D. −8 至 8</span></label>
+        <div class="q-feedback" data-correct="✓ 正確！有符號整數範圍是 −2^(N−1) 至 2^(N−1)−1，即 −2^3 = −8 至 2^3−1 = 7。" data-wrong="✗ 答錯了。正確答案是 B：有符號（二補碼）範圍是 −2^(N−1) 至 2^(N−1)−1 = −8 至 7。（0 至 15 是無符號整數的範圍）" data-correct-en="✓ Correct! The signed range is −2^(N−1) to 2^(N−1)−1, i.e. −8 to 7." data-wrong-en="✗ Wrong. The answer is B: the signed (two's complement) range is −2^(N−1) to 2^(N−1)−1 = −8 to 7. (0 to 15 is the UNSIGNED range.)"></div>
+      </div>
+
+      <div class="quiz-q" data-ans="D">
+        <div class="q" data-en="6. What is the 8-bit two's complement number of −1?">6. 十進制數值 −1 的 8 位元二進制補碼數字是什麼？</div>
+        <label class="opt"><input type="radio" name="q6" value="A"><span>A. 0000 0001</span></label>
+        <label class="opt"><input type="radio" name="q6" value="B"><span>B. 1000 0001</span></label>
+        <label class="opt"><input type="radio" name="q6" value="C"><span>C. 1111 1110</span></label>
+        <label class="opt"><input type="radio" name="q6" value="D"><span>D. 1111 1111</span></label>
+        <div class="q-feedback" data-correct="✓ 正確！1₁₀ = 0000 0001，取其二補碼（反轉加 1）= 1111 1111，即 −1 的二補碼數字。" data-wrong="✗ 答錯了。正確答案是 D：1₁₀ 的 8 位元二進制是 0000 0001；反轉所有位元得 1111 1110，再加 1 得 1111 1111，這就是 −1 的二補碼數字。" data-correct-en="✓ Correct! 1₁₀ = 0000 0001; its two's complement (invert and add 1) = 1111 1111, which is the number for −1." data-wrong-en="✗ Wrong. The answer is D: 1₁₀ in 8-bit binary is 0000 0001; inverting gives 1111 1110, and adding 1 gives 1111 1111 — the two's complement number of −1."></div>
+      </div>
+
+      <div class="quiz-q" data-ans="B">
+        <div class="q" data-en="7. Using 4-bit two's complement, what happens when calculating 3 + 5?">7. 以 4 位元二進制補碼計算 3 + 5，會發生什麼？</div>
+        <label class="opt"><input type="radio" name="q7" value="A"><span data-en="A. Gives 1000 (= 8), which is correct">A. 得出 1000（即 8），結果正確</span></label>
+        <label class="opt"><input type="radio" name="q7" value="B"><span data-en="B. An overflow error occurs; the result is wrong">B. 發生溢出誤差，結果錯誤</span></label>
+        <label class="opt"><input type="radio" name="q7" value="C"><span data-en="C. No overflow; the result is in range">C. 沒有溢出，結果在範圍內</span></label>
+        <label class="opt"><input type="radio" name="q7" value="D"><span data-en="D. The calculation cannot be performed">D. 無法計算</span></label>
+        <div class="q-feedback" data-correct="✓ 正確！4 位元二補碼範圍是 −8 至 7，而 3 + 5 = 8 超出範圍，故發生溢出誤差（結果 1000 會被讀成 −8）。" data-wrong="✗ 答錯了。正確答案是 B：4 位元二補碼範圍只到 7，3 + 5 = 8 超出範圍 → 溢出誤差，結果 1000 會被誤讀為 −8。" data-correct-en="✓ Correct! The 4-bit two's complement range is −8 to 7, and 3 + 5 = 8 exceeds it — an overflow error occurs (the result 1000 would read as −8)." data-wrong-en="✗ Wrong. The answer is B: the 4-bit range only reaches 7, so 3 + 5 = 8 is out of range → overflow error, and the result 1000 reads as −8."></div>
+      </div>
+
+      <div class="quiz-q" data-ans="C">
+        <div class="q" data-en="8. Which statements about Unicode are correct? (1) It supports many languages. (2) Every character is stored in a fixed 4 bytes. (3) It uses variable-length encoding (1 to 4 bytes).">8. 以下哪些關於統一碼（Unicode）的陳述是正確？(1) 支援多種語言 (2) 每個字符固定以 4 個字節儲存 (3) 使用可變長度編碼（1 至 4 個字節）</div>
+        <label class="opt"><input type="radio" name="q8" value="A"><span data-en="A. (1) only">A. 只有 (1)</span></label>
+        <label class="opt"><input type="radio" name="q8" value="B"><span data-en="B. (2) only">B. 只有 (2)</span></label>
+        <label class="opt"><input type="radio" name="q8" value="C"><span data-en="C. (1) and (3) only">C. 只有 (1) 和 (3)</span></label>
+        <label class="opt"><input type="radio" name="q8" value="D"><span data-en="D. (2) and (3) only">D. 只有 (2) 和 (3)</span></label>
+        <div class="q-feedback" data-correct="✓ 正確！統一碼支援多種語言（1 正確），並使用可變長度編碼（1–4 個字節，3 正確）；(2) 錯在「固定 4 個字節」。" data-wrong="✗ 答錯了。正確答案是 C：統一碼支援多種語言，且使用<b>可變長度</b>編碼（1–4 個字節）——所以 (1) 和 (3) 正確，(2) 的「固定 4 字節」是錯的。" data-correct-en="✓ Correct! Unicode supports many languages (1 is correct) and uses variable-length encoding of 1–4 bytes (3 is correct); (2) is wrong because the length is not fixed at 4 bytes." data-wrong-en="✗ Wrong. The answer is C: Unicode supports many languages and uses VARIABLE-length encoding (1–4 bytes) — so (1) and (3) are correct, and (2) is wrong."></div>
+      </div>
+
+      <div class="quiz-q" data-ans="B">
+        <div class="q" data-en="9. A school wants to publish a logo with a transparent background on its website. Which image format is most suitable?">9. 學校想在網頁上放一個<b>透明背景</b>的標誌，最適合用哪種影像格式？</div>
+        <label class="opt"><input type="radio" name="q9" value="A"><span data-en="A. jpg">A. jpg</span></label>
+        <label class="opt"><input type="radio" name="q9" value="B"><span data-en="B. png">B. png</span></label>
+        <label class="opt"><input type="radio" name="q9" value="C"><span data-en="C. bmp">C. bmp</span></label>
+        <label class="opt"><input type="radio" name="q9" value="D"><span data-en="D. mp3">D. mp3</span></label>
+        <div class="q-feedback" data-correct="✓ 正確！png 採無損壓縮並支援透明背景，適合標誌與線條圖。" data-wrong="✗ 答錯了。正確答案是 B：png 是無損壓縮，且支援透明背景；jpg 是有損壓縮且不支援透明，bmp 檔案太大，mp3 是音頻格式。" data-correct-en="✓ Correct! png uses lossless compression and supports transparency — ideal for logos and line art." data-wrong-en="✗ Wrong. The answer is B: png is lossless and supports transparency. jpg is lossy and has no transparency, bmp files are far too large, and mp3 is an audio format."></div>
+      </div>
+
+      <div class="quiz-q" data-ans="C">
+        <div class="q" data-en="10. Which statement about lossy compression is correct?">10. 下列哪項關於<b>有損壓縮</b>的陳述是正確的？</div>
+        <label class="opt"><input type="radio" name="q10" value="A"><span data-en="A. The file can always be restored exactly to the original.">A. 檔案一定可以完全還原成原本的數據。</span></label>
+        <label class="opt"><input type="radio" name="q10" value="B"><span data-en="B. It is the same as lossless compression, only slower.">B. 它與無損壓縮相同，只是速度較慢。</span></label>
+        <label class="opt"><input type="radio" name="q10" value="C"><span data-en="C. Details we barely notice are discarded, so the file is smaller but cannot be restored.">C. 捨棄人眼／人耳不易察覺的細節，檔案更細但無法還原。</span></label>
+        <label class="opt"><input type="radio" name="q10" value="D"><span data-en="D. It is only used for text files.">D. 它只適用於文字檔案。</span></label>
+        <div class="q-feedback" data-correct="✓ 正確！有損壓縮（如 jpg、mp3、mp4）會捨棄不易察覺的細節，換取更細的檔案，但無法還原。" data-wrong="✗ 答錯了。正確答案是 C：有損壓縮以「捨棄細節」換取細小檔案，且無法還原；能完全還原的是無損壓縮（如 png）。" data-correct-en="✓ Correct! Lossy compression (jpg, mp3, mp4) discards details we barely notice for a smaller file — and it cannot be undone." data-wrong-en="✗ Wrong. The answer is C: lossy compression trades discarded detail for a smaller file and cannot be reversed. Lossless compression (such as png) restores the data exactly."></div>
+      </div>
+
+      <button class="btn" id="quizBtn" data-en="Submit Score">結算得分</button>
+      <div id="quizResult"></div>
+    </div>
+  </section>
+
+</main>
+
+<button id="toTop" aria-label="回到頂部">↑</button>
+
+<footer data-en="Chapter 3: Data Representation · Interactive Lab | aligned with the HKDSE ICT curriculum">第三章　數據表示 · 互動實驗室　|　緊扣 HKDSE ICT 課程</footer>
+
+<script>
+// ==================== i18n 語言切換 ====================
+let LANG = 'zh';
+const i18nTexts = {
+  zh: {
+    convHint: '在上面輸入數值，三種進制會即時顯示。',
+    convErrBin: '⚠️ 二進制只可由 0 和 1 組成。',
+    convErrDec: '⚠️ 十進制只可由數字 0–9 組成。',
+    convErrHex: '⚠️ 十六進制只可由 0–9 及 A–F 組成。',
+    convBinLbl: '二進制', convDecLbl: '十進制', convHexLbl: '十六進制',
+    convWork: '展開計算',
+    patPatterns: '可表示的樣式數量',
+    patUnsigned: '無符號整數範圍',
+    patSigned: '有符號（二補碼）範圍',
+    patTo: '至',
+    twosValue: '十進制數值',
+    twosRange: '此位元數的範圍',
+    twosNegative: '負數（首位元為 1）',
+    twosPositive: '非負數（首位元為 0）',
+    twosWork: '展開計算（首位元為負位值）',
+    ovA: '第一個數', ovB: '第二個數',
+    ovSum: '相加結果', ovRange: '此位元數的範圍',
+    ovOk: '✓ 結果在範圍內，沒有溢出誤差。',
+    ovBad: '✗ 結果超出範圍 → 發生溢出誤差！',
+    ovOutRange: '⚠️ 輸入的數值本身已超出此位元數的範圍。',
+    asciiChar: '字符', asciiDec: '十進制', asciiBin: '二進制（7 位元）', asciiHex: '十六進制',
+    asciiHint: '輸入一個字符，或輸入 0–127 的十進制編碼。',
+    asciiErr: '⚠️ 請輸入單個字符，或 0–127 的十進制編碼。',
+    sampRate: '取樣率',
+    fsL1Img: '闊（像素）', fsL2Img: '高（像素）', fsL3Img: '色深（每像素位元）',
+    fsL1Aud: '取樣率（Hz）', fsL2Aud: '位元深度', fsL3Aud: '時長（秒）',
+    fsPixels: '總像素', fsColors: '可表示的顏色數', fsSamples: '總取樣數', fsCh: '聲道',
+    fsFormula: '計算式', fsRaw: '未壓縮', fsLossless: '無損壓縮', fsLossy: '有損壓縮',
+    fsSize: '估計檔案大小', fsFormat: '格式', fsMethod: '壓縮方式',
+    fsSave: '比原始細約 {p}%', fsBits: '位元', fsBytes: '位元組', fsNote: '⚠️ 實際壓縮率取決於檔案內容（顏色種類、畫面細節等），上表為典型參考值，用來比較數量級。',
+    fsHintImg: '💡 相片／網頁圖片 → jpg；標誌、截圖、要透明背景 → png；要保留全部原始像素作後製 → bmp。',
+    fsHintAud: '💡 錄音原始檔／後期編輯 → wav；網上音樂、流動裝置 → mp3。'
+  },
+  en: {
+    convHint: 'Type a value above and all three systems will appear instantly.',
+    convErrBin: '⚠️ Binary can only contain 0 and 1.',
+    convErrDec: '⚠️ Decimal can only contain digits 0–9.',
+    convErrHex: '⚠️ Hexadecimal can only contain 0–9 and A–F.',
+    convBinLbl: 'Binary', convDecLbl: 'Decimal', convHexLbl: 'Hexadecimal',
+    convWork: 'Expansion',
+    patPatterns: 'Number of patterns',
+    patUnsigned: 'Unsigned range',
+    patSigned: 'Signed (two’s complement) range',
+    patTo: 'to',
+    twosValue: 'Decimal value',
+    twosRange: 'Range for this bit width',
+    twosNegative: 'Negative (first bit is 1)',
+    twosPositive: 'Non-negative (first bit is 0)',
+    twosWork: 'Expansion (first bit has a negative place value)',
+    ovA: 'First number', ovB: 'Second number',
+    ovSum: 'Sum', ovRange: 'Range for this bit width',
+    ovOk: '✓ The result is in range — no overflow error.',
+    ovBad: '✗ The result is out of range → an overflow error occurs!',
+    ovOutRange: '⚠️ The input value is already outside the range for this bit width.',
+    asciiChar: 'Character', asciiDec: 'Decimal', asciiBin: 'Binary (7-bit)', asciiHex: 'Hexadecimal',
+    asciiHint: 'Type a single character, or a decimal code from 0–127.',
+    asciiErr: '⚠️ Please enter a single character, or a decimal code from 0–127.',
+    sampRate: 'Sampling rate',
+    fsL1Img: 'Width (px)', fsL2Img: 'Height (px)', fsL3Img: 'Colour depth (bits/px)',
+    fsL1Aud: 'Sampling rate (Hz)', fsL2Aud: 'Bit depth', fsL3Aud: 'Duration (s)',
+    fsPixels: 'Total pixels', fsColors: 'Colours available', fsSamples: 'Total samples', fsCh: 'channels',
+    fsFormula: 'Formula', fsRaw: 'Uncompressed', fsLossless: 'Lossless', fsLossy: 'Lossy',
+    fsSize: 'Estimated size', fsFormat: 'Format', fsMethod: 'Method',
+    fsSave: 'about {p}% smaller', fsBits: 'bits', fsBytes: 'bytes', fsNote: '⚠️ Real compression ratios depend on the content (number of colours, detail, etc.). The figures above are typical reference values for comparing orders of magnitude.',
+    fsHintImg: '💡 Photos / web images → jpg; logos, screenshots or transparency → png; keep every original pixel for editing → bmp.',
+    fsHintAud: '💡 Master recording / later editing → wav; online music and mobile devices → mp3.'
+  }
+};
+function initI18n(){
+  document.querySelectorAll('[data-en]').forEach(el=>{
+    if(!el.dataset.zh) el.dataset.zh = el.innerHTML;
+  });
+}
+function setLang(lang){
+  LANG = lang;
+  document.body.dataset.lang = lang;
+  document.documentElement.lang = lang === 'en' ? 'en' : 'zh-Hant';
+  document.querySelectorAll('.lang-btn').forEach(b=> b.classList.toggle('active', b.dataset.lang === lang));
+  document.querySelectorAll('[data-en]').forEach(el=>{
+    if(lang === 'en'){ el.innerHTML = el.dataset.en; }
+    else { el.innerHTML = el.dataset.zh || el.innerHTML; }
+  });
+  renderConv();
+  renderPatterns();
+  renderTwos();
+  renderOverflow();
+  renderAscii();
+  renderSampling();
+  buildEncCards();
+  buildBarCards();
+  buildFmtCards();
+  buildFmtDrag();
+  buildSituation();
+  fsSetup();
+  refreshMindmap();
+  refreshQuizFeedback();
+}
+document.querySelectorAll('.lang-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{ setLang(btn.dataset.lang); });
+});
+initI18n();
+
+// ==================== 實驗①：進制轉換器 ====================
+let convBase = 'bin';
+function group4(bin){
+  const pad = bin.length % 4 === 0 ? bin : '0'.repeat(4 - bin.length % 4) + bin;
+  return pad.match(/.{1,4}/g).join(' ');
+}
+function binExpansion(bin){
+  const parts = [];
+  for(let i=0;i<bin.length;i++){
+    parts.push(bin[i] === '1' ? Math.pow(2, bin.length - 1 - i) : 0);
+  }
+  const sum = parts.reduce((a,b)=>a+b, 0);
+  return parts.join(' + ') + ' = ' + sum;
+}
+function renderConv(){
+  const raw = document.getElementById('convInput').value.trim();
+  const out = document.getElementById('convOut');
+  const T = i18nTexts[LANG];
+  if(raw === ''){ out.innerHTML = '<p class="lead">'+T.convHint+'</p>'; return; }
+  let dec = null;
+  if(convBase === 'bin'){
+    if(!/^[01]+$/.test(raw)){ out.innerHTML = '<p class="feedback bad">'+T.convErrBin+'</p>'; return; }
+    dec = parseInt(raw, 2);
+  } else if(convBase === 'dec'){
+    if(!/^\d+$/.test(raw)){ out.innerHTML = '<p class="feedback bad">'+T.convErrDec+'</p>'; return; }
+    dec = parseInt(raw, 10);
+  } else {
+    if(!/^[0-9A-Fa-f]+$/.test(raw)){ out.innerHTML = '<p class="feedback bad">'+T.convErrHex+'</p>'; return; }
+    dec = parseInt(raw, 16);
+  }
+  const bin = dec.toString(2);
+  const hex = dec.toString(16).toUpperCase();
+  let html = '<table>';
+  html += '<tr><th>'+T.convBinLbl+'</th><td><b style="font-size:16px;letter-spacing:1px">'+group4(bin)+'</b></td></tr>';
+  html += '<tr><th>'+T.convDecLbl+'</th><td><b style="font-size:16px">'+dec+'</b></td></tr>';
+  html += '<tr><th>'+T.convHexLbl+'</th><td><b style="font-size:16px">'+hex+'</b></td></tr>';
+  html += '</table>';
+  html += '<p style="font-size:13px;color:var(--muted);margin-top:6px">'+T.convWork+'：'+binExpansion(bin)+'</p>';
+  out.innerHTML = html;
+}
+function setConvBase(b){
+  convBase = b;
+  document.getElementById('convBin').className = 'btn' + (b==='bin' ? '' : ' ghost');
+  document.getElementById('convDec').className = 'btn' + (b==='dec' ? '' : ' ghost');
+  document.getElementById('convHex').className = 'btn' + (b==='hex' ? '' : ' ghost');
+  renderConv();
+}
+document.getElementById('convBin').addEventListener('click', ()=> setConvBase('bin'));
+document.getElementById('convDec').addEventListener('click', ()=> setConvBase('dec'));
+document.getElementById('convHex').addEventListener('click', ()=> setConvBase('hex'));
+document.getElementById('convInput').addEventListener('input', renderConv);
+
+// ==================== 實驗②：位元與樣式數量 ====================
+function renderPatterns(){
+  const b = +document.getElementById('patSlider').value;
+  document.getElementById('patVal').textContent = b;
+  const n = Math.pow(2, b);
+  const T = i18nTexts[LANG];
+  let html = '<table>';
+  html += '<tr><th>'+T.patPatterns+'</th><td><b style="font-size:16px">2<sup>'+b+'</sup> = '+n+'</b></td></tr>';
+  html += '<tr><th>'+T.patUnsigned+'</th><td>0 '+T.patTo+' '+(n-1)+'</td></tr>';
+  html += '<tr><th>'+T.patSigned+'</th><td>'+(-Math.pow(2,b-1))+' '+T.patTo+' '+(Math.pow(2,b-1)-1)+'</td></tr>';
+  html += '</table>';
+  document.getElementById('patOut').innerHTML = html;
+}
+document.getElementById('patSlider').addEventListener('input', renderPatterns);
+
+// ==================== 實驗③：二補碼探索器 ====================
+let twosArr = [0,0,0,0];
+function twosValue(){
+  const n = twosArr.length;
+  let v = 0;
+  for(let i=0;i<n;i++){
+    const w = Math.pow(2, n-1-i);
+    v += (i === 0 ? -w : w) * twosArr[i];
+  }
+  return v;
+}
+function buildTwosBits(){
+  const box = document.getElementById('twosBits');
+  box.innerHTML = '';
+  twosArr.forEach((b,i)=>{
+    const el = document.createElement('button');
+    el.textContent = b;
+    let css = 'width:46px;height:46px;border-radius:10px;border:2px solid var(--line);background:#fff;font-size:20px;font-weight:700;cursor:pointer;';
+    if(i === 0 && b === 1) css += 'border-color:var(--amber);background:var(--amber-bg);color:var(--amber);';
+    else if(i === 0 && b === 0) css += 'border-color:var(--amber);color:var(--muted);';
+    else if(b === 1) css += 'border-color:var(--blue);background:var(--blue-bg);color:var(--blue);';
+    else css += 'color:var(--muted);';
+    el.style.cssText = css;
+    el.addEventListener('click', ()=>{
+      twosArr[i] = twosArr[i] ? 0 : 1;
+      buildTwosBits(); renderTwos();
+    });
+    box.appendChild(el);
+  });
+}
+function renderTwos(){
+  const T = i18nTexts[LANG];
+  const n = twosArr.length;
+  const v = twosValue();
+  const neg = twosArr[0] === 1;
+  // expansion
+  const parts = [];
+  for(let i=0;i<n;i++){
+    const w = Math.pow(2, n-1-i);
+    const bit = twosArr[i];
+    parts.push((i===0 ? '('+(-w)+')' : w) + ' × ' + bit);
+  }
+  let html = '<p style="font-size:16px">'+T.twosValue+'：<b style="font-size:22px;color:'+(neg?'var(--red)':'var(--green)')+'">'+v+'</b></p>';
+  html += '<p style="font-size:13.5px;margin-top:2px">('+(neg ? T.twosNegative : T.twosPositive)+')</p>';
+  html += '<p style="font-size:12.5px;color:var(--muted);margin-top:6px">'+T.twosWork+'：'+parts.join(' + ')+' = '+v+'</p>';
+  html += '<p style="font-size:12.5px;color:var(--muted)">'+T.twosRange+'：'+(-Math.pow(2,n-1))+' '+T.patTo+' '+(Math.pow(2,n-1)-1)+'</p>';
+  document.getElementById('twosOut').innerHTML = html;
+}
+document.getElementById('twosSlider').addEventListener('input', ()=>{
+  const n = +document.getElementById('twosSlider').value;
+  document.getElementById('twosVal').textContent = n;
+  const old = twosArr.slice();
+  twosArr = [];
+  for(let i=0;i<n;i++) twosArr.push(old[old.length - n + i] !== undefined ? old[old.length - n + i] : 0);
+  buildTwosBits(); renderTwos();
+});
+
+// ==================== 實驗④：溢出誤差探索 ====================
+function renderOverflow(){
+  const T = i18nTexts[LANG];
+  const n = +document.getElementById('ovSlider').value;
+  document.getElementById('ovVal').textContent = n;
+  const a = parseInt(document.getElementById('ovA').value, 10);
+  const b = parseInt(document.getElementById('ovB').value, 10);
+  const lo = -Math.pow(2, n-1), hi = Math.pow(2, n-1) - 1;
+  const out = document.getElementById('ovOut');
+  if(isNaN(a) || isNaN(b)){ out.innerHTML = '<p class="lead">'+T.ovRange+'：'+lo+' '+T.patTo+' '+hi+'</p>'; return; }
+  const sum = a + b;
+  const aBad = a < lo || a > hi, bBad = b < lo || b > hi;
+  const overflow = sum < lo || sum > hi;
+  let html = '<table>';
+  html += '<tr><th>'+T.ovA+'</th><td>'+a+'</td></tr>';
+  html += '<tr><th>'+T.ovB+'</th><td>'+b+'</td></tr>';
+  html += '<tr><th>'+T.ovSum+'</th><td><b style="font-size:16px">'+sum+'</b></td></tr>';
+  html += '<tr><th>'+T.ovRange+'</th><td>'+lo+' '+T.patTo+' '+hi+'</td></tr>';
+  html += '</table>';
+  if(aBad || bBad) html += '<p class="feedback bad">'+T.ovOutRange+'</p>';
+  else if(overflow) html += '<p class="feedback bad">'+T.ovBad+'</p>';
+  else html += '<p class="feedback ok">'+T.ovOk+'</p>';
+  out.innerHTML = html;
+}
+document.getElementById('ovSlider').addEventListener('input', renderOverflow);
+document.getElementById('ovA').addEventListener('input', renderOverflow);
+document.getElementById('ovB').addEventListener('input', renderOverflow);
+
+// ==================== 實驗⑤：ASCII 探索 ====================
+function renderAscii(){
+  const T = i18nTexts[LANG];
+  const raw = document.getElementById('asciiInput').value;
+  const out = document.getElementById('asciiOut');
+  if(raw === ''){ out.innerHTML = '<p class="lead">'+T.asciiHint+'</p>'; return; }
+  let code = null;
+  if(/^\d{1,3}$/.test(raw) && +raw >= 0 && +raw <= 127){
+    code = +raw;
+  } else if(raw.length === 1){
+    code = raw.charCodeAt(0);
+    if(code > 127) code = null;
+  }
+  if(code === null){ out.innerHTML = '<p class="feedback bad">'+T.asciiErr+'</p>'; return; }
+  const ch = String.fromCharCode(code);
+  const bin = code.toString(2).padStart(7, '0');
+  const hex = code.toString(16).toUpperCase();
+  let html = '<table>';
+  html += '<tr><th>'+T.asciiChar+'</th><td><b style="font-size:20px">'+ch+'</b></td></tr>';
+  html += '<tr><th>'+T.asciiDec+'</th><td><b>'+code+'</b></td></tr>';
+  html += '<tr><th>'+T.asciiBin+'</th><td><b style="letter-spacing:1px">'+bin+'</b></td></tr>';
+  html += '<tr><th>'+T.asciiHex+'</th><td><b>'+hex+'</b></td></tr>';
+  html += '</table>';
+  out.innerHTML = html;
+}
+document.getElementById('asciiInput').addEventListener('input', renderAscii);
+
+// ==================== 實驗⑥：取樣與數碼化 ====================
+const sacv = document.getElementById('sampAnalogCv');
+const sdcv = document.getElementById('sampDigitalCv');
+function drawSampAnalog(){
+  const c = sacv.getContext('2d'); const w = sacv.width, h = sacv.height;
+  c.clearRect(0,0,w,h);
+  c.strokeStyle = '#185fa5'; c.lineWidth = 2; c.beginPath();
+  for(let x=0; x<=w; x++){ const y = h/2 - Math.sin(x/w*Math.PI*4)*(h/2-12); x===0?c.moveTo(x,y):c.lineTo(x,y); }
+  c.stroke();
+}
+function drawSampDigital(n){
+  const c = sdcv.getContext('2d'); const w = sdcv.width, h = sdcv.height;
+  c.clearRect(0,0,w,h);
+  c.strokeStyle = '#d85a30'; c.lineWidth = 2; c.beginPath();
+  const step = w/n; let prevY = null;
+  for(let i=0;i<n;i++){
+    const x = i*step; const y = h/2 - Math.sin(i/n*Math.PI*4)*(h/2-12);
+    if(prevY === null){ c.moveTo(x,y); } else { c.lineTo(x,prevY); c.lineTo(x,y); }
+    prevY = y;
+  }
+  c.lineTo(w, prevY); c.stroke();
+}
+function renderSampling(){
+  const v = +document.getElementById('sampSlider').value;
+  document.getElementById('sampVal').textContent = v;
+  drawSampDigital(v);
+}
+document.getElementById('sampSlider').addEventListener('input', renderSampling);
+
+// ==================== 字符編碼卡片 ====================
+const encCards = [
+  {n:'ASCII', c:'7 位元 / 1 字節', cEn:'7 bits / 1 byte', cat:'英文', catEn:'English',
+   use:'美式標準編碼，常用 7 位元表示一個字符，可表示 128 個字符。因佔用空間小而沿用至今。可擴展為 8 位元以表示更多字符、作奇偶檢驗位或配合字節處理。',
+   useEn:'A standard English encoding using 7 bits per character (128 characters). Still used today because it needs very little space. Sometimes extended to 8 bits for more characters, a parity bit, or byte-based processing.',
+   icon:'e1'},
+  {n:'大五碼', nEn:'Big5', c:'2 個字節', cEn:'2 bytes', cat:'繁體中文', catEn:'Traditional Chinese',
+   use:'繁體中文常用的編碼系統，使用 2 個字節（16 位元）儲存一個字符，包含超過 10,000 個字符（含英文字母、數字、符號）。與國標碼不能互換。',
+   useEn:'Commonly used for Traditional Chinese. Uses 2 bytes (16 bits) per character and covers over 10,000 characters (including English letters, digits and symbols). Not interchangeable with GB.',
+   icon:'e2'},
+  {n:'國標碼', nEn:'GB', c:'2 個字節', cEn:'2 bytes', cat:'簡體中文', catEn:'Simplified Chinese',
+   use:'簡體中文常用的編碼系統，同樣使用 2 個字節儲存一個字符。若以國標碼解讀大五碼檔案，只會出現亂碼而不會變成簡體中文。',
+   useEn:'Commonly used for Simplified Chinese, also 2 bytes per character. Decoding a Big5 file with GB produces garbled text — not translated Simplified Chinese.',
+   icon:'e3'},
+  {n:'統一碼', nEn:'Unicode', c:'1 至 4 個字節', cEn:'1 to 4 bytes', cat:'多種語言', catEn:'Many languages',
+   use:'為表示世界上大多數語言而設，可表示超過 100,000 個字符。使用可變長度編碼（如 UTF-8），不同語言的字符佔 1 至 4 個字節不等。適合混合語言的檔案。',
+   useEn:'Designed to represent most of the world’s languages — over 100,000 characters. Uses variable-length encoding (e.g. UTF-8), so characters take 1 to 4 bytes depending on the language. Best for mixed-language files.',
+   icon:'e4'},
+];
+const ENC_ICONS = {
+  e1:'<rect x="5" y="5" width="36" height="36" rx="8" fill="#e6f1fb" stroke="#185fa5" stroke-width="2"/><text x="23" y="30" font-size="13" text-anchor="middle" fill="#185fa5" font-weight="700">A</text>',
+  e2:'<rect x="5" y="5" width="36" height="36" rx="8" fill="#e1f5ee" stroke="#0f6e56" stroke-width="2"/><text x="23" y="30" font-size="13" text-anchor="middle" fill="#0f6e56" font-weight="700">繁</text>',
+  e3:'<rect x="5" y="5" width="36" height="36" rx="8" fill="#e1f5ee" stroke="#0f6e56" stroke-width="2"/><text x="23" y="30" font-size="13" text-anchor="middle" fill="#0f6e56" font-weight="700">简</text>',
+  e4:'<rect x="5" y="5" width="36" height="36" rx="8" fill="#eeedfe" stroke="#534ab7" stroke-width="2"/><text x="23" y="30" font-size="12" text-anchor="middle" fill="#534ab7" font-weight="700">U</text>',
+};
+function buildEncCards(){
+  const g = document.getElementById('encGrid');
+  const detail = document.getElementById('encDetail');
+  g.innerHTML = encCards.map((h,i)=>{
+    const name = LANG==='en' ? (h.nEn || h.n) : h.n;
+    const c = LANG==='en' ? (h.cEn || h.c) : h.c;
+    return '<div class="hw-card" data-i="'+i+'"><svg viewBox="0 0 46 46" xmlns="http://www.w3.org/2000/svg">'+(ENC_ICONS[h.icon]||'')+'</svg><div class="n">'+name+'</div><div class="c">'+c+'</div></div>';
+  }).join('');
+  detail.classList.remove('show');
+  g.querySelectorAll('.hw-card').forEach(card=>{
+    card.addEventListener('click', ()=>{
+      const h = encCards[+card.dataset.i];
+      const nm = LANG==='en' ? (h.nEn||h.n) : h.n;
+      const ct = LANG==='en' ? (h.catEn||h.cat) : h.cat;
+      const us = LANG==='en' ? (h.useEn||h.use) : h.use;
+      detail.innerHTML = '<b>'+nm+'</b><span class="cat">'+ct+'</span><div class="use" style="margin-top:6px">'+us+'</div>';
+      detail.classList.add('show');
+    });
+  });
+}
+
+// ==================== 條碼卡片 ====================
+const barCards = [
+  {n:'條碼', nEn:'Barcode', c:'一維、約 50 字符', cEn:'1D, about 50 chars', cat:'條碼編碼', catEn:'Barcode encoding',
+   use:'由不同寬度的條形和空格組成，用來表示一串數字（通常是產品編號）。元素包括：條碼符號、靜區（兩端空白）、起始／終止字符、供人類閱讀的字串。掃描時只有紅線覆蓋的區域會被讀取，故條形的高度不重要，但寬度必須準確。',
+   useEn:'Made of bars and spaces of different widths, representing a string of digits (usually a product ID). Elements: barcode symbol, quiet zone (blank margins at both ends), start/stop characters, and a human-readable string. Only the area covered by the red scan line is read, so bar height does not matter — but the widths must stay exact.',
+   icon:'b1'},
+  {n:'二維碼', nEn:'QR code', c:'二維、約 1000 字符', cEn:'2D, about 1000 chars', cat:'條碼編碼', catEn:'Barcode encoding',
+   use:'二維條碼，由白色背景上的黑點組成，可表示 URL、電話號碼或電郵地址。有四側的靜區、三個角的定位標誌（故可從任何方向掃描）與校正標誌（修復傾斜扭曲）。糾錯能力高，通常可恢復達 30% 的數據，故中心加上商標仍可讀取。',
+   useEn:'A 2D barcode of black dots on a white background, representing a URL, phone number or email address. It has a quiet zone on all four sides, positioning marks in three corners (so it can be scanned from any direction), and alignment marks to fix distortion. High error correction — usually recovers up to 30% of data, so a logo in the centre is still readable.',
+   icon:'b2'},
+];
+const BAR_ICONS = {
+  b1:'<rect x="4" y="10" width="38" height="26" rx="3" fill="#e6f1fb" stroke="#185fa5" stroke-width="2"/><g fill="#185fa5"><rect x="8" y="14" width="2" height="18"/><rect x="12" y="14" width="4" height="18"/><rect x="18" y="14" width="1" height="18"/><rect x="21" y="14" width="3" height="18"/><rect x="27" y="14" width="2" height="18"/><rect x="31" y="14" width="4" height="18"/><rect x="37" y="14" width="1" height="18"/></g>',
+  b2:'<rect x="6" y="6" width="34" height="34" rx="3" fill="#e1f5ee" stroke="#0f6e56" stroke-width="2"/><g fill="#0f6e56"><rect x="10" y="10" width="7" height="7"/><rect x="29" y="10" width="7" height="7"/><rect x="10" y="29" width="7" height="7"/><rect x="21" y="21" width="4" height="4"/><rect x="21" y="29" width="4" height="4"/><rect x="29" y="29" width="3" height="3"/></g>',
+};
+function buildBarCards(){
+  const g = document.getElementById('barGrid');
+  const detail = document.getElementById('barDetail');
+  g.innerHTML = barCards.map((h,i)=>{
+    const name = LANG==='en' ? (h.nEn || h.n) : h.n;
+    const c = LANG==='en' ? (h.cEn || h.c) : h.c;
+    return '<div class="hw-card" data-i="'+i+'"><svg viewBox="0 0 46 46" xmlns="http://www.w3.org/2000/svg">'+(BAR_ICONS[h.icon]||'')+'</svg><div class="n">'+name+'</div><div class="c">'+c+'</div></div>';
+  }).join('');
+  detail.classList.remove('show');
+  g.querySelectorAll('.hw-card').forEach(card=>{
+    card.addEventListener('click', ()=>{
+      const h = barCards[+card.dataset.i];
+      const nm = LANG==='en' ? (h.nEn||h.n) : h.n;
+      const ct = LANG==='en' ? (h.catEn||h.cat) : h.cat;
+      const us = LANG==='en' ? (h.useEn||h.use) : h.use;
+      detail.innerHTML = '<b>'+nm+'</b><span class="cat">'+ct+'</span><div class="use" style="margin-top:6px">'+us+'</div>';
+      detail.classList.add('show');
+    });
+  });
+}
+
+// ==================== 多媒體檔案格式卡片 ====================
+const fmtCards = [
+  {n:'bmp', type:'image', c:'影像 · 未壓縮', cEn:'Image · uncompressed', cat:'未壓縮', catEn:'Uncompressed',
+   use:'把每一個像素的顏色原原本本記下來，可 100% 還原，但檔案非常大。適合要保留全部原始像素作後製的圖檔。',
+   useEn:'Records the colour of every pixel exactly, so it restores 100% — but the file is very large. Use it when you must keep every original pixel for later editing.', icon:'f1'},
+  {n:'png', type:'image', c:'影像 · 無損壓縮', cEn:'Image · lossless', cat:'無損壓縮', catEn:'Lossless',
+   use:'壓縮後解壓可完全還原，沒有失真；支援透明背景。適合標誌、螢幕截圖、線條與文字較多的圖。',
+   useEn:'Decompresses back to exactly the original — no loss. Supports transparency. Good for logos, screenshots and images with sharp lines or text.', icon:'f2'},
+  {n:'jpg / jpeg', type:'image', c:'影像 · 有損壓縮', cEn:'Image · lossy', cat:'有損壓縮', catEn:'Lossy',
+   use:'捨棄人眼不易察覺的細節，換取細小的檔案；壓縮後無法還原。適合照片與網頁圖片。',
+   useEn:'Discards details our eyes barely notice to get a much smaller file; the loss cannot be undone. Best for photos and web images.', icon:'f3'},
+  {n:'wav', type:'audio', c:'音頻 · 未壓縮', cEn:'Audio · uncompressed', cat:'未壓縮', catEn:'Uncompressed',
+   use:'把每個取樣值原原本本記下來，音質完整但檔案很大。適合錄音原始檔與後期編輯。',
+   useEn:'Stores every sampled value exactly — full quality, very large file. Use it for master recordings and later editing.', icon:'f4'},
+  {n:'mp3', type:'audio', c:'音頻 · 有損壓縮', cEn:'Audio · lossy', cat:'有損壓縮', catEn:'Lossy',
+   use:'捨棄人耳不易察覺的聲音，檔案細小得多。適合網上音樂與流動裝置。',
+   useEn:'Removes sounds the human ear barely notices, making the file far smaller. Ideal for online music and mobile devices.', icon:'f5'},
+  {n:'avi', type:'video', c:'視頻 · 容器', cEn:'Video · container', cat:'視頻容器', catEn:'Video container',
+   use:'視頻容器，可同時容納影像軌與音頻軌；未經高度壓縮，故檔案通常很大。',
+   useEn:'A video container that holds video and audio tracks together. Not heavily compressed, so files are usually very large.', icon:'f6'},
+  {n:'mpeg4 / mp4', type:'video', c:'視頻 · 有損壓縮', cEn:'Video · lossy', cat:'有損壓縮', catEn:'Lossy',
+   use:'把視頻高度壓縮，檔案相對細小，是網上影片、手機影片最常用的格式。',
+   useEn:'Heavily compressed video with a relatively small file — the most common format for online video and phone recordings.', icon:'f7'},
+  {n:'txt', type:'text', c:'文本 · 純文字', cEn:'Text · plain', cat:'純文字', catEn:'Plain text',
+   use:'只儲存字符本身，不含字體、顏色、大小等任何格式。檔案最小、相容性最高，任何系統都能開。',
+   useEn:'Stores only the characters themselves — no fonts, colours or sizes. Smallest file and highest compatibility; any system can open it.', icon:'f8'},
+  {n:'docx', type:'text', c:'文本 · Word 文件', cEn:'Text · Word', cat:'格式化文本', catEn:'Formatted text',
+   use:'Microsoft Word 的文件格式，除文字外還儲存字體、顏色、排版、圖片等格式設定。',
+   useEn:'Microsoft Word’s document format. Stores fonts, colours, layout and images in addition to the text.', icon:'f9'},
+  {n:'odt', type:'text', c:'文本 · 開放格式', cEn:'Text · OpenDocument', cat:'格式化文本', catEn:'Formatted text',
+   use:'開放文件格式（OpenDocument），是 LibreOffice 等開源辦公軟件的預設格式，不綁定單一廠商。',
+   useEn:'The OpenDocument text format — the default for open-source office suites such as LibreOffice, and not tied to one vendor.', icon:'f10'},
+  {n:'pdf', type:'text', c:'文本 · 固定版面', cEn:'Text · fixed layout', cat:'跨平台', catEn:'Cross-platform',
+   use:'跨平台固定版面：在任何裝置上看起來都一樣，且不易被修改，適合分發、列印與提交文件。',
+   useEn:'A cross-platform fixed layout: it looks the same on any device and is hard to modify — ideal for distribution, printing and submissions.', icon:'f11'},
+];
+function fmtIcon(i, label, fill, stroke){
+  return '<rect x="4" y="8" width="38" height="30" rx="6" fill="'+fill+'" stroke="'+stroke+'" stroke-width="2"/>'+
+         '<text x="23" y="28" font-size="'+(label.length>3?'8':'10')+'" text-anchor="middle" fill="'+stroke+'" font-weight="700">'+label+'</text>';
+}
+const FMT_ICONS = {
+  f1:fmtIcon(1,'BMP','#e6f1fb','#185fa5'),
+  f2:fmtIcon(2,'PNG','#e1f5ee','#0f6e56'),
+  f3:fmtIcon(3,'JPG','#e1f5ee','#0f6e56'),
+  f4:fmtIcon(4,'WAV','#eeedfe','#534ab7'),
+  f5:fmtIcon(5,'MP3','#eeedfe','#534ab7'),
+  f6:fmtIcon(6,'AVI','#faeeda','#854f0b'),
+  f7:fmtIcon(7,'MP4','#faeeda','#854f0b'),
+  f8:fmtIcon(8,'TXT','#eaf3e6','#3b6d11'),
+  f9:fmtIcon(9,'DOC','#eaf3e6','#3b6d11'),
+  f10:fmtIcon(10,'ODT','#eaf3e6','#3b6d11'),
+  f11:fmtIcon(11,'PDF','#fcebeb','#a32d2d'),
+};
+function buildFmtCards(){
+  const g = document.getElementById('fmtGrid');
+  const detail = document.getElementById('fmtDetail');
+  if(!g) return;
+  g.innerHTML = fmtCards.map((h,i)=>{
+    const c = LANG==='en' ? (h.cEn || h.c) : h.c;
+    return '<div class="hw-card" data-i="'+i+'"><svg viewBox="0 0 46 46" xmlns="http://www.w3.org/2000/svg">'+(FMT_ICONS[h.icon]||'')+'</svg><div class="n">'+h.n+'</div><div class="c">'+c+'</div></div>';
+  }).join('');
+  detail.classList.remove('show');
+  g.querySelectorAll('.hw-card').forEach(card=>{
+    card.addEventListener('click', ()=>{
+      const h = fmtCards[+card.dataset.i];
+      const ct = LANG==='en' ? (h.catEn||h.cat) : h.cat;
+      const us = LANG==='en' ? (h.useEn||h.use) : h.use;
+      detail.innerHTML = '<b>'+h.n+'</b><span class="cat">'+ct+'</span><div class="use" style="margin-top:6px">'+us+'</div>';
+      detail.classList.add('show');
+    });
+  });
+}
+
+// ==================== 實驗⑧：格式拖卡分類（按媒體類型） ====================
+const fmtZonesDef = [
+  {type:'image', zh:'影像', en:'Image', color:'var(--blue)'},
+  {type:'audio', zh:'音頻', en:'Audio', color:'var(--purple)'},
+  {type:'video', zh:'視頻', en:'Video', color:'var(--amber)'},
+  {type:'text',  zh:'文本', en:'Text',  color:'var(--green)'},
+];
+let fmtDragState = null;
+function fmtShuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); const t=a[i];a[i]=a[j];a[j]=t;} return a; }
+function fmtZoneName(type){ const z=fmtZonesDef.find(x=>x.type===type); return LANG==='en'?z.en:z.zh; }
+function buildFmtDrag(){
+  const pool = document.getElementById('fmtPool');
+  const zonesEl = document.getElementById('fmtZones');
+  const prog = document.getElementById('fmtDragProgress');
+  const fb = document.getElementById('fmtDragFeedback');
+  if(!pool || !zonesEl) return;
+  if(!fmtDragState){
+    fmtDragState = { pool: fmtShuffle(fmtCards.map((_,i)=>i)), placed:{image:[],audio:[],video:[],text:[]}, sel:null };
+  }
+  const total = () => fmtDragState.placed.image.length+fmtDragState.placed.audio.length+fmtDragState.placed.video.length+fmtDragState.placed.text.length;
+  function place(idx, type){
+    const card = fmtCards[idx];
+    if(card.type !== type){
+      fb.textContent = (LANG==='en' ? '✗ '+card.n+' is '+card.catEn+', not '+fmtZoneName(type)+'.' : '✗ '+card.n+' 屬於「'+card.cat+'」，不是「'+fmtZoneName(type)+'」。');
+      fb.className = 'feedback bad';
+      return false;
+    }
+    fmtDragState.placed[type].push(idx);
+    fmtDragState.pool = fmtDragState.pool.filter(x=>x!==idx);
+    fb.textContent = (LANG==='en' ? '✓ '+card.n+' is a '+card.catEn+' '+fmtZoneName(type)+' format.' : '✓ '+card.n+' 是「'+card.cat+'」的'+fmtZoneName(type)+'格式。');
+    fb.className = 'feedback ok';
+    if(total() === fmtCards.length){ fb.textContent = (LANG==='en' ? '🎉 All 11 formats sorted correctly!' : '🎉 11 個格式全部正確分類！'); }
+    return true;
+  }
+  pool.innerHTML = '';
+  fmtDragState.pool.forEach(idx=>{
+    const c = fmtCards[idx];
+    const chip = document.createElement('div');
+    chip.className = 'fmt-chip' + (fmtDragState.sel===idx ? ' sel' : '');
+    chip.textContent = c.n; chip.draggable = true; chip.dataset.i = idx;
+    chip.addEventListener('click', ()=>{ fmtDragState.sel = (fmtDragState.sel===idx)?null:idx; buildFmtDrag(); });
+    chip.addEventListener('dragstart', e=>{ if(e.dataTransfer) e.dataTransfer.setData('text/plain', String(idx)); });
+    pool.appendChild(chip);
+  });
+  zonesEl.innerHTML = '';
+  fmtZonesDef.forEach(z=>{
+    const zone = document.createElement('div');
+    zone.className = 'fmt-zone'; zone.dataset.type = z.type;
+    const zl = document.createElement('div'); zl.className='zlbl'; zl.style.background=z.color; zl.textContent = LANG==='en'?z.en:z.zh;
+    const zc = document.createElement('div'); zc.className='zcount'; zc.textContent = (LANG==='en'? fmtDragState.placed[z.type].length+' placed' : fmtDragState.placed[z.type].length+' 個已放');
+    zone.appendChild(zl); zone.appendChild(zc);
+    fmtDragState.placed[z.type].forEach(idx=>{ const pc=document.createElement('div'); pc.className='fmt-chip placed'; pc.textContent=fmtCards[idx].n; zone.appendChild(pc); });
+    zone.addEventListener('click', ()=>{ if(fmtDragState.sel!==null){ const ok=place(fmtDragState.sel, z.type); if(ok) fmtDragState.sel=null; buildFmtDrag(); } });
+    zone.addEventListener('dragover', e=>{ e.preventDefault(); zone.classList.add('over'); });
+    zone.addEventListener('dragleave', ()=> zone.classList.remove('over'));
+    zone.addEventListener('drop', e=>{ e.preventDefault(); zone.classList.remove('over'); const v=e.dataTransfer?e.dataTransfer.getData('text/plain'):''; const idx=parseInt(v,10); if(!isNaN(idx)){ const ok=place(idx,z.type); if(ok) fmtDragState.sel=null; buildFmtDrag(); } });
+    zonesEl.appendChild(zone);
+  });
+  prog.textContent = (LANG==='en' ? total()+' / '+fmtCards.length+' sorted' : total()+' / '+fmtCards.length+' 已分類');
+}
+(function(){ const b=document.getElementById('fmtDragReset'); if(b) b.addEventListener('click', ()=>{ fmtDragState=null; buildFmtDrag(); }); })();
+
+// ==================== 實驗⑨：情境揀格式 ====================
+const sitScenarios = [
+  { zh:'學校網頁想放一張風景照片，要檔案細、載入快。', en:'The school website wants a landscape photo — the file must be small and load fast.',
+    choices:['jpg','png','bmp','pdf'], ans:'jpg',
+    why:'jpg 是有損壓縮，檔案最細，最適合照片與網頁；bmp 太大、pdf 不適合照片。',
+    whyEn:'jpg is lossy — the smallest file, ideal for photos and the web; bmp is too big and pdf is not for photos.' },
+  { zh:'公司標誌要放網頁，需要透明背景、線條清晰，且日後可完全還原。', en:'A company logo goes on the website: it needs a transparent background, sharp lines, and must be restorable exactly later.',
+    choices:['jpg','png','bmp','mp3'], ans:'png',
+    why:'png 無損壓縮、支援透明背景、線條不會模糊，最適合標誌與截圖；jpg 不支援透明。',
+    whyEn:'png is lossless, supports transparency and keeps lines sharp — best for logos and screenshots; jpg has no transparency.' },
+  { zh:'錄音師想保留每段聲音的全部原始取樣，方便日後剪輯。', en:'A sound engineer wants to keep every original sample of the audio for later editing.',
+    choices:['wav','mp3','jpg','mp4'], ans:'wav',
+    why:'wav 未壓縮，原原本本記低每個取樣，最適合後製原檔；mp3 已丟失細節。',
+    whyEn:'wav is uncompressed and stores every sample — perfect for master editing; mp3 has already discarded detail.' },
+  { zh:'把手機錄的短片放上 YouTube，希望檔案細、容易上載。', en:'You upload a phone clip to YouTube and want a small file that is easy to upload.',
+    choices:['avi','mp4','wav','bmp'], ans:'mp4',
+    why:'mp4 高度壓縮、檔案細，是網上影片最常用的格式；avi 通常很大。',
+    whyEn:'mp4 is heavily compressed and small — the common format for online video; avi is usually huge.' },
+  { zh:'交功課的報告要跨平台、版面固定，老師不易修改。', en:'A homework report must look the same on any device and be hard for the teacher to modify.',
+    choices:['pdf','docx','txt','png'], ans:'pdf',
+    why:'pdf 跨平台固定版面、不易被改，最適合分發與提交；docx 容易被編輯。',
+    whyEn:'pdf has a fixed cross-platform layout and is hard to edit — ideal for submission; docx is easy to change.' },
+  { zh:'只想傳一段純文字筆記，不需要任何字體或顏色格式。', en:'You only want to send plain-text notes, with no fonts or colours.',
+    choices:['txt','docx','pdf','mp3'], ans:'txt',
+    why:'txt 只存字符，檔案最小、任何系統都能開；docx／pdf 都帶額外格式。',
+    whyEn:'txt stores characters only — smallest and opens anywhere; docx/pdf carry extra formatting.' },
+  { zh:'印刷前的相片要保留每一粒像素，不介意檔案很大。', en:'A photo for printing must keep every pixel; file size does not matter.',
+    choices:['bmp','jpg','png','mp3'], ans:'bmp',
+    why:'bmp 未壓縮，保留全部像素，最適合作印刷後製原檔；jpg／png 都已壓縮。',
+    whyEn:'bmp is uncompressed and keeps every pixel — best as a print master; jpg/png are already compressed.' },
+  { zh:'網頁背景音樂要用細小檔案，聽眾不會察覺音質分別。', en:'Background music on a website needs a small file; listeners will not notice the quality difference.',
+    choices:['mp3','wav','bmp','pdf'], ans:'mp3',
+    why:'mp3 有損壓縮、檔案細，適合網上音樂；wav 太大。',
+    whyEn:'mp3 is lossy and small — ideal for online music; wav is too large.' },
+];
+let sitState = null;
+function buildSituation(){
+  const card = document.getElementById('sitCard');
+  const btns = document.getElementById('sitBtns');
+  const prog = document.getElementById('sitProgress');
+  const fb = document.getElementById('sitFeedback');
+  if(!card || !btns) return;
+  if(!sitState) sitState = { idx:0 };
+  if(sitState.idx >= sitScenarios.length){
+    card.textContent = LANG==='en' ? '🎉 All situations done — you can now pick a format for any scenario!' : '🎉 全部情境完成 — 你已能為任意情境揀格式！';
+    btns.innerHTML=''; prog.textContent=''; fb.textContent=''; fb.className='feedback';
+    return;
+  }
+  const s = sitScenarios[sitState.idx];
+  card.textContent = LANG==='en' ? s.en : s.zh;
+  btns.innerHTML = s.choices.map(c=>'<button class="btn ghost" data-v="'+c+'">'+c+'</button>').join('');
+  prog.textContent = (sitState.idx+1)+' / '+sitScenarios.length;
+  fb.textContent=''; fb.className='feedback';
+  btns.querySelectorAll('.btn').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      if(sitState.idx >= sitScenarios.length) return;
+      const cur = sitScenarios[sitState.idx];
+      fb.textContent = (LANG==='en'?'✓ ':'✓ ') + (LANG==='en'?cur.whyEn:cur.why);
+      fb.className = (b.dataset.v===cur.ans) ? 'feedback ok' : 'feedback bad';
+      if(b.dataset.v===cur.ans){ sitState.idx++; setTimeout(buildSituation, 900); }
+    });
+  });
+}
+
+// ==================== 實驗⑦：檔案大小探索器 ====================
+const FS_DEPTHS = [1, 4, 8, 16, 24, 32];
+const FS_RATES  = [8000, 16000, 22050, 44100, 48000];
+const FS_ABITS  = [8, 16, 24, 32];
+let fsMode = 'image';
+const fsState = { image:[1920, 1080, 4], audio:[3, 1, 60] };
+function fmtSize(b){
+  if(b >= 1024*1024) return (b/1024/1024).toFixed(2) + ' MB';
+  if(b >= 1024) return (b/1024).toFixed(1) + ' KB';
+  return Math.round(b) + ' B';
+}
+function fmtNum(n){ return n.toLocaleString('en-US'); }
+function fsSetup(){
+  const T = i18nTexts[LANG];
+  const sp = [document.getElementById('fsS1'), document.getElementById('fsS2'), document.getElementById('fsS3')];
+  if(!sp[0]) return;
+  if(fsMode === 'image'){
+    sp[0].min = 100; sp[0].max = 4000; sp[0].step = 100;
+    sp[1].min = 100; sp[1].max = 4000; sp[1].step = 100;
+    sp[2].min = 0;   sp[2].max = 5;    sp[2].step = 1;
+    document.getElementById('fsL1').textContent = T.fsL1Img;
+    document.getElementById('fsL2').textContent = T.fsL2Img;
+    document.getElementById('fsL3').textContent = T.fsL3Img;
+  } else {
+    sp[0].min = 0; sp[0].max = 4;   sp[0].step = 1;
+    sp[1].min = 0; sp[1].max = 3;   sp[1].step = 1;
+    sp[2].min = 1; sp[2].max = 300; sp[2].step = 1;
+    document.getElementById('fsL1').textContent = T.fsL1Aud;
+    document.getElementById('fsL2').textContent = T.fsL2Aud;
+    document.getElementById('fsL3').textContent = T.fsL3Aud;
+  }
+  const st = fsState[fsMode];
+  sp.forEach((s,i)=>{ s.value = st[i]; });
+  document.getElementById('fsModeImg').className = 'btn' + (fsMode==='image' ? '' : ' ghost');
+  document.getElementById('fsModeAud').className = 'btn' + (fsMode==='audio' ? '' : ' ghost');
+  fsUpdate();
+}
+function fsUpdate(){
+  const T = i18nTexts[LANG];
+  const sp = [document.getElementById('fsS1'), document.getElementById('fsS2'), document.getElementById('fsS3')];
+  if(!sp[0]) return;
+  const v = [+sp[0].value, +sp[1].value, +sp[2].value];
+  fsState[fsMode] = v;
+  let info = '', bits = 0, rows = [];
+  if(fsMode === 'image'){
+    const w = v[0], h = v[1], depth = FS_DEPTHS[v[2]];
+    bits = w * h * depth;
+    document.getElementById('fsV1').textContent = fmtNum(w);
+    document.getElementById('fsV2').textContent = fmtNum(h);
+    document.getElementById('fsV3').textContent = depth + ' ' + T.fsBits;
+    info = '<p style="font-size:14px;margin-bottom:6px">'+T.fsPixels+'：<b>'+fmtNum(w)+' × '+fmtNum(h)+' = '+fmtNum(w*h)+'</b>　|　'+T.fsColors+'：<b>2<sup>'+depth+'</sup> = '+fmtNum(Math.pow(2, depth))+'</b></p>';
+    info += '<p style="font-size:13px;color:var(--muted);margin-bottom:8px">'+T.fsFormula+'：'+fmtNum(w)+' × '+fmtNum(h)+' × '+depth+' '+T.fsBits+' ÷ 8 = '+fmtNum(bits/8)+' '+T.fsBytes+'</p>';
+    rows = [
+      {n:'bmp', m:T.fsRaw, f:1},
+      {n:'png', m:T.fsLossless, f:0.5},
+      {n:'jpg', m:T.fsLossy, f:0.1},
+    ];
+  } else {
+    const rate = FS_RATES[v[0]], ab = FS_ABITS[v[1]], sec = v[2];
+    bits = rate * ab * sec * 2;
+    document.getElementById('fsV1').textContent = fmtNum(rate) + ' Hz';
+    document.getElementById('fsV2').textContent = ab + ' ' + T.fsBits;
+    document.getElementById('fsV3').textContent = sec + ' s';
+    info = '<p style="font-size:14px;margin-bottom:6px">'+T.fsSamples+'：<b>'+fmtNum(rate*sec*2)+'</b>（'+fmtNum(rate)+' Hz × '+sec+' s × 2 '+T.fsCh+'）</p>';
+    info += '<p style="font-size:13px;color:var(--muted);margin-bottom:8px">'+T.fsFormula+'：'+fmtNum(rate)+' × '+ab+' '+T.fsBits+' × '+sec+' s × 2 ÷ 8 = '+fmtNum(bits/8)+' '+T.fsBytes+'</p>';
+    rows = [
+      {n:'wav', m:T.fsRaw, f:1},
+      {n:'mp3', m:T.fsLossy, f:0.1},
+    ];
+  }
+  const rawBytes = bits/8;
+  let table = '<table><tr><th>'+T.fsFormat+'</th><th>'+T.fsMethod+'</th><th>'+T.fsSize+'</th></tr>';
+  rows.forEach(r=>{
+    const size = fmtSize(rawBytes * r.f);
+    const save = r.f === 1 ? '—' : T.fsSave.replace('{p}', Math.round((1 - r.f) * 100));
+    table += '<tr><td><b>'+r.n+'</b></td><td>'+r.m+'</td><td><b>'+size+'</b>　<span style="font-size:12.5px;color:var(--muted)">'+save+'</span></td></tr>';
+  });
+  table += '</table>';
+  const hint = fsMode === 'image' ? T.fsHintImg : T.fsHintAud;
+  document.getElementById('fsOut').innerHTML = info + table
+    + '<p style="font-size:12.5px;color:var(--muted);margin-top:8px">'+T.fsNote+'</p>'
+    + '<p style="font-size:13px;margin-top:6px">'+hint+'</p>';
+}
+['fsS1','fsS2','fsS3'].forEach(id=>{
+  const el = document.getElementById(id);
+  if(el) el.addEventListener('input', fsUpdate);
+});
+const fsBtnImg = document.getElementById('fsModeImg');
+const fsBtnAud = document.getElementById('fsModeAud');
+if(fsBtnImg) fsBtnImg.addEventListener('click', ()=>{ fsMode = 'image'; fsSetup(); });
+if(fsBtnAud) fsBtnAud.addEventListener('click', ()=>{ fsMode = 'audio'; fsSetup(); });
+
+// ==================== 腦圖 ====================
+const mmData = {
+  root:{zh:'數據表示', en:'Data Representation', zhDesc:'第三章：數字系統 → 整數表示 → 字符編碼 → 條碼 → 模擬與數碼 → 多媒體檔案格式。', enDesc:'Chapter 3: number systems → integer representation → character encoding → barcodes → analogue vs digital → multimedia file formats.', children:['nums','patterns','int','char','bar','ad','mm']},
+  nums:{zh:'數字系統', en:'Number Systems', zhDesc:'二／十／十六進制互換；數據單位基於 1024，位元速率基於 1000。', enDesc:'Convert binary/decimal/hex; storage units use 1024, bit-rate units use 1000.', children:[]},
+  patterns:{zh:'樣式數量', en:'Patterns', zhDesc:'b 位元 → 2^b 個樣式；要表示 P 個樣式需 log₂P 位元。', enDesc:'b bits → 2^b patterns; P patterns need log₂P bits.', children:[]},
+  int:{zh:'整數表示', en:'Integer Representation', zhDesc:'無符號 0 至 2^N−1；有符號（二補碼）−2^(N−1) 至 2^(N−1)−1；結果超出範圍即溢出誤差。', enDesc:'Unsigned 0 to 2^N−1; signed (two’s complement) −2^(N−1) to 2^(N−1)−1; out of range → overflow error.', children:[]},
+  char:{zh:'字符編碼', en:'Character Encoding', zhDesc:'ASCII（7b/1B）、大五碼與國標碼（2B）、統一碼（1–4B 可變長度）。', enDesc:'ASCII (7b/1B), Big5 & GB (2B), Unicode (1–4B variable).', children:[]},
+  bar:{zh:'條碼編碼', en:'Barcode Encoding', zhDesc:'條碼約 50 字符、兩個角度；二維碼約 1000 字符、任何方向、可恢復 30% 數據。', enDesc:'Barcode ~50 chars, 2 angles; QR ~1000 chars, any direction, recovers 30% of data.', children:[]},
+  ad:{zh:'模擬與數碼', en:'Analogue vs Digital', zhDesc:'模擬＝連續值；數碼＝離散 0/1。數碼化＝離散化（取樣）＋量化。', enDesc:'Analogue = continuous; digital = discrete 0/1. Digitisation = discretisation (sampling) + quantisation.', children:[]},
+  mm:{zh:'多媒體', en:'Multimedia', zhDesc:'元素：文本／圖像／音頻／視頻／動畫。格式：bmp、png、jpg、wav、mp3、avi、mp4、txt、docx、odt、pdf。未壓縮最脹、無損不失真、有損最輕。', enDesc:'Elements: text / image / audio / video / animation. Formats: bmp, png, jpg, wav, mp3, avi, mp4, txt, docx, odt, pdf. Uncompressed = bulkiest, lossless = faithful, lossy = lightest.', children:[]},
+};
+let mmActive = 'root';
+function mmLabel(n){ return LANG==='en' ? mmData[n].en : mmData[n].zh; }
+function mmDesc(n){ return LANG==='en' ? mmData[n].enDesc : mmData[n].zhDesc; }
+function buildMindmap(){
+  const W = 880, H = 440, cx = W/2, cy = H/2;
+  const nodes = ['nums','patterns','int','char','bar','ad','mm'];
+  const pos = {};
+  nodes.forEach((n,i)=>{
+    const ang = -Math.PI/2 + i*(2*Math.PI/nodes.length);
+    pos[n] = {x: cx + Math.cos(ang)*270, y: cy + Math.sin(ang)*172};
+  });
+  const colors = {nums:'#185fa5', patterns:'#0f6e56', int:'#534ab7', char:'#854f0b', bar:'#a32d2d', ad:'#3b6d11', mm:'#0b6e99'};
+  let svg = '<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:880px">';
+  nodes.forEach(n=>{
+    svg += '<line x1="'+cx+'" y1="'+cy+'" x2="'+pos[n].x+'" y2="'+pos[n].y+'" stroke="#c9cbd1" stroke-width="2"/>';
+  });
+  svg += '<g class="mm-node" data-node="root"><circle cx="'+cx+'" cy="'+cy+'" r="46" fill="#185fa5"/><text x="'+cx+'" y="'+(cy+5)+'" fill="#fff" font-size="14" text-anchor="middle" font-weight="700">'+mmLabel('root')+'</text></g>';
+  nodes.forEach(n=>{
+    const c = colors[n];
+    svg += '<g class="mm-node" data-node="'+n+'"><rect x="'+(pos[n].x-72)+'" y="'+(pos[n].y-24)+'" width="144" height="48" rx="10" fill="#fff" stroke="'+c+'" stroke-width="2"/><text x="'+pos[n].x+'" y="'+(pos[n].y+5)+'" fill="'+c+'" font-size="13.5" text-anchor="middle" font-weight="700">'+mmLabel(n)+'</text></g>';
+  });
+  svg += '</svg>';
+  document.getElementById('mindmapBox').innerHTML = svg;
+  document.querySelectorAll('.mm-node').forEach(g=>{
+    g.addEventListener('click', ()=>{
+      mmActive = g.dataset.node;
+      document.getElementById('mmDesc').textContent = mmDesc(mmActive);
+    });
+  });
+}
+function refreshMindmap(){
+  buildMindmap();
+  document.getElementById('mmDesc').textContent = mmDesc(mmActive);
+}
+
+// ==================== 小測驗 ====================
+function refreshQuizFeedback(){
+  document.querySelectorAll('.quiz-q').forEach(q=>{
+    if(!q.dataset.done) return;
+    const fb = q.querySelector('.q-feedback');
+    const isCorrect = q.dataset.wasCorrect === '1';
+    if(LANG === 'en'){ fb.textContent = isCorrect ? fb.dataset.correctEn : fb.dataset.wrongEn; }
+    else { fb.textContent = isCorrect ? fb.dataset.correct : fb.dataset.wrong; }
+  });
+}
+document.querySelectorAll('.quiz-q').forEach(q=>{
+  const ans = q.dataset.ans;
+  const fb = q.querySelector('.q-feedback');
+  fb.style.display = 'none';
+  q.querySelectorAll('.opt').forEach(opt=>{
+    opt.addEventListener('click', ()=>{
+      if(q.dataset.done) return;
+      q.dataset.done = '1';
+      const val = opt.querySelector('input').value;
+      const isCorrect = val === ans;
+      q.dataset.wasCorrect = isCorrect ? '1' : '0';
+      q.querySelectorAll('.opt').forEach(o=>{
+        const v = o.querySelector('input').value;
+        if(v === ans){ o.classList.add('correct'); }
+        else if(o === opt){ o.classList.add('wrong'); }
+      });
+      fb.textContent = isCorrect
+        ? (LANG==='en' ? fb.dataset.correctEn : fb.dataset.correct)
+        : (LANG==='en' ? fb.dataset.wrongEn : fb.dataset.wrong);
+      fb.style.color = isCorrect ? '#3b6d11' : '#a32d2d';
+      fb.style.display = 'block';
+    });
+  });
+});
+document.getElementById('quizBtn').addEventListener('click', ()=>{
+  let score = 0, total = document.querySelectorAll('.quiz-q').length;
+  document.querySelectorAll('.quiz-q').forEach(q=>{
+    const ans = q.dataset.ans;
+    const sel = q.querySelector('input:checked');
+    if(sel && sel.value === ans) score++;
+  });
+  const r = document.getElementById('quizResult');
+  let msg;
+  if(LANG === 'en'){
+    if(score === total) msg = 'Full marks! You have mastered this chapter.';
+    else if(score >= total*0.7) msg = 'Well done! Review the wrong answers.';
+    else msg = 'Review the mind map and notes above, then try again.';
+    r.textContent = 'Score: ' + score + ' / ' + total + '  ' + msg;
+  } else {
+    if(score === total) msg = '滿分！你已完全掌握本章。';
+    else if(score >= total*0.7) msg = '不錯！再溫習一下錯題即可。';
+    else msg = '建議重溫上面的腦圖與筆記，再挑戰一次。';
+    r.textContent = '得分：' + score + ' / ' + total + '　' + msg;
+  }
+});
+
+// ==================== 回到頂部 ====================
+const toTop = document.getElementById('toTop');
+window.addEventListener('scroll', ()=>{ toTop.style.display = window.scrollY > 400 ? 'block' : 'none'; });
+toTop.addEventListener('click', ()=>{ window.scrollTo({top:0, behavior:'smooth'}); });
+
+// ==================== 初始繪製 ====================
+renderConv();
+renderPatterns();
+buildTwosBits(); renderTwos();
+renderOverflow();
+renderAscii();
+drawSampAnalog(); renderSampling();
+buildEncCards();
+buildBarCards();
+buildFmtCards();
+buildFmtDrag();
+buildSituation();
+fsSetup();
+buildMindmap();
+</script>
+</body>
+</html>
